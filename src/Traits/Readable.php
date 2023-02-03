@@ -11,39 +11,42 @@ trait Readable
 
     public function initReadable(): void
     {
+        if (empty($this->tableData)) {
+            return;
+        }
+
         $this->loadReadableHooks();
-    }
-
-    public function loadReadable(): void
-    {
-        if (empty($_GET['action']) || $_GET['action'] !== 'view' || empty($_GET['model_id'])) {
-            return;
-        }
-
-        $queryFirstItem = static::query()
-            ->where('id', $_GET['model_id'])
-            ->first();
-
-        if (empty($queryFirstItem)) {
-            return;
-        }
-
-        $data = $queryFirstItem->toArray();
-
-        echo View::first(
-            [
-                'wpdbmodeladminui/admin-ui-single',
-                'wpdbmodeladminui::admin-ui-single',
-            ],
-            [
-                'title' => $data[$this->adminTable->get_primary_column()],
-                'data' => $data,
-            ]
-        );
     }
 
     public function loadReadableHooks(): void
     {
+        Hook::action('wp-database-model-admin-ui/traits/option-page/display-menu-page/' . $this->table, function () {
+            if (empty($_GET['action']) || $_GET['action'] !== 'view' || empty($_GET['model_id'])) {
+                return;
+            }
+
+            $queryFirstItem = static::query()
+                ->where('id', $_GET['model_id'])
+                ->first();
+
+            if (empty($queryFirstItem)) {
+                return;
+            }
+
+            $data = $queryFirstItem->toArray();
+
+            echo View::first(
+                [
+                    'wpdbmodeladminui/admin-ui-single',
+                    'wpdbmodeladminui::admin-ui-single',
+                ],
+                [
+                    'title' => $data[$this->primaryColumn],
+                    'data' => $data,
+                ]
+            );
+        });
+
         Hook::filter(
             'wp-database-model-admin-ui/admin-table/' . $this->table . '/column_default',
             function ($value, object|array $item, string $column_name, AdminTable $adminTable) {

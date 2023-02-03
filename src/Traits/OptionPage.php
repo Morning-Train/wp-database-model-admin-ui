@@ -8,12 +8,7 @@ use WP_Screen;
 trait OptionPage
 {
 
-    use AdminUi;
-    use Readable;
-    use Removable;
-
     private array $tableData;
-    private bool $isSetup = false;
     private array $traitsInUse;
 
     // Option page settings
@@ -25,17 +20,10 @@ trait OptionPage
     private string $iconUrl;
     private ?int $position;
 
-    public function initModelAdminUi(): void
+    private string $primaryColumn;
+
+    public function initOptionPage(): void
     {
-        if ($this->isSetup) {
-            return;
-        }
-
-        $this->isSetup = true;
-        $this->tableData = $this->getAdminUiData();
-
-        $this->traitsInUse = $this->modelAdminUi ?? [];
-
         $this->pageTitle = $this->tableData['pageTitle'] ?? __('Admin Table', '');
         $this->menuTitle = $this->tableData['menuTitle'] ?? __('Admin Table', '');
         $this->capability = $this->tableData['capability'] ?? 'manage_options';
@@ -43,6 +31,9 @@ trait OptionPage
         $this->callback = $this->tableData['callback'] ?? null;
         $this->iconUrl = $this->tableData['iconUrl'] ?? '';
         $this->position = $this->tableData['position'] ?? null;
+
+        /*** @see \WP_List_Table::get_default_primary_column_name */
+        $this->primaryColumn = array_keys($this->tableData['tableColumns'])[0];
 
         $this->loadOptionHooks();
     }
@@ -61,22 +52,24 @@ trait OptionPage
             );
         });
 
+        Hook::filter('set-screen-option', function ($screen_option, string $option, int $value) {
+            if (empty($_REQUEST['page']) || $this->table !== $_REQUEST['page']) {
+                return $screen_option;
+            }
+
+            if ($option === 'per_page') {
+                return $value;
+            }
+
+            return $screen_option;
+        });
+
         Hook::action('current_screen', function (WP_Screen $screen) {
             if ($screen->id !== 'toplevel_page_' . $this->table) {
                 return;
             }
 
-            $this->initAdminUi($this->tableData);
-
-            foreach ($this->traitsInUse as $traitInUse) {
-                $methodName = 'init' . ucfirst(basename($traitInUse));
-
-                if (! method_exists($this, $methodName)) {
-                    continue;
-                }
-
-                $this->{$methodName}();
-            }
+            add_screen_option('per_page', ['default' => 20, 'option' => 'per_page']);
         });
     }
 
@@ -86,19 +79,13 @@ trait OptionPage
             return;
         }
 
-        if (method_exists($this, 'loadOverview')) {
-            $this->loadOverview();
+        $screen = get_current_screen();
+
+        if ($screen === null || $screen->id !== 'toplevel_page_' . $this->table) {
+            return;
         }
 
-        foreach ($this->traitsInUse as $traitInUse) {
-            $methodName = 'load' . ucfirst(basename($traitInUse));
-
-            if (! method_exists($this, $methodName)) {
-                continue;
-            }
-
-            $this->{$methodName}();
-        }
+        do_action('wp-database-model-admin-ui/traits/option-page/display-menu-page/' . $this->table);
     }
 
 }

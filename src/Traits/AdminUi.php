@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Builder;
 use Morningtrain\WP\DatabaseModelAdminUi\Model\AdminTable;
 use Morningtrain\WP\Hooks\Hook;
 use Morningtrain\WP\View\View;
-use WP_Screen;
 
 trait AdminUi
 {
+
+    use OptionPage;
 
     private AdminTable $adminTable;
     private string $searchButtonText;
@@ -19,45 +20,24 @@ trait AdminUi
     private array $sortableColumns;
 
 
-    public function initAdminUi(array $tableData): void
+    public function initAdminUi(): void
     {
-        $this->handleTableData($tableData);
-
-        $this->adminTable = new AdminTable($this->table);
-
-        $this->prepareItemsToAdminUi();
+        $this->handleTableData();
+        $this->initOptionPage();
         $this->loadAdminUiHooks();
     }
 
-    public function loadOverview(): void
+    private function handleTableData(): void
     {
-        if (! empty($_GET['action']) || ! empty($_GET['model_id'])) {
-            return;
-        }
-
-        echo View::first(
-            [
-                'wpdbmodeladminui/admin-ui-form',
-                'wpdbmodeladminui::admin-ui-form',
-            ],
-            [
-                'pageTitle' => $this->pageTitle,
-                'page' => $this->table,
-                'searchBoxText' => $this->searchButtonText,
-                'searchBoxInputId' => $this->table,
-                'adminTable' => $this->adminTable,
-            ]
-        );
+        $this->tableData = $this->adminUiTableData ?? [];
+        $this->columnsData = $this->tableData['tableColumns'] ?? [];
+        $this->searchButtonText = $this->tableData['tableSearchButtonText'] ?? __('Search', '');
     }
 
-    private function handleTableData(array $tableData): void
+    private function prepareItemsToAdminUi(): void
     {
-        $this->columnsData = $tableData['tableColumns'] ?? [];
-        $this->searchButtonText = $tableData['tableSearchButtonText'] ?? __('Search', '');
-    }
+        $this->adminTable = new AdminTable($this->table);
 
-    public function prepareItemsToAdminUi(): void
-    {
         $this->handleAdminTableColumns();
 
         $query = static::query();
@@ -75,16 +55,26 @@ trait AdminUi
 
     public function loadAdminUiHooks(): void
     {
-        Hook::filter('set-screen-option', function ($screen_option, string $option, int $value) {
-            if (empty($_REQUEST['page']) || $this->table !== $_REQUEST['page']) {
-                return $screen_option;
+        Hook::action('wp-database-model-admin-ui/traits/option-page/display-menu-page/' . $this->table, function () {
+            if (! empty($_GET['action']) && ! empty($_GET['model_id'])) {
+                return;
             }
 
-            if ($option === 'per_page') {
-                return $value;
-            }
+            $this->prepareItemsToAdminUi();
 
-            return $screen_option;
+            echo View::first(
+                [
+                    'wpdbmodeladminui/admin-ui-form',
+                    'wpdbmodeladminui::admin-ui-form',
+                ],
+                [
+                    'pageTitle' => $this->pageTitle,
+                    'page' => $this->table,
+                    'searchBoxText' => $this->searchButtonText,
+                    'searchBoxInputId' => $this->table,
+                    'adminTable' => $this->adminTable,
+                ]
+            );
         });
     }
 
