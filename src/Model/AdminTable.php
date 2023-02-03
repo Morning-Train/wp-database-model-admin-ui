@@ -26,8 +26,6 @@ class AdminTable extends WP_List_Table
                 'screen' => 'toplevel_page_' . $slug,
             ]
         );
-
-        \add_screen_option('per_page', ['default' => 20, 'option' => 'per_page']);
     }
 
     public function get_columns(): array

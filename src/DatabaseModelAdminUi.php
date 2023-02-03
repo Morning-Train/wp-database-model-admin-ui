@@ -10,7 +10,8 @@ class DatabaseModelAdminUi
 
     public static function setup(string|array $modelsDir): void
     {
-        Loader::create($modelsDir)->call('initModelAdminUi');
+        Loader::create($modelsDir)
+            ->call('setupAdminUi');
 
         View::addNamespace('wpdbmodeladminui', dirname(__DIR__) . '/resources/views');
     }
