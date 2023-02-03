@@ -24,7 +24,10 @@ trait AdminUi
     {
         $this->handleTableData();
         $this->initOptionPage();
-        $this->loadAdminUiHooks();
+
+        Hook::action('admin_init', function () {
+            $this->loadAdminUiHooks();
+        });
     }
 
     private function handleTableData(): void

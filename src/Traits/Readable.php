@@ -11,22 +11,49 @@ trait Readable
 
     public function initReadable(): void
     {
-        if (empty($this->tableData)) {
+        Hook::action('admin_init', function () {
+            if (empty($this->tableData)) {
+                return;
+            }
+
+            $this->checkForNonExistingModel();
+            $this->loadReadableHooks();
+        });
+    }
+
+    public function checkForNonExistingModel(): void
+    {
+        $action = $_GET['action'] ?? null;
+        $modelId = $_GET['model_id'] ?? null;
+
+        if (empty($action) || $action !== 'view' || empty($modelId) || ! is_numeric($modelId)) {
             return;
         }
 
-        $this->loadReadableHooks();
+        $model = static::query()
+            ->where('id', $_GET['model_id'])
+            ->first();
+
+        if (! empty($model)) {
+            return;
+        }
+
+        wp_safe_redirect(admin_url('admin.php?page=' . $_GET['page']));
+        exit();
     }
 
     public function loadReadableHooks(): void
     {
         Hook::action('wp-database-model-admin-ui/traits/option-page/display-menu-page/' . $this->table, function () {
-            if (empty($_GET['action']) || $_GET['action'] !== 'view' || empty($_GET['model_id'])) {
+            $action = $_GET['action'] ?? null;
+            $modelId = $_GET['model_id'] ?? null;
+
+            if (empty($action) || $action !== 'view' || empty($modelId) || ! is_numeric($modelId)) {
                 return;
             }
 
             $queryFirstItem = static::query()
-                ->where('id', $_GET['model_id'])
+                ->where('id', $modelId)
                 ->first();
 
             if (empty($queryFirstItem)) {
@@ -43,6 +70,7 @@ trait Readable
                 [
                     'title' => $data[$this->primaryColumn],
                     'data' => $data,
+                    'screen' => get_current_screen(),
                 ]
             );
         });
@@ -73,7 +101,7 @@ trait Readable
 
     private function getCurrentPageUrlWithParams(int $modelId, string $page): string
     {
-        $current_page = admin_url('admin.php?page=' . $_GET["page"]);
+        $current_page = admin_url('admin.php?page=' . $_GET['page']);
         return add_query_arg(
             [
                 'model_id' => $modelId,
