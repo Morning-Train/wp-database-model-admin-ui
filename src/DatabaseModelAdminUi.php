@@ -9,36 +9,16 @@ use Morningtrain\WP\View\View;
 class DatabaseModelAdminUi
 {
 
-    private static array $modelsDir;
-
-    public static function setup(string|array $modelsDir): void
+    public static function setup(string|array $eloquentModelsDir): void
     {
-        static::$modelsDir = (array) $modelsDir;
+        Helper::setEloquentModelsDirs($eloquentModelsDir);
 
-        Loader::create($modelsDir)
+        Loader::create($eloquentModelsDir)
             ->call('setupAdminUi');
 
         View::addNamespace('wpdbmodeladminui', dirname(__DIR__) . '/resources/views');
 
         static::setupAcf();
-    }
-
-    public static function getAdminPageUrlWithQueryArgs(string $page, int $modelId, ?string $action = null, ?string $nonce = null): string
-    {
-        return add_query_arg(
-            [
-                'page' => $page,
-                'model_id' => $modelId,
-                'action' => $action,
-                'nonce' => $nonce,
-            ],
-            admin_url('admin.php')
-        );
-    }
-
-    public static function getEloquentModelsDirs(): array
-    {
-        return static::$modelsDir;
     }
 
     private static function setupAcf(): void
