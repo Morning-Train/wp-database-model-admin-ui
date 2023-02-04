@@ -2,7 +2,7 @@
 
 namespace Morningtrain\WP\DatabaseModelAdminUi\Traits;
 
-use Morningtrain\WP\DatabaseModelAdminUi\DatabaseModelAdminUi;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\Helper;
 use Morningtrain\WP\DatabaseModelAdminUi\Model\AdminTable;
 use Morningtrain\WP\Hooks\Hook;
 use Morningtrain\WP\View\View;
@@ -102,7 +102,7 @@ trait Readable
         Hook::filter(
             'wp-database-model-admin-ui/admin-table/' . $this->table . '/column_name/' . $this->primaryColumn,
             function ($emptyValue, object|array $item, string $column_name, AdminTable $adminTable) {
-                $href = DatabaseModelAdminUi::getAdminPageUrlWithQueryArgs(
+                $href = Helper::getAdminPageUrlWithQueryArgs(
                     $this->readablePageSlug,
                     $item['id']
                 );

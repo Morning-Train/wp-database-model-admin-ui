@@ -2,7 +2,7 @@
 
 namespace Morningtrain\WP\DatabaseModelAdminUi\Traits;
 
-use Morningtrain\WP\DatabaseModelAdminUi\DatabaseModelAdminUi;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\Helper;
 use Morningtrain\WP\DatabaseModelAdminUi\Model\AdminTable;
 use Morningtrain\WP\Hooks\Hook;
 
@@ -82,7 +82,7 @@ trait AcfEditable
             function (array $rowActions, object|array $item, string $column_name, AdminTable $adminTable): array
             {
                 if ($adminTable->get_primary_column() === $column_name) {
-                    $href = DatabaseModelAdminUi::getAdminPageUrlWithQueryArgs(
+                    $href = Helper::getAdminPageUrlWithQueryArgs(
                         $this->acfEditablePageSlug,
                         $item['id']
                     );

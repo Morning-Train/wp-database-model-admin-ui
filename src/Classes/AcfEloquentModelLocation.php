@@ -34,7 +34,7 @@ class AcfEloquentModelLocation extends ACF_Location
      * @return  array
      */
     public function get_values($rule) {
-        $phpLoader = new Loader(DatabaseModelAdminUi::getEloquentModelsDirs());
+        $phpLoader = new Loader(Helper::getEloquentModelsDirs());
         $eloquentModelFiles = $phpLoader->findFiles();
         $choices = [];
 
