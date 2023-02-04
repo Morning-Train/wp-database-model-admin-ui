@@ -65,7 +65,13 @@ class AdminTable extends WP_List_Table
      */
     protected function column_default($item, $column_name): void
     {
-        echo apply_filters('wp-database-model-admin-ui/admin-table/' . $this->slug . '/column_default', $item[$column_name] ?? null, $item, $column_name, $this);
+        $value = apply_filters('wp-database-model-admin-ui/admin-table/' . $this->slug . '/column_name/' . $column_name, null, $item, $column_name, $this);
+
+        if ($value !== null) {
+            echo $value;
+        } else {
+            echo apply_filters('wp-database-model-admin-ui/admin-table/' . $this->slug . '/column_default', $item[$column_name] ?? null, $item, $column_name, $this);
+        }
 
         if($this->get_primary_column() === $column_name) {
             echo $this->row_actions(

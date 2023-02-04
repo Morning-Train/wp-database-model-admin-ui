@@ -100,12 +100,8 @@ trait Readable
         });
 
         Hook::filter(
-            'wp-database-model-admin-ui/admin-table/' . $this->table . '/column_default',
-            function ($value, object|array $item, string $column_name, AdminTable $adminTable) {
-                if ($adminTable->get_primary_column() !== $column_name) {
-                    return $value;
-                }
-
+            'wp-database-model-admin-ui/admin-table/' . $this->table . '/column_name/' . $this->primaryColumn,
+            function ($emptyValue, object|array $item, string $column_name, AdminTable $adminTable) {
                 $href = DatabaseModelAdminUi::getAdminPageUrlWithQueryArgs(
                     $this->readablePageSlug,
                     $item['id']
