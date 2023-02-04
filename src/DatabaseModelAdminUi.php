@@ -16,4 +16,17 @@ class DatabaseModelAdminUi
         View::addNamespace('wpdbmodeladminui', dirname(__DIR__) . '/resources/views');
     }
 
+    public static function getAdminPageUrlWithQueryArgs(string $page, int $modelId, ?string $action = null, ?string $nonce = null): string
+    {
+        return add_query_arg(
+            [
+                'page' => $page,
+                'model_id' => $modelId,
+                'action' => $action,
+                'nonce' => $nonce,
+            ],
+            admin_url('admin.php')
+        );
+    }
+
 }
