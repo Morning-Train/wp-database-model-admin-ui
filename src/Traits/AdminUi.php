@@ -6,35 +6,118 @@ use Illuminate\Database\Eloquent\Builder;
 use Morningtrain\WP\DatabaseModelAdminUi\Model\AdminTable;
 use Morningtrain\WP\Hooks\Hook;
 use Morningtrain\WP\View\View;
+use WP_Screen;
 
 trait AdminUi
 {
 
-    use OptionPage;
-
     private AdminTable $adminTable;
-    private string $searchButtonText;
+
+    // Table columns
     private array $columnsData;
     private array $columns;
     private array $searchableColumns;
     private array $sortableColumns;
 
+    private string $primaryColumn;
+    private string $searchButtonText;
+
+    // Option page settings
+    private string $pageTitle;
+    private string $menuTitle;
+    private string $capability;
+    private string $menu_slug;
+    private ?string $callback;
+    private string $iconUrl;
+    private ?int $position;
+
 
     public function initAdminUi(): void
     {
-        $this->handleTableData();
-        $this->initOptionPage();
-
-        Hook::action('admin_init', function () {
-            $this->loadAdminUiHooks();
-        });
+        $this->handleAdminUiTableData();
+        $this->loadAdminUiHooks();
     }
 
-    private function handleTableData(): void
+    public function displayMenuPage(): void
     {
-        $this->tableData = $this->adminUiTableData ?? [];
-        $this->columnsData = $this->tableData['tableColumns'] ?? [];
-        $this->searchButtonText = $this->tableData['tableSearchButtonText'] ?? __('Search', '');
+        if (empty($_GET['page']) || $_GET['page'] !== $this->table) {
+            return;
+        }
+
+        $screen = get_current_screen();
+
+        if ($screen === null || $screen->id !== 'toplevel_page_' . $this->table) {
+            return;
+        }
+
+        $this->prepareItemsToAdminUi();
+
+        echo View::first(
+            [
+                'wpdbmodeladminui/admin-ui-form',
+                'wpdbmodeladminui::admin-ui-form',
+            ],
+            [
+                'pageTitle' => $this->pageTitle,
+                'page' => $this->table,
+                'searchBoxText' => $this->searchButtonText,
+                'searchBoxInputId' => $this->table,
+                'adminTable' => $this->adminTable,
+            ]
+        );
+    }
+
+    private function handleAdminUiTableData(): void
+    {
+        $this->adminUiTableData = $this->adminUiTableData ?? [];
+        $this->columnsData = $this->adminUiTableData['tableColumns'] ?? [];
+        $this->searchButtonText = $this->adminUiTableData['tableSearchButtonText'] ?? __('Search', '');
+
+        $this->pageTitle = $this->adminUiTableData['pageTitle'] ?? __('Admin Table', '');
+        $this->menuTitle = $this->adminUiTableData['menuTitle'] ?? __('Admin Table', '');
+        $this->capability = $this->adminUiTableData['capability'] ?? 'manage_options';
+        $this->menu_slug = $this->table;
+        $this->iconUrl = $this->adminUiTableData['iconUrl'] ?? '';
+        $this->position = $this->adminUiTableData['position'] ?? null;
+
+        /*** @see \WP_List_Table::get_default_primary_column_name */
+        $this->primaryColumn = array_keys($this->adminUiTableData['tableColumns'])[0];
+    }
+
+    private function loadAdminUiHooks() : void
+    {
+        Hook::action('admin_menu', function () {
+            \add_menu_page(
+                $this->pageTitle,
+                $this->menuTitle,
+                $this->capability,
+                $this->table,
+                [$this, 'displayMenuPage'],
+                $this->iconUrl,
+                $this->position
+            );
+        });
+
+        Hook::filter('set-screen-option', function ($screen_option, string $option, int $value) {
+            if (empty($_REQUEST['page']) || $this->table !== $_REQUEST['page']) {
+                return $screen_option;
+            }
+
+            if ($option === 'per_page') {
+                return $value;
+            }
+
+            return $screen_option;
+        });
+
+
+        Hook::action('current_screen', function (WP_Screen $screen) {
+            if ($screen->id !== 'toplevel_page_' . $this->table) {
+                return;
+            }
+
+            add_screen_option('per_page', ['default' => 20, 'option' => 'per_page']);
+        });
     }
 
     private function prepareItemsToAdminUi(): void
@@ -54,31 +137,6 @@ trait AdminUi
         $data = $this->markSearchWordInSearchableColumns($data);
 
         $this->adminTable->prepare_items($data);
-    }
-
-    public function loadAdminUiHooks(): void
-    {
-        Hook::action('wp-database-model-admin-ui/traits/option-page/display-menu-page/' . $this->table, function () {
-            if (! empty($_GET['action']) && ! empty($_GET['model_id'])) {
-                return;
-            }
-
-            $this->prepareItemsToAdminUi();
-
-            echo View::first(
-                [
-                    'wpdbmodeladminui/admin-ui-form',
-                    'wpdbmodeladminui::admin-ui-form',
-                ],
-                [
-                    'pageTitle' => $this->pageTitle,
-                    'page' => $this->table,
-                    'searchBoxText' => $this->searchButtonText,
-                    'searchBoxInputId' => $this->table,
-                    'adminTable' => $this->adminTable,
-                ]
-            );
-        });
     }
 
     private function handleAdminTableColumns(): void
