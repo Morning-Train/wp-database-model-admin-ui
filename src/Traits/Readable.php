@@ -9,32 +9,65 @@ use Morningtrain\WP\View\View;
 trait Readable
 {
 
+    private string $readablePageSlug;
+    private $readableCurrentModel;
+
     public function initReadable(): void
     {
-        Hook::action('admin_init', function () {
-            if (empty($this->tableData)) {
-                return;
-            }
-
-            $this->checkForNonExistingModel();
-            $this->loadReadableHooks();
-        });
-    }
-
-    public function checkForNonExistingModel(): void
-    {
-        $action = $_GET['action'] ?? null;
-        $modelId = $_GET['model_id'] ?? null;
-
-        if (empty($action) || $action !== 'view' || empty($modelId) || ! is_numeric($modelId)) {
+        if (empty($this->adminUiTableData)) {
             return;
         }
 
-        $model = static::query()
+        $this->readablePageSlug = $this->table . '-view';
+
+        $this->checkForNonExistingModel();
+        $this->loadReadableHooks();
+    }
+
+    public function displayReadableSubmenuPage(): void
+    {
+        $modelId = $_GET['model_id'] ?? null;
+        $queryFirstItem = static::query()
+            ->where('id', $modelId)
+            ->first();
+
+        if (empty($queryFirstItem)) {
+            return;
+        }
+
+        $data = $queryFirstItem->toArray();
+
+        echo View::first(
+            [
+                'wpdbmodeladminui/admin-ui-single',
+                'wpdbmodeladminui::admin-ui-single',
+            ],
+            [
+                'title' => $data[$this->primaryColumn],
+                'data' => $data,
+                'screen' => get_current_screen(),
+            ]
+        );
+    }
+
+    private function checkForNonExistingModel(): void
+    {
+        $page = $_GET['page'] ?? null;
+        $modelId = $_GET['model_id'] ?? null;
+
+        if (empty($page) || empty($modelId)) {
+            return;
+        }
+
+        if ($page !== $this->readablePageSlug || ! is_numeric($modelId)) {
+            return;
+        }
+
+        $this->readableCurrentModel = static::query()
             ->where('id', $_GET['model_id'])
             ->first();
 
-        if (! empty($model)) {
+        if (! empty($this->readableCurrentModel)) {
             return;
         }
 
@@ -42,36 +75,28 @@ trait Readable
         exit();
     }
 
-    public function loadReadableHooks(): void
+    private function loadReadableHooks(): void
     {
-        Hook::action('wp-database-model-admin-ui/traits/option-page/display-menu-page/' . $this->table, function () {
-            $action = $_GET['action'] ?? null;
-            $modelId = $_GET['model_id'] ?? null;
+        Hook::action('admin_menu', function () {
+            $page = $_GET['page'] ?? null;
 
-            if (empty($action) || $action !== 'view' || empty($modelId) || ! is_numeric($modelId)) {
+            if (empty($page) || $page !== $this->readablePageSlug) {
                 return;
             }
 
-            $queryFirstItem = static::query()
-                ->where('id', $modelId)
-                ->first();
-
-            if (empty($queryFirstItem)) {
-                return;
+            if (empty($this->readableCurrentModel)) {
+                $this->readableCurrentModel = static::query()
+                    ->where('id', $_GET['model_id'])
+                    ->first();
             }
 
-            $data = $queryFirstItem->toArray();
-
-            echo View::first(
-                [
-                    'wpdbmodeladminui/admin-ui-single',
-                    'wpdbmodeladminui::admin-ui-single',
-                ],
-                [
-                    'title' => $data[$this->primaryColumn],
-                    'data' => $data,
-                    'screen' => get_current_screen(),
-                ]
+            \add_submenu_page(
+                $this->table,
+                $this->readableCurrentModel->{$this->primaryColumn},
+                $this->readableCurrentModel->{$this->primaryColumn},
+                'manage_options',
+                $this->readablePageSlug,
+                [$this, 'displayReadableSubmenuPage']
             );
         });
 
@@ -82,7 +107,7 @@ trait Readable
                     return $value;
                 }
 
-                return '<a href="' . $this->getCurrentPageUrlWithParams($item['id'], $_GET['page']) . '">' . $item[$column_name] . '</a>';
+                return '<a href="' . $this->getCurrentPageUrlWithParams($item['id'], $this->readablePageSlug) . '">' . $item[$column_name] . '</a>';
             }
         );
 
@@ -91,7 +116,7 @@ trait Readable
             function (array $rowActions, object|array $item, string $column_name, AdminTable $adminTable): array
             {
                 if ($adminTable->get_primary_column() === $column_name) {
-                    $rowActions['view'] = '<a href="' . $this->getCurrentPageUrlWithParams($item['id'], $_GET['page']) . '">' . __('View') . '</a>';
+                    $rowActions['view'] = '<a href="' . $this->getCurrentPageUrlWithParams($item['id'], $this->readablePageSlug) . '">' . __('View') . '</a>';
                 }
 
                 return $rowActions;
@@ -101,12 +126,11 @@ trait Readable
 
     private function getCurrentPageUrlWithParams(int $modelId, string $page): string
     {
-        $current_page = admin_url('admin.php?page=' . $_GET['page']);
+        $current_page = admin_url('admin.php');
         return add_query_arg(
             [
-                'model_id' => $modelId,
                 'page' => $page,
-                'action' => 'view',
+                'model_id' => $modelId,
             ],
             $current_page
         );
