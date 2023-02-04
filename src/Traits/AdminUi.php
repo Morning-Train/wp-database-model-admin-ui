@@ -87,7 +87,7 @@ trait AdminUi
     private function loadAdminUiHooks() : void
     {
         Hook::action('admin_menu', function () {
-            \add_menu_page(
+            add_menu_page(
                 $this->pageTitle,
                 $this->menuTitle,
                 $this->capability,

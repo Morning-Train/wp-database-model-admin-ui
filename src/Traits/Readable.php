@@ -90,7 +90,7 @@ trait Readable
             }
 
             add_submenu_page(
-                $this->table,
+                'options-writing.php', // This will hide it from the admin menu
                 $this->readableCurrentModel->{$this->primaryColumn},
                 $this->readableCurrentModel->{$this->primaryColumn},
                 'manage_options',
@@ -114,6 +114,15 @@ trait Readable
                 return '<a href="' . $href . '">' . $item[$column_name] . '</a>';
             }
         );
+
+        Hook::filter('parent_file', function (string $file) {
+            global $plugin_page;
+            if ($plugin_page === $this->readablePageSlug) {
+                $plugin_page = $this->table;
+            }
+
+            return $file;
+        });
     }
 
 }
