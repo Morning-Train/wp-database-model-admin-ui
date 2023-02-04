@@ -4,7 +4,6 @@ namespace Morningtrain\WP\DatabaseModelAdminUi\Traits;
 
 use Morningtrain\WP\DatabaseModelAdminUi\Model\AdminTable;
 use Morningtrain\WP\Hooks\Hook;
-use Morningtrain\WP\View\View;
 
 trait Removable
 {
@@ -12,7 +11,7 @@ trait Removable
     public function initRemovable(): void
     {
         Hook::action('admin_init', function () {
-            if (empty($this->tableData)) {
+            if (empty($this->adminUiTableData)) {
                 return;
             }
 
@@ -23,10 +22,15 @@ trait Removable
 
     public function checkForDeleting(): void
     {
+        $page = $_GET['page'] ?? null;
         $action = $_GET['action'] ?? null;
         $modelId = $_GET['model_id'] ?? null;
 
-        if (empty($action) || $action !== 'delete' || empty($modelId) || ! is_numeric($modelId)) {
+        if (empty($page) || empty($action) || empty($modelId)) {
+            return;
+        }
+
+        if ($page !== $this->table || $action !== 'delete' || ! is_numeric($modelId)) {
             return;
         }
 
@@ -35,32 +39,22 @@ trait Removable
             static::query()->where('id', $modelId)->delete();
         }
 
-        wp_safe_redirect(admin_url('admin.php?page=' . $_GET['page']));
+        wp_safe_redirect(admin_url('admin.php?page=' . $this->table));
         exit();
     }
 
     public function loadRemovableHooks(): void
     {
-        Hook::action('load-toplevel_page_' . $this->table, function () {
-            wp_enqueue_script('common');
-            wp_enqueue_script('wp-lists');
-            wp_enqueue_script('postbox');
-
-            Hook::action('add_meta_boxes', function () {
-                add_meta_box( 'meta-box-id', __( 'My Meta Box', 'textdomain' ), function () { ray([123]); echo 123123; }, 'toplevel_page_' . $this->table);
-            });
-        });
-
         Hook::filter(
             'wp-database-model-admin-ui/admin-table/' . $this->table . '/column_default/row_actions',
             function (array $rowActions, object|array $item, string $column_name, AdminTable $adminTable): array
             {
                 if ($adminTable->get_primary_column() === $column_name) {
-                    $current_page = admin_url('admin.php?page=' . $_GET['page']);
+                    $current_page = admin_url('admin.php');
                     $href = add_query_arg(
                         [
                             'model_id' => $item['id'],
-                            'page' => $_GET['page'],
+                            'page' => $this->table,
                             'action' => 'delete',
                             'nonce' => wp_create_nonce('row-actions-delete'),
                         ],
