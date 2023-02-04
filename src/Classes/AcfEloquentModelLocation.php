@@ -1,6 +1,6 @@
 <?php
 
-namespace Morningtrain\WP\DatabaseModelAdminUi;
+namespace Morningtrain\WP\DatabaseModelAdminUi\Classes;
 
 use ACF_Location;
 use Morningtrain\PHPLoader\Loader;
