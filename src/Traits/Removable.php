@@ -2,6 +2,7 @@
 
 namespace Morningtrain\WP\DatabaseModelAdminUi\Traits;
 
+use Morningtrain\WP\DatabaseModelAdminUi\DatabaseModelAdminUi;
 use Morningtrain\WP\DatabaseModelAdminUi\Model\AdminTable;
 use Morningtrain\WP\Hooks\Hook;
 
@@ -39,7 +40,9 @@ trait Removable
             static::query()->where('id', $modelId)->delete();
         }
 
-        wp_safe_redirect(admin_url('admin.php?page=' . $this->table));
+        $url = $_SERVER['HTTP_REFERER'] ?? admin_url('admin.php?page=' . $this->table);
+
+        header('Location: ' . $url);
         exit();
     }
 
@@ -50,15 +53,11 @@ trait Removable
             function (array $rowActions, object|array $item, string $column_name, AdminTable $adminTable): array
             {
                 if ($adminTable->get_primary_column() === $column_name) {
-                    $current_page = admin_url('admin.php');
-                    $href = add_query_arg(
-                        [
-                            'model_id' => $item['id'],
-                            'page' => $this->table,
-                            'action' => 'delete',
-                            'nonce' => wp_create_nonce('row-actions-delete'),
-                        ],
-                        $current_page
+                    $href = DatabaseModelAdminUi::getAdminPageUrlWithQueryArgs(
+                        $this->table,
+                        $item['id'],
+                        'action',
+                        wp_create_nonce('row-actions-delete')
                     );
 
                     $rowActions['delete'] = '<a href="' . $href . '" onclick="return confirm(\'' .  __('Are you sure?') . '\')">' . __('Delete') . '</a>';
