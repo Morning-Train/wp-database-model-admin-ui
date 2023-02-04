@@ -2,6 +2,7 @@
 
 namespace Morningtrain\WP\DatabaseModelAdminUi\Traits;
 
+use Morningtrain\WP\DatabaseModelAdminUi\DatabaseModelAdminUi;
 use Morningtrain\WP\DatabaseModelAdminUi\Model\AdminTable;
 use Morningtrain\WP\Hooks\Hook;
 use Morningtrain\WP\View\View;
@@ -18,7 +19,7 @@ trait Readable
             return;
         }
 
-        $this->readablePageSlug = $this->table . '-view';
+        $this->readablePageSlug = 'view_' . $this->table;
 
         $this->checkForNonExistingModel();
         $this->loadReadableHooks();
@@ -28,8 +29,7 @@ trait Readable
     {
         $modelId = $_GET['model_id'] ?? null;
         $queryFirstItem = static::query()
-            ->where('id', $modelId)
-            ->first();
+            ->find($modelId);
 
         if (empty($queryFirstItem)) {
             return;
@@ -64,14 +64,13 @@ trait Readable
         }
 
         $this->readableCurrentModel = static::query()
-            ->where('id', $_GET['model_id'])
-            ->first();
+            ->find($_GET['model_id']);
 
         if (! empty($this->readableCurrentModel)) {
             return;
         }
 
-        wp_safe_redirect(admin_url('admin.php?page=' . $_GET['page']));
+        header('Location: ' . admin_url('admin.php?page=' . $this->table));
         exit();
     }
 
@@ -90,7 +89,7 @@ trait Readable
                     ->first();
             }
 
-            \add_submenu_page(
+            add_submenu_page(
                 $this->table,
                 $this->readableCurrentModel->{$this->primaryColumn},
                 $this->readableCurrentModel->{$this->primaryColumn},
@@ -107,32 +106,13 @@ trait Readable
                     return $value;
                 }
 
-                return '<a href="' . $this->getCurrentPageUrlWithParams($item['id'], $this->readablePageSlug) . '">' . $item[$column_name] . '</a>';
+                $href = DatabaseModelAdminUi::getAdminPageUrlWithQueryArgs(
+                    $this->readablePageSlug,
+                    $item['id']
+                );
+
+                return '<a href="' . $href . '">' . $item[$column_name] . '</a>';
             }
-        );
-
-        Hook::filter(
-            'wp-database-model-admin-ui/admin-table/' . $this->table . '/column_default/row_actions',
-            function (array $rowActions, object|array $item, string $column_name, AdminTable $adminTable): array
-            {
-                if ($adminTable->get_primary_column() === $column_name) {
-                    $rowActions['view'] = '<a href="' . $this->getCurrentPageUrlWithParams($item['id'], $this->readablePageSlug) . '">' . __('View') . '</a>';
-                }
-
-                return $rowActions;
-            }
-        );
-    }
-
-    private function getCurrentPageUrlWithParams(int $modelId, string $page): string
-    {
-        $current_page = admin_url('admin.php');
-        return add_query_arg(
-            [
-                'page' => $page,
-                'model_id' => $modelId,
-            ],
-            $current_page
         );
     }
 
