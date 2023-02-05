@@ -60,6 +60,7 @@ trait AdminUi
             [
                 'pageTitle' => $this->pageTitle,
                 'page' => $this->table,
+                'useSearchBox' => ! empty($this->searchableColumns),
                 'searchBoxText' => $this->searchButtonText,
                 'searchBoxInputId' => $this->table,
                 'adminTable' => $this->adminTable,

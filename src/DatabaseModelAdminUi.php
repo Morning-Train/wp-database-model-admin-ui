@@ -3,6 +3,8 @@
 namespace Morningtrain\WP\DatabaseModelAdminUi;
 
 use Morningtrain\PHPLoader\Loader;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\AcfEloquentModelLocation;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\Helper;
 use Morningtrain\WP\Hooks\Hook;
 use Morningtrain\WP\View\View;
 
