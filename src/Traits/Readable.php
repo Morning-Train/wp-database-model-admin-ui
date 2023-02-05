@@ -45,7 +45,7 @@ trait Readable
             [
                 'title' => $data[$this->primaryColumn],
                 'data' => $data,
-                'screen' => get_current_screen(),
+                'columns' => $this->adminUiTableData['tableColumns'] ?? [],
             ]
         );
     }
