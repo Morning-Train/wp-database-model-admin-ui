@@ -5,11 +5,11 @@ namespace Morningtrain\WP\DatabaseModelAdminUi\Classes;
 class Helper
 {
 
-    private static array|string $eloquentModelsDirs;
+    private static array $eloquentModelsDirs;
 
     public static function setEloquentModelsDirs(array|string $eloquentModelsDirs): void
     {
-        static::$eloquentModelsDirs = $eloquentModelsDirs;
+        static::$eloquentModelsDirs = (array) $eloquentModelsDirs;
     }
 
     public static function getEloquentModelsDirs(): array
