@@ -2,9 +2,12 @@
 
 namespace Morningtrain\WP\DatabaseModelAdminUi;
 
+use Illuminate\Database\Eloquent\Model;
 use Morningtrain\PHPLoader\Loader;
-use Morningtrain\WP\DatabaseModelAdminUi\Classes\AcfEloquentModelLocation;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\Acf\AcfEloquentModelLocation;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\Helper;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPages;
 use Morningtrain\WP\Hooks\Hook;
 use Morningtrain\WP\View\View;
 
@@ -15,12 +18,18 @@ class DatabaseModelAdminUi
     {
         Helper::setEloquentModelsDirs($eloquentModelsDir);
 
-        Loader::create($eloquentModelsDir)
-            ->call('setupAdminUi');
+        Loader::create($eloquentModelsDir);
 
         View::addNamespace('wpdbmodeladminui', dirname(__DIR__) . '/resources/views');
 
         static::setupAcf();
+
+        ModelPages::setupModelPages();
+    }
+
+    public static function addModelPage(string $model, string $tableSlug): ModelPage
+    {
+        return new ModelPage($model, $tableSlug);
     }
 
     private static function setupAcf(): void

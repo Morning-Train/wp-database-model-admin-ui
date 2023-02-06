@@ -1,24 +1,22 @@
 <?php
 
-namespace Morningtrain\WP\DatabaseModelAdminUi\Traits;
+namespace Morningtrain\WP\DatabaseModelAdminUi\Classes\AdminTable;
 
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\Helper;
-use Morningtrain\WP\DatabaseModelAdminUi\Model\AdminTable;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage;
 use Morningtrain\WP\Hooks\Hook;
 
-trait Removable
+class Removable
 {
 
-    public function initRemovable(): void
-    {
-        Hook::action('admin_init', function () {
-            if (empty($this->adminUiTableData)) {
-                return;
-            }
+    private ModelPage $modelPage;
 
-            $this->checkForDeleting();
-            $this->loadRemovableHooks();
-        });
+    public function __construct(ModelPage $modelPage)
+    {
+        $this->modelPage = $modelPage;
+
+        $this->checkForDeleting();
+        $this->loadRemovableHooks();
     }
 
     public function checkForDeleting(): void
@@ -31,16 +29,16 @@ trait Removable
             return;
         }
 
-        if ($page !== $this->table || $action !== 'delete' || ! is_numeric($modelId)) {
+        if ($page !== $this->modelPage->pageSlug || $action !== 'delete' || ! is_numeric($modelId)) {
             return;
         }
 
         if (! empty($_GET['nonce']) && \wp_verify_nonce($_GET['nonce'], 'row-actions-delete') !== false) {
             // TODO: Add delete notice
-            static::query()->where('id', $modelId)->delete();
+            $this->modelPage->model::query()->where('id', $modelId)->delete();
         }
 
-        $url = $_SERVER['HTTP_REFERER'] ?? admin_url('admin.php?page=' . $this->table);
+        $url = $_SERVER['HTTP_REFERER'] ?? admin_url('admin.php?page=' . $this->modelPage->pageSlug);
 
         header('Location: ' . $url);
         exit();
@@ -49,11 +47,11 @@ trait Removable
     public function loadRemovableHooks(): void
     {
         Hook::filter(
-            'wpdbmodeladminui/admin-table/' . $this->table . '/row_actions',
+            'wpdbmodeladminui/admin-table/' . $this->modelPage->pageSlug . '/row_actions',
             function (array $rowActions, object|array $item): array
             {
                 $href = Helper::getAdminPageUrlWithQueryArgs(
-                    $this->table,
+                    $this->modelPage->pageSlug,
                     $item['id'],
                     'action',
                     wp_create_nonce('row-actions-delete')

@@ -1,24 +1,23 @@
 <?php
 
-namespace Morningtrain\WP\DatabaseModelAdminUi\Traits;
+namespace Morningtrain\WP\DatabaseModelAdminUi\Classes\AdminTable;
 
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\Helper;
-use Morningtrain\WP\DatabaseModelAdminUi\Model\AdminTable;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage;
 use Morningtrain\WP\Hooks\Hook;
 
-trait AcfEditable
+class AcfEditable
 {
 
-    private string $acfEditablePageSlug;
-    private $acfEditableCurrentModel;
+    private ModelPage $modelPage;
 
-    public function initAcfEditable(): void
+    public function __construct(ModelPage $modelPage)
     {
-        if (empty($this->adminUiTableData) || ! class_exists('ACF')) {
+        $this->modelPage = $modelPage;
+
+        if (! class_exists('ACF')) {
             return;
         }
-
-        $this->acfEditablePageSlug = 'edit_' . $this->table;
 
         $this->checkForNonExistingAcfEditableModel();
         $this->loadAcfEditableHooks();
@@ -33,22 +32,22 @@ trait AcfEditable
             return;
         }
 
-        if ($page !== $this->acfEditablePageSlug || ! is_numeric($modelId)) {
+        if ($page !== $this->modelPage->acfEditablePageSlug || ! is_numeric($modelId)) {
             return;
         }
 
-        $this->acfEditableCurrentModel = static::query()
+        $acfEditableCurrentModel = $this->modelPage->model::query()
             ->find($_GET['model_id']);
 
-        if (! empty($this->acfEditableCurrentModel)) {
+        if (! empty($acfEditableCurrentModel)) {
             global $currentAcfEditableModel, $currentAcfEditablePage;
-            $currentAcfEditableModel = static::class;
+            $currentAcfEditableModel = $this->modelPage->model;
             $currentAcfEditablePage = $page;
 
             return;
         }
 
-        header('Location: ' . admin_url('admin.php?page=' . $this->table));
+        header('Location: ' . admin_url('admin.php?page=' . $this->modelPage->pageSlug));
         exit();
     }
 
@@ -58,31 +57,29 @@ trait AcfEditable
             $page = $_GET['page'] ?? null;
             $modelId = $_GET['model_id'] ?? null;
 
-            if (empty($page) || empty($modelId) || $page !== $this->acfEditablePageSlug) {
+            if (empty($page) || empty($modelId) || $page !== $this->modelPage->acfEditablePageSlug) {
                 return;
             }
 
-            if (empty($this->acfEditableCurrentModel)) {
-                $this->acfEditableCurrentModel = static::query()
-                    ->find($modelId);
-            }
+            $acfEditableCurrentModel = $this->modelPage->model::query()
+                ->find($modelId);
 
             acf_add_options_sub_page([
                 'parent_slug' => 'options-writing.php', // This will hide it from the admin menu
-                'page_title' => $this->acfEditableCurrentModel->{$this->primaryColumn} . ' - ' . __('Edit'),
-                'menu_title' => $this->acfEditableCurrentModel->{$this->primaryColumn} . ' - ' . __('Edit'),
+                'page_title' => $acfEditableCurrentModel->{$this->modelPage->primaryColumn} . ' - ' . __('Edit'),
+                'menu_title' => $acfEditableCurrentModel->{$this->modelPage->primaryColumn} . ' - ' . __('Edit'),
                 'capability' => 'manage_options',
-                'menu_slug' => $this->acfEditablePageSlug,
-                'post_id' => 'eloquent_model__' . $this->table . '__' . $modelId
+                'menu_slug' => $this->modelPage->acfEditablePageSlug,
+                'post_id' => 'eloquent_model__' . $this->modelPage->pageSlug . '__' . $modelId
             ]);
         });
 
         Hook::filter(
-            'wpdbmodeladminui/admin-table/' . $this->table . '/row_actions',
+            'wpdbmodeladminui/admin-table/' . $this->modelPage->pageSlug . '/row_actions',
             function (array $rowActions, object|array $item): array
             {
                 $href = Helper::getAdminPageUrlWithQueryArgs(
-                    $this->acfEditablePageSlug,
+                    $this->modelPage->acfEditablePageSlug,
                     $item['id']
                 );
 
@@ -95,11 +92,11 @@ trait AcfEditable
         Hook::filter('acf/load_value', function ($value, int|string $post_id, array $field) {
             $parts = explode('__', $post_id);
 
-            if (count($parts) !== 3 || $parts[0] !== 'eloquent_model' || $parts[1] !== $this->table) {
+            if (count($parts) !== 3 || $parts[0] !== 'eloquent_model' || $parts[1] !== $this->modelPage->pageSlug) {
                 return $value;
             }
 
-            $model = static::query()
+            $model = $this->modelPage->model::query()
                 ->find($parts[2]);
 
             if (empty($model)) {
@@ -112,7 +109,7 @@ trait AcfEditable
         Hook::filter('acf/save_post', function (int|string $post_id) {
             $parts = explode('__', $post_id);
 
-            if (count($parts) !== 3 || $parts[0] !== 'eloquent_model' || $parts[1] !== $this->table) {
+            if (count($parts) !== 3 || $parts[0] !== 'eloquent_model' || $parts[1] !== $this->modelPage->pageSlug) {
                 return;
             }
 
@@ -120,15 +117,15 @@ trait AcfEditable
             // TODO: Maybe another way to get the data for this??
             $keys = array_keys(get_fields($post_id));
             $values = array_combine($keys, $_POST['acf']);
-            static::query()
+            $this->modelPage->model::query()
                 ->find($parts[2])
                 ->update($values);
         });
 
         Hook::filter('parent_file', function (string $file) {
             global $plugin_page;
-            if ($plugin_page === $this->acfEditablePageSlug) {
-                $plugin_page = $this->table;
+            if ($plugin_page === $this->modelPage->acfEditablePageSlug) {
+                $plugin_page = $this->modelPage->pageSlug;
             }
 
             return $file;
