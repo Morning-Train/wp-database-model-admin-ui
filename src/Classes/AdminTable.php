@@ -64,7 +64,7 @@ class AdminTable extends WP_List_Table
     protected function column_default($item, $column_name): void
     {
         if (! empty($this->modelPage->columns[$column_name])) {
-            $this->modelPage->columns[$column_name]->render($item);
+            $this->modelPage->columns[$column_name]->render($item, $this->modelPage);
         } else {
             echo $item[$column_name];
         }
@@ -73,7 +73,7 @@ class AdminTable extends WP_List_Table
             $rowActions = array_combine(
                 array_column($this->modelPage->rowActions, 'slug'),
                 array_map(function (ModelPageRowAction $rowAction) use ($item) {
-                    return $rowAction->render($item);
+                    return $rowAction->render($item, $this->modelPage);
                 }, $this->modelPage->rowActions)
             );
 

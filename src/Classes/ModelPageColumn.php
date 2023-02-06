@@ -44,12 +44,10 @@ class ModelPageColumn
         return $this;
     }
 
-    public function render(array $item): void
+    public function render(array $item, ModelPage $modelPage): void
     {
-        $page = $_GET['page'];
-
         if ($this->renderCallback !== null) {
-            echo ($this->renderCallback)($item, $page);
+            echo ($this->renderCallback)($item, $modelPage);
             return;
         }
 

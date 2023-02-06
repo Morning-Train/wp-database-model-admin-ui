@@ -11,11 +11,9 @@ class ModelPageRowAction
     ) {
     }
 
-    public function render(array $item): string
+    public function render(array $item, ModelPage $modelPage): string
     {
-        $page = $_GET['page'];
-
-        return ($this->renderCallback)($item, $page);
+        return ($this->renderCallback)($item, $modelPage);
     }
 
 }
