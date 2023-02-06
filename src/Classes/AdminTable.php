@@ -1,6 +1,6 @@
 <?php
 
-namespace Morningtrain\WP\DatabaseModelAdminUi\Model;
+namespace Morningtrain\WP\DatabaseModelAdminUi\Classes;
 
 if (! class_exists('WP_List_Table')) {
     require_once(ABSPATH . 'wp-admin/includes/class-wp-list-table.php');
@@ -11,14 +11,12 @@ use WP_List_Table;
 class AdminTable extends WP_List_Table
 {
 
+    private ModelPage $modelPage;
     private array $columns = [];
     private array $sortableColumns = [];
-    private string $slug;
 
     public function __construct(string $slug)
     {
-        $this->slug = $slug;
-
         parent::__construct(
             [
                 'plural' => '',
@@ -65,27 +63,28 @@ class AdminTable extends WP_List_Table
      */
     protected function column_default($item, $column_name): void
     {
-        $value = apply_filters(
-            'wpdbmodeladminui/admin-table/' . $this->slug . '/column_name/' . $column_name,
-            null,
-            $item,
-            $column_name,
-            $this
-        );
-
-        echo $value ?? $item[$column_name] ?? null;
+        if (! empty($this->modelPage->columns[$column_name])) {
+            $this->modelPage->columns[$column_name]->render($item);
+        } else {
+            echo $item[$column_name];
+        }
 
         if($this->get_primary_column() === $column_name) {
-            echo $this->row_actions(
-                apply_filters(
-                    'wpdbmodeladminui/admin-table/' . $this->slug . '/row_actions',
-                    [],
-                    $item
-                )
+            $rowActions = array_combine(
+                array_column($this->modelPage->rowActions, 'slug'),
+                array_map(function (ModelPageRowAction $rowAction) use ($item) {
+                    return $rowAction->render($item);
+                }, $this->modelPage->rowActions)
             );
+
+            echo $this->row_actions($rowActions);
         }
     }
 
+    public function addModelPage(ModelPage $modelPage): void
+    {
+        $this->modelPage = $modelPage;
+    }
 
     public function addColumns(array $columns = []): void
     {
