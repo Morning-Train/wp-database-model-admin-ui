@@ -17,17 +17,19 @@ class Helper
         return static::$eloquentModelsDirs;
     }
 
-    public static function getAdminPageUrlWithQueryArgs(string $page, int $modelId, ?string $action = null, ?string $nonce = null): string
+    public static function getCurrentModePageFromUrlPage(): ?ModelPage
     {
-        return add_query_arg(
-            [
-                'page' => $page,
-                'model_id' => $modelId,
-                'action' => $action,
-                'nonce' => $nonce,
-            ],
-            admin_url('admin.php')
-        );
+        $page = $_GET['page'] ?? null;
+
+        foreach (ModelPages::getModelPages() as $modelPage) {
+            if (! $modelPage->acfEditable || $page !== $modelPage->acfEditablePageSlug) {
+                continue;
+            }
+
+            return $modelPage;
+        }
+
+        return null;
     }
 
 }
