@@ -3,6 +3,7 @@
 namespace Morningtrain\WP\DatabaseModelAdminUi\Handlers;
 
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPages;
+use Morningtrain\WP\DatabaseModelAdminUi\Services\AdminUiMenuService;
 use WP_Screen;
 
 class AdminUiHandler
@@ -10,13 +11,13 @@ class AdminUiHandler
 
     public static function addModelMenuPages(): void
     {
-        foreach (ModelPages::getModelPages() as $pageSlug => $modelPage) {
+        foreach (ModelPages::getModelPages() as $modelPage) {
             add_menu_page(
                 $modelPage->pageTitle,
                 $modelPage->menuTitle,
                 $modelPage->capability,
                 $modelPage->pageSlug,
-                [$this, 'displayMenuPage'],
+                [AdminUiMenuService::class, 'displayMenuPage'],
                 $modelPage->iconUrl,
                 $modelPage->position
             );
@@ -44,19 +45,27 @@ class AdminUiHandler
         add_screen_option('per_page', ['default' => 20, 'option' => 'per_page']);
     }
 
-    public static function handleActiveAdminMenu(string $file): string
+    public static function checkForModelDeleting(): void
     {
-        // TODO: Broken?!?
-        global $plugin_page;
-        $pageSlugs = array_keys(ModelPages::getModelPages());
+        $page = $_GET['page'] ?? null;
+        $action = $_GET['action'] ?? null;
+        $modelId = $_GET['model_id'] ?? null;
+        $modelPage = ModelPages::getModelPages()[$page] ?? null;
 
-        foreach ($pageSlugs as $pageSlug) {
-            if (in_array($plugin_page, ['edit_' . $pageSlug, 'view_' . $pageSlug], true)) {
-                return $pageSlug;
-            }
+        if (empty($page) || empty($action) || empty($modelId) || empty($modelPage)) {
+            return;
         }
 
-        return $file;
+        if ($page !== $modelPage->pageSlug || $action !== 'delete' || ! is_numeric($modelId)) {
+            return;
+        }
+
+        $modelPage->model::query()->where('id', $modelId)->delete();
+
+        $url = $_SERVER['HTTP_REFERER'] ?? admin_url('admin.php?page=' . $modelPage->pageSlug);
+
+        header('Location: ' . $url);
+        exit();
     }
 
 }

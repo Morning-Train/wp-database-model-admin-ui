@@ -2,10 +2,7 @@
 
 namespace Morningtrain\WP\DatabaseModelAdminUi\Classes;
 
-use Morningtrain\WP\DatabaseModelAdminUi\Classes\AdminTable\AcfEditable;
-use Morningtrain\WP\DatabaseModelAdminUi\Classes\AdminTable\AdminUi;
-use Morningtrain\WP\DatabaseModelAdminUi\Classes\AdminTable\Readable;
-use Morningtrain\WP\DatabaseModelAdminUi\Classes\AdminTable\Removable;
+use Morningtrain\WP\DatabaseModelAdminUi\Handlers\AcfEditableHandler;
 use Morningtrain\WP\DatabaseModelAdminUi\Handlers\AdminUiHandler;
 use Morningtrain\WP\Hooks\Hook;
 
@@ -17,13 +14,24 @@ class ModelPages
 
     public static function setupModelPages(): void
     {
-        Hook::action('admin_menu', [AdminUiHandler::class, 'addModelMenuPages']);
-        Hook::filter('set-screen-option', [AdminUiHandler::class, 'setPerPageScreenOption']);
-        Hook::filter('current_screen', [AdminUiHandler::class, 'addScreenOption']);
-        Hook::filter('parent_file', [AdminUiHandler::class, 'handleActiveAdminMenu']);
-
         Hook::action('wp_loaded', function () {
-            static::setupAdminTables();
+            Hook::action('admin_menu', [AdminUiHandler::class, 'addModelMenuPages']);
+            Hook::filter('set-screen-option', [AdminUiHandler::class, 'setPerPageScreenOption']);
+            Hook::filter('current_screen', [AdminUiHandler::class, 'addScreenOption']);
+            Hook::filter('admin_init', [AdminUiHandler::class, 'checkForModelDeleting']);
+
+            $currentModelPage = Helper::getCurrentModePageFromUrlPage();
+
+            if (empty($currentModelPage)) {
+                return;
+            }
+            if ($currentModelPage->acfEditable) {
+                Hook::action('admin_menu', [AcfEditableHandler::class, 'addAcfEditMenuPage']);
+                Hook::filter('admin_init', [AcfEditableHandler::class, 'checkForNonExistingAcfEditableModel']);
+                Hook::filter('acf/load_value', [AcfEditableHandler::class, 'handleLoadValueForAcfModel']);
+                Hook::filter('acf/save_post', [AcfEditableHandler::class, 'handleSaveValueForAcfModel']);
+                Hook::filter('parent_file', [AcfEditableHandler::class, 'fixSelectedAdminMenuForAcfEditable']);
+            }
         })->priority(11);
     }
 
@@ -35,21 +43,6 @@ class ModelPages
     public static function setModelPageForList(ModelPage $modelPage): void
     {
         static::$modelPages[$modelPage->pageSlug] = $modelPage;
-    }
-
-    private static function setupAdminTables(): void
-    {
-        foreach (static::$modelPages as $modelPage) {
-            new AdminUi($modelPage);
-
-            if ($modelPage->removable) {
-                new Removable($modelPage);
-            }
-
-            if ($modelPage->acfEditable) {
-                new AcfEditable($modelPage);
-            }
-        }
     }
 
 }
