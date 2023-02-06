@@ -2,15 +2,20 @@
 
 namespace Morningtrain\WP\DatabaseModelAdminUi\Classes;
 
+use Illuminate\Support\Facades\Schema;
+use Morningtrain\Test\Models\Caar;
+
 class ModelPage
 {
 
     public array $columns = [];
+    public array $tableColumns = [];
     public array $searchableColumns = [];
     public array $sortableColumns = [];
 
+    public array $rowActions = [];
+
     public bool $acfEditable = false;
-    public bool $readable = false;
     public bool $removable = false;
 
     public string $pageTitle;
@@ -20,13 +25,12 @@ class ModelPage
     public ?int $position = null;
     public string $searchButtonText;
 
-    public string $readablePageSlug;
     public string $acfEditablePageSlug;
     public string $primaryColumn;
 
     public function __construct(
-        public string $model,
-        public string $pageSlug
+        public string $pageSlug,
+        public string $model
     )
     {
         $this->pageTitle = __('Admin table');
@@ -34,31 +38,45 @@ class ModelPage
         $this->capability = 'manage_options';
         $this->searchButtonText = __('Search');
 
-        $this->readablePageSlug = 'view_' . $this->pageSlug;
         $this->acfEditablePageSlug = 'edit_' . $this->pageSlug;
     }
 
-    public function init(): void
+    public function register(): void
     {
+        if (empty($this->tableColumns)) {
+            $columns = Schema::getColumnListing((new Caar())->getTable());
+            $this->tableColumns = array_combine($columns, $columns);
+        }
+
         ModelPages::setModelPageForList($this);
     }
 
-    public function columns(array $columns): self
+    public function withRowActions(array $rowActions): self
+    {
+        $this->rowActions = $rowActions;
+
+        return $this;
+    }
+
+    public function withColumns(array $columns): self
     {
         $this->columns = array_combine(
-            array_keys($columns),
-            array_map(function ($column) {
-                return $column['title'];
-            }, $columns)
+            array_column($columns, 'slug'),
+            $columns
         );
 
-        $this->sortableColumns = array_keys(array_filter($columns, function ($column) {
-            return ! empty($column['sortable']);
-        }));
+        $this->tableColumns = array_combine(
+            array_column($this->columns, 'slug'),
+            array_column($this->columns, 'title')
+        );
 
-        $this->searchableColumns = array_keys(array_filter($columns, function ($column) {
-            return ! empty($column['searchable']);
-        }));
+        $this->searchableColumns = array_column(array_filter($columns, function (ModelPageColumn $column) {
+            return $column->searchable;
+        }), 'slug');
+
+        $this->sortableColumns = array_column(array_filter($columns, function (ModelPageColumn $column) {
+            return $column->sortable;
+        }), 'slug');
 
         /*** @see \WP_List_Table::get_default_primary_column_name */
         $this->primaryColumn = array_keys($this->columns)[0];
@@ -66,63 +84,56 @@ class ModelPage
         return $this;
     }
 
-    public function readable(): self
-    {
-        $this->readable = true;
-
-        return $this;
-    }
-
-    public function removable(): self
+    public function makeRemovable(): self
     {
         $this->removable = true;
 
         return $this;
     }
 
-    public function acfEditable(): self
+    public function makeAcfEditable(): self
     {
         $this->acfEditable = true;
 
         return $this;
     }
 
-    public function setIconUrl(string $iconUrl): self
+    public function withIconUrl(string $iconUrl): self
     {
         $this->iconUrl = $iconUrl;
 
         return $this;
     }
 
-    public function setPageTitle(string $pageTitle): self
+    public function withPageTitle(string $pageTitle): self
     {
         $this->pageTitle = $pageTitle;
 
         return $this;
     }
 
-    public function setMenuTitle(string $menuTitle): self
+    public function withMenuTitle(string $menuTitle): self
     {
         $this->menuTitle = $menuTitle;
 
         return $this;
     }
 
-    public function setCapability(string $capability): self
+    public function withCapability(string $capability): self
     {
         $this->capability = $capability;
 
         return $this;
     }
 
-    public function setPosition(int $position): self
+    public function withPosition(int $position): self
     {
         $this->position = $position;
 
         return $this;
     }
 
-    public function setSearchButtonText(string $searchButtonText): self
+    public function withSearchButtonText(string $searchButtonText): self
     {
         $this->searchButtonText = $searchButtonText;
 
