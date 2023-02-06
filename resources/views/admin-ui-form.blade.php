@@ -5,7 +5,7 @@
      * @var bool $useSearchBox
      * @var int $searchBoxText
      * @var string $searchBoxInputId
-     * @var \Morningtrain\WP\DatabaseModelAdminUi\Model\AdminTable $adminTable
+     * @var \Morningtrain\WP\DatabaseModelAdminUi\Classes\AdminTable $adminTable
      */
 @endphp
 <div class="wrap">
@@ -14,7 +14,7 @@
     <hr class="wp-header-end">
 
     <form method="get">
-        <input type="hidden" name="page" value="{{ $page }}" />
+        <input type="hidden" name="page" value="{{ $page }}"/>
 
         @if($useSearchBox)
             {!! $adminTable->search_box($searchBoxText, $searchBoxInputId) !!}

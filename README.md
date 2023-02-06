@@ -49,7 +49,7 @@ composer require morningtrain/wp-database-model-admin-ui
 Initialize `\Morningtrain\WP\DatabaseModelAdminUi\DatabaseModelAdminUi` with the folder, where all the Eloquent Models is located.
 
 ```php
-\Morningtrain\WP\DatabaseModelAdminUi\DatabaseModelAdminUi::setup(__DIR__ . "/app/Models");
+\Morningtrain\WP\DatabaseModelAdminUi\ModelUI::setup(__DIR__ . "/app/Models");
 ```
 
 ### Use on an Eloquent Model
