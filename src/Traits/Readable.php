@@ -100,7 +100,7 @@ trait Readable
         });
 
         Hook::filter(
-            'wp-database-model-admin-ui/admin-table/' . $this->table . '/column_name/' . $this->primaryColumn,
+            'wpdbmodeladminui/admin-table/' . $this->table . '/column_name/' . $this->primaryColumn,
             function ($emptyValue, object|array $item, string $column_name, AdminTable $adminTable) {
                 $href = Helper::getAdminPageUrlWithQueryArgs(
                     $this->readablePageSlug,

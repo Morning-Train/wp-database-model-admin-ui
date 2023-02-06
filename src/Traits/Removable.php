@@ -49,19 +49,17 @@ trait Removable
     public function loadRemovableHooks(): void
     {
         Hook::filter(
-            'wp-database-model-admin-ui/admin-table/' . $this->table . '/column_default/row_actions',
-            function (array $rowActions, object|array $item, string $column_name, AdminTable $adminTable): array
+            'wpdbmodeladminui/admin-table/' . $this->table . '/row_actions',
+            function (array $rowActions, object|array $item): array
             {
-                if ($adminTable->get_primary_column() === $column_name) {
-                    $href = Helper::getAdminPageUrlWithQueryArgs(
-                        $this->table,
-                        $item['id'],
-                        'action',
-                        wp_create_nonce('row-actions-delete')
-                    );
+                $href = Helper::getAdminPageUrlWithQueryArgs(
+                    $this->table,
+                    $item['id'],
+                    'action',
+                    wp_create_nonce('row-actions-delete')
+                );
 
-                    $rowActions['delete'] = '<a href="' . $href . '" onclick="return confirm(\'' .  __('Are you sure?') . '\')">' . __('Delete') . '</a>';
-                }
+                $rowActions['delete'] = '<a href="' . $href . '" onclick="return confirm(\'' .  __('Are you sure?') . '\')">' . __('Delete') . '</a>';
 
                 return $rowActions;
             }
