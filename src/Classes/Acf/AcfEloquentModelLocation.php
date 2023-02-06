@@ -5,6 +5,7 @@ namespace Morningtrain\WP\DatabaseModelAdminUi\Classes\Acf;
 use ACF_Location;
 use Morningtrain\PHPLoader\Loader;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\Helper;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPages;
 
 class AcfEloquentModelLocation extends ACF_Location
 {
@@ -61,19 +62,27 @@ class AcfEloquentModelLocation extends ACF_Location
      */
     public function match($rule, $screen, $field_group)
     {
-        global $currentAcfEditableModel, $currentAcfEditablePage;
-        $currentModel = substr($currentAcfEditableModel, strrpos($currentAcfEditableModel, '\\') + 1);
-        $ruleCurrentModel = $rule['value'];
+        $page = $_GET['page'] ?? null;
+        $currentModelPage = null;
 
-        if (! array_key_exists('options_page', $screen) || $screen['options_page'] !== $currentAcfEditablePage) {
+        foreach (ModelPages::getModelPages() as $modelPage) {
+            if (! $modelPage->acfEditable || $page !== $modelPage->acfEditablePageSlug) {
+                continue;
+            }
+
+            $currentModelPage = $modelPage;
+            break;
+        }
+
+        if (empty($currentModelPage) || empty($screen['options_page']) || $screen['options_page'] !== $currentModelPage->acfEditablePageSlug) {
             return false;
         }
 
-        if ($rule['operator'] === '==' && $ruleCurrentModel === $currentModel) {
+        if ($rule['operator'] === '==' && $rule['value'] === basename($currentModelPage->model)) {
             return true;
         }
 
-        if ($rule['operator'] === '!=' && $ruleCurrentModel !== $currentModel) {
+        if ($rule['operator'] === '!=' && $rule['value'] !== basename($currentModelPage->model)) {
             return true;
         }
 
