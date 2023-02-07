@@ -15,6 +15,8 @@ class ModelPage
     public array $sortableColumns;
     public array $excludeColumns;
 
+    public ModelPageAcfSettings $acfSettings;
+
     public array $rowActions;
 
     public bool $acfEditable;
@@ -101,6 +103,14 @@ class ModelPage
     public function withoutColumns(array $columnSlugs): self
     {
         $this->excludeColumns = $columnSlugs;
+
+        return $this;
+    }
+
+    public function withAcfSettings(ModelPageAcfSettings $modelPageAcf): self
+    {
+        $this->acfEditable = true;
+        $this->acfSettings = $modelPageAcf;
 
         return $this;
     }
