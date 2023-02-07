@@ -22,11 +22,26 @@ class Helper
         $page = $_GET['page'] ?? null;
 
         foreach (ModelPages::getModelPages() as $modelPage) {
-            if (! $modelPage->acfEditable || $page !== $modelPage->acfEditablePageSlug) {
-                continue;
+            if ($modelPage->acfEditable && $page === $modelPage->acfEditablePageSlug) {
+                return $modelPage;
             }
 
-            return $modelPage;
+            if ($page === $modelPage->pageSlug) {
+                return $modelPage;
+            }
+        }
+
+        return null;
+    }
+
+    public static function getCurrentModePageFromUrlAcfEditablePage(): ?ModelPage
+    {
+        $page = $_GET['page'] ?? null;
+
+        foreach (ModelPages::getModelPages() as $modelPage) {
+            if ($modelPage->acfEditable && $page === $modelPage->acfEditablePageSlug) {
+                return $modelPage;
+            }
         }
 
         return null;
