@@ -13,7 +13,7 @@ class ModelPageColumn
     public function __construct(
         public string $slug
     ) {
-        $this->title = $this->slug;
+        $this->title = ucfirst(str_replace('_', ' ', $this->slug));
     }
 
     public function withTitle(string $title): self
