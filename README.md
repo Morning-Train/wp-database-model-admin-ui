@@ -52,76 +52,122 @@ Initialize `\Morningtrain\WP\DatabaseModelAdminUi\DatabaseModelAdminUi` with the
 \Morningtrain\WP\DatabaseModelAdminUi\ModelUI::setup(__DIR__ . "/app/Models");
 ```
 
-### Use on an Eloquent Model
+### Use for an Eloquent Model
 
-In the start of the Model, there is needed to use som traits.  
-The traits that is available is:
+When an Admin Table need to be show, on an Eloquent Model, this need to be register in.  
+To do this, the code need to be run before hook **wp_loaded** on priority **11**.  
+To start of, use `\Morningtrain\WP\DatabaseModelAdminUi\ModelUI::modelPage()` method and give it a slug and an Eloquent Model class.
 
-- `AdminUi`: Render of the Admin Table
-- `Readable`: Add the option, to have a single page for each Model entry
-
-In this example there will be used `AdminUi` and `Readable`.  
-We will start out, be make use of the traits, by:
-
+When this is done, we need to register it. This is done by:
 ```php
-use AdminUi;
-use Readable;
+\Morningtrain\WP\DatabaseModelAdminUi\ModelUI::modelPage('car', Car::class)
+    ->register();
 ```
 
-After this, there is needed a method, to start the init methods, for the traits. In the same method, is where the Admin Table settings is being written:
+This is all there is to get started with an Admin Table overview.  
+There is some options, to customize the Admin Table:
+
+#### Options
+
+##### _Page Title_  
+Sets the value to the page title, for the Admin Table.  
+Default: `Admin Table`
 
 ```php
-public function setupAdminUi(): void
-    {
-        $this->adminUiTableData = [
-            'iconUrl' => 'dashicons-admin-site',
-            'pageTitle' => __('Cars'),
-            'menuTitle' => __('Cars'),
-            'capability' => 'manage_options',
-            'position' => 101,
-            'tableColumns' => [
-                'name' => [
-                    'title' => __('Name'),
-                    'sortable' => true,
-                    'searchable' => true
-                ],
-                'car_model' => [
-                    'title' => __('Model'),
-                    'searchable' => true,
-                ],
-            ],
-            'searchButtonText' => __('Search')
-        ];
-
-        $this->initAdminUi();
-        $this->initReadable();
-    }
+->withPageTitle('Cars')
 ```
 
-All the Admin Table settings is as follows:
+##### _Menu Title_
+Sets the value to the menu title, for the Admin Table.  
+Default: `Admin Table`
 
-- `iconUrl`: Is an icon, that is present in Wordpress Dashicons
-- `pageTitle`: What's the option-page page title
-- `menuTitle`: What's the option-page menu title
-- `capability`: What capability the user needs, to view the Admin Table
-- `position`: Placement in the Admin menu
-- `tableColumns`: The Admin Table columns, that needs to be shown
-  - `name`: The label, that is shown for the column
-  - `sortable`: If the column in sortable **(Optional)**
-  - `searchable`: If you should be able to search for this column **(Optional)**
-- `searchButtonText`: What the button text, on the search button
+```php
+->withMenuTitle('Cars')
+```
 
-#### Actions
+##### _Capability_
+Sets the value, that the user needs, for viewing the Admin Table.  
+Default: `manage_options`
 
-_None at the moment_
+```php
+->withCapability('read')
+```
 
+##### _Icon Url_
+Sets the value for the Admin Table admin menu icon.  
+Default: **_empty value_**
 
-#### Filters
+```php
+->withIconUrl('dashicons-admin-home')
+```
 
-| Hook Name                                                       | Filtered value | Extra parameters                                                                                                            | Description                                                 |
-|-----------------------------------------------------------------|----------------|-----------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------|
-| wpdbmodeladminui/admin-table/{$slug}/column_name/{$column_name} | null           | **$item**: Model object <br />**$column_name**: A string, with the column name <br />**$adminTable**: The AdminTable object | Return some echo able, to bypass the default value          |
-| wpdbmodeladminui/admin-table/{$slug}/row_actions                | array          | **$item**: Model object                                                                                                     | Filter the row actions, that is shown on the primary column |
+##### _Position_
+Sets the value for the Admin Table admin menu position.  
+Default: `null`
+
+```php
+->withIconUrl('dashicons-admin-home')
+```
+
+##### _Search button text_
+Sets the value for the Admin Table search button text.  
+Default: `__('Search')`
+
+```php
+->withSearchButtonText('Go')
+```
+
+##### _Columns_
+Sets the value as columns, for the Admin Table.  
+Default: `[]`
+
+This one is created from the ModelPageColumn object.  
+It requires a slug.  
+On top of that, there is some options.
+
+```php
+->withColumns([
+    \Morningtrain\WP\DatabaseModelAdminUi\ModelUI::modelPageColumn('name')
+        ->withTitle('Name') // Sets the value to the column title
+        ->withRender(callback|string) // Custom render, in each table row, for the specific column
+        ->makeSearchable() // Make so there can be search for this column value
+        ->makeSortable() // Make so there can be sorted for this column value
+])
+```
+
+##### _Row Actions_
+Sets the value as row actions, for the Admin Table.  
+Default: `[]`
+
+This one is created from the ModelPageRowAction object.  
+It requires a slug and a render callback.
+
+```php
+->withRowActions([
+    \Morningtrain\WP\DatabaseModelAdminUi\ModelUI::modelPageRowAction('edit', callback|string)
+])
+```
+
+##### _ACF Editable_
+Add a ACF edit page.  
+Default: `false`
+
+If this is set, there will be check if there is a row action with the slug `edit`. If this isn't present, it will add a default.  
+To make this work, there is needed
+
+```php
+->makeAcfEditable()
+```
+
+##### _Removable_
+Add a removable option.  
+Default: `false`
+
+If this is set, there will be check if there is a row action with the slug `delete`. If this isn't present, it will add a default.
+
+```php
+->makeRemovable()
+```
 
 
 ## Contributing
