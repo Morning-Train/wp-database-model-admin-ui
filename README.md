@@ -153,7 +153,8 @@ Add a ACF edit page.
 Default: `false`
 
 If this is set, there will be check if there is a row action with the slug `edit`. If this isn't present, it will add a default.  
-To make this work, there is needed
+To make this work, there is needed to create an ACF group, that has the fields, like the Eloquent Model, that can be edited.  
+Under the ACF group locations, there is a new rule called **Eloquent Model**, that should be chosen to show the ACF group on the edit page.
 
 ```php
 ->makeAcfEditable()
