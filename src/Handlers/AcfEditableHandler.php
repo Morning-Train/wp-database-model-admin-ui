@@ -63,14 +63,18 @@ class AcfEditableHandler
             return $value;
         }
 
-        $model = $currentModelPage->model::query()
+        $instance = $currentModelPage->model::query()
             ->find($parts[2]);
 
-        if (empty($model)) {
+        if (empty($instance)) {
             return $value;
         }
 
-        return $model->{$field['name']} ?? $value;
+        if (! empty($currentModelPage->acfSettings->extraLoadCallbacks[$field['name']])) {
+            return ($currentModelPage->acfSettings->extraLoadCallbacks[$field['name']])($value, $instance);
+        }
+
+        return $instance->{$field['name']} ?? $value;
     }
 
     public static function handleSaveValueForAcfModel(int|string $post_id): void
@@ -94,6 +98,10 @@ class AcfEditableHandler
         $currentModelPage->model::query()
             ->find($parts[2])
             ->update($values);
+
+        if ($currentModelPage->acfSettings->extraSaveCallback !== null) {
+            ($currentModelPage->acfSettings->extraSaveCallback)($parts[2], $currentModelPage->model, $values);
+        }
     }
 
     public static function fixSelectedAdminMenuForAcfEditable(string $file): string
