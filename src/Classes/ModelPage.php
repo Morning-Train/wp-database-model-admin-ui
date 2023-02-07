@@ -12,6 +12,7 @@ class ModelPage
     public array $tableColumns;
     public array $searchableColumns;
     public array $sortableColumns;
+    public array $excludeColumns;
 
     public array $rowActions;
 
@@ -88,8 +89,12 @@ class ModelPage
             return $column->sortable;
         }), 'slug');
 
-        /*** @see \WP_List_Table::get_default_primary_column_name */
-        $this->primaryColumn = array_keys($this->columns)[0];
+        return $this;
+    }
+
+    public function withoutColumns(array $columnSlugs): self
+    {
+        $this->excludeColumns = $columnSlugs;
 
         return $this;
     }
@@ -152,12 +157,19 @@ class ModelPage
 
     private function checkForTableColumns(): void
     {
-        if (! empty($this->tableColumns)) {
-            return;
+        if (empty($this->tableColumns)) {
+            $columns = Schema::getColumnListing((new $this->model())->getTable());
+            $this->tableColumns = array_combine(
+                $columns,
+                array_map(function ($column) {
+                    return ucfirst(str_replace('_', ' ', $column));
+                }, $columns)
+            );
         }
 
-        $columns = Schema::getColumnListing((new $this->model())->getTable());
-        $this->tableColumns = array_combine($columns, $columns);
+        $this->tableColumns = array_filter($this->tableColumns, function ($tableColumnKey) {
+            return ! in_array($tableColumnKey, $this->excludeColumns, true);
+        }, ARRAY_FILTER_USE_KEY);
 
         /*** @see \WP_List_Table::get_default_primary_column_name */
         $this->primaryColumn = array_keys($this->tableColumns)[0];
