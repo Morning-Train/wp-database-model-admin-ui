@@ -57,7 +57,10 @@ class ModelPage
 
     public function register(): void
     {
-        $this->checkForTableColumns();
+        if (! $this->checkForTableColumns()) {
+            return;
+        }
+
         $this->checkForEditRowAction();
         $this->checkForDeleteRowAction();
 
@@ -157,7 +160,7 @@ class ModelPage
         return $this;
     }
 
-    private function checkForTableColumns(): void
+    private function checkForTableColumns(): bool
     {
         if (empty($this->tableColumns)) {
             $columns = Schema::getColumnListing((new $this->model())->getTable());
@@ -169,12 +172,18 @@ class ModelPage
             );
         }
 
+        if (empty($this->tableColumns)) {
+            return false;
+        }
+
         $this->tableColumns = array_filter($this->tableColumns, function ($tableColumnKey) {
             return ! in_array($tableColumnKey, $this->excludeColumns, true);
         }, ARRAY_FILTER_USE_KEY);
 
         /*** @see \WP_List_Table::get_default_primary_column_name */
         $this->primaryColumn = array_keys($this->tableColumns)[0];
+
+        return true;
     }
 
     private function checkForEditRowAction(): void
