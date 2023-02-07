@@ -3,26 +3,26 @@
 namespace Morningtrain\WP\DatabaseModelAdminUi\Classes;
 
 use Illuminate\Support\Facades\Schema;
-use Morningtrain\Test\Models\Caar;
+use Morningtrain\WP\DatabaseModelAdminUi\ModelUI;
 
 class ModelPage
 {
 
-    public array $columns = [];
-    public array $tableColumns = [];
-    public array $searchableColumns = [];
-    public array $sortableColumns = [];
+    public array $columns;
+    public array $tableColumns;
+    public array $searchableColumns;
+    public array $sortableColumns;
 
-    public array $rowActions = [];
+    public array $rowActions;
 
-    public bool $acfEditable = false;
-    public bool $removable = false;
+    public bool $acfEditable;
+    public bool $removable;
 
     public string $pageTitle;
     public string $menuTitle;
     public string $capability;
-    public string $iconUrl = '';
-    public ?int $position = null;
+    public string $iconUrl;
+    public ?int $position;
     public string $searchButtonText;
 
     public string $acfEditablePageSlug;
@@ -33,9 +33,20 @@ class ModelPage
         public string $model
     )
     {
+        $this->acfEditable = false;
+        $this->removable = false;
+
+        $this->columns = [];
+        $this->tableColumns = [];
+        $this->searchableColumns = [];
+        $this->sortableColumns = [];
+        $this->rowActions = [];
+
         $this->pageTitle = __('Admin table');
         $this->menuTitle = __('Admin table');
         $this->capability = 'manage_options';
+        $this->iconUrl = '';
+        $this->position = null;
         $this->searchButtonText = __('Search');
 
         $this->acfEditablePageSlug = 'edit_' . $this->pageSlug;
@@ -43,10 +54,9 @@ class ModelPage
 
     public function register(): void
     {
-        if (empty($this->tableColumns)) {
-            $columns = Schema::getColumnListing((new Caar())->getTable());
-            $this->tableColumns = array_combine($columns, $columns);
-        }
+        $this->checkForTableColumns();
+        $this->checkForEditRowAction();
+        $this->checkForDeleteRowAction();
 
         ModelPages::setModelPageForList($this);
     }
@@ -138,6 +148,51 @@ class ModelPage
         $this->searchButtonText = $searchButtonText;
 
         return $this;
+    }
+
+    private function checkForTableColumns(): void
+    {
+        if (! empty($this->tableColumns)) {
+            return;
+        }
+
+        $columns = Schema::getColumnListing((new $this->model())->getTable());
+        $this->tableColumns = array_combine($columns, $columns);
+
+        /*** @see \WP_List_Table::get_default_primary_column_name */
+        $this->primaryColumn = array_keys($this->tableColumns)[0];
+    }
+
+    private function checkForEditRowAction(): void
+    {
+        if (! $this->acfEditable || ! empty($this->rowActions['edit'])) {
+            return;
+        }
+
+        $this->rowActions[] = ModelUI::modelPageRowAction(
+            'edit',
+            function (array $item, ModelPage $modelPage) {
+                $href = admin_url('admin.php') . '?page=' . $modelPage->acfEditablePageSlug . '&model_id=' . $item['id'];
+
+                return '<a href="' . $href . '">' . __('Edit') . '</a>';
+            }
+        );
+    }
+
+    private function checkForDeleteRowAction(): void
+    {
+        if (! $this->removable || ! empty($this->rowActions['delete'])) {
+            return;
+        }
+
+        $this->rowActions[] = ModelUI::modelPageRowAction(
+            'delete',
+            function (array $item, ModelPage $modelPage) {
+                $href = admin_url('admin.php') . '?page=' . $modelPage->pageSlug . '&model_id=' . $item['id'] . '&action=delete';
+
+                return '<a href="' . $href . '" onclick="return confirm(\'' .  __('Are you sure?') . '\')">' . __('Delete') . '</a>';
+            }
+        );
     }
 
 }
