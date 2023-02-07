@@ -5,9 +5,11 @@ namespace Morningtrain\WP\DatabaseModelAdminUi;
 use Morningtrain\PHPLoader\Loader;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\AcfEloquentModelLocation;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\Helper;
-use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage;
-use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPageColumn;
-use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPageRowAction;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPage;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPageAcfSettings;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPageAcfLoad;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPageColumn;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPageRowAction;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPages;
 use Morningtrain\WP\Hooks\Hook;
 use Morningtrain\WP\View\View;
@@ -43,6 +45,11 @@ class ModelUI
     public static function modelPageRowAction(string $slug, callable|string $renderCallback): ModelPageRowAction
     {
         return new ModelPageRowAction($slug, $renderCallback);
+    }
+
+    public static function modelPageAcfSettings(): ModelPageAcfSettings
+    {
+        return new ModelPageAcfSettings();
     }
 
     private static function setupAcf(): void
