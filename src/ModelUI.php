@@ -2,9 +2,8 @@
 
 namespace Morningtrain\WP\DatabaseModelAdminUi;
 
-use Illuminate\Database\Eloquent\Model;
 use Morningtrain\PHPLoader\Loader;
-use Morningtrain\WP\DatabaseModelAdminUi\Classes\Acf\AcfEloquentModelLocation;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\AcfEloquentModelLocation;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\Helper;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPageColumn;
@@ -26,7 +25,9 @@ class ModelUI
 
         static::setupAcf();
 
-        ModelPages::setupModelPages();
+        Hook::action('wp_loaded', function () {
+            ModelPages::setupModelPages();
+        })->priority(11);
     }
 
     public static function modelPage(string $tableSlug, string $model): ModelPage

@@ -1,11 +1,9 @@
 <?php
 
-namespace Morningtrain\WP\DatabaseModelAdminUi\Classes\Acf;
+namespace Morningtrain\WP\DatabaseModelAdminUi\Classes;
 
 use ACF_Location;
 use Morningtrain\PHPLoader\Loader;
-use Morningtrain\WP\DatabaseModelAdminUi\Classes\Helper;
-use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPages;
 
 class AcfEloquentModelLocation extends ACF_Location
 {
