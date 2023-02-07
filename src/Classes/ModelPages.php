@@ -17,20 +17,24 @@ class ModelPages
         Hook::action('wp_loaded', function () {
             Hook::action('admin_menu', [AdminUiHandler::class, 'addModelMenuPages']);
             Hook::filter('set-screen-option', [AdminUiHandler::class, 'setPerPageScreenOption']);
-            Hook::filter('current_screen', [AdminUiHandler::class, 'addScreenOption']);
-            Hook::filter('admin_init', [AdminUiHandler::class, 'checkForModelDeleting']);
+            Hook::action('current_screen', [AdminUiHandler::class, 'addScreenOption']);
 
             $currentModelPage = Helper::getCurrentModePageFromUrlPage();
 
             if (empty($currentModelPage)) {
                 return;
             }
+
             if ($currentModelPage->acfEditable) {
                 Hook::action('admin_menu', [AcfEditableHandler::class, 'addAcfEditMenuPage']);
-                Hook::filter('admin_init', [AcfEditableHandler::class, 'checkForNonExistingAcfEditableModel']);
+                Hook::action('admin_init', [AcfEditableHandler::class, 'checkForNonExistingAcfEditableModel']);
                 Hook::filter('acf/load_value', [AcfEditableHandler::class, 'handleLoadValueForAcfModel']);
                 Hook::filter('acf/save_post', [AcfEditableHandler::class, 'handleSaveValueForAcfModel']);
                 Hook::filter('parent_file', [AcfEditableHandler::class, 'fixSelectedAdminMenuForAcfEditable']);
+            }
+
+            if ($currentModelPage->removable) {
+                Hook::action('admin_init', [AdminUiHandler::class, 'checkForModelDeleting']);
             }
         })->priority(11);
     }
