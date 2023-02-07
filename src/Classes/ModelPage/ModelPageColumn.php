@@ -1,6 +1,6 @@
 <?php
 
-namespace Morningtrain\WP\DatabaseModelAdminUi\Classes;
+namespace Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage;
 
 class ModelPageColumn
 {

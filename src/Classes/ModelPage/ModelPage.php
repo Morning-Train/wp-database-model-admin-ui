@@ -1,8 +1,9 @@
 <?php
 
-namespace Morningtrain\WP\DatabaseModelAdminUi\Classes;
+namespace Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage;
 
 use Illuminate\Support\Facades\Schema;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPages;
 use Morningtrain\WP\DatabaseModelAdminUi\ModelUI;
 
 class ModelPage

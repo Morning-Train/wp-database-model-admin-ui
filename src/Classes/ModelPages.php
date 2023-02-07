@@ -2,6 +2,7 @@
 
 namespace Morningtrain\WP\DatabaseModelAdminUi\Classes;
 
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPage;
 use Morningtrain\WP\DatabaseModelAdminUi\Handlers\AcfEditableHandler;
 use Morningtrain\WP\DatabaseModelAdminUi\Handlers\AdminUiHandler;
 use Morningtrain\WP\Hooks\Hook;
@@ -28,7 +29,7 @@ class ModelPages
             Hook::action('admin_menu', [AcfEditableHandler::class, 'addAcfEditMenuPage']);
             Hook::action('admin_init', [AcfEditableHandler::class, 'checkForNonExistingAcfEditableModel']);
             Hook::filter('acf/load_value', [AcfEditableHandler::class, 'handleLoadValueForAcfModel']);
-            Hook::filter('acf/save_post', [AcfEditableHandler::class, 'handleSaveValueForAcfModel']);
+            Hook::action('acf/save_post', [AcfEditableHandler::class, 'handleSaveValueForAcfModel']);
             Hook::filter('parent_file', [AcfEditableHandler::class, 'fixSelectedAdminMenuForAcfEditable']);
         }
 

@@ -2,6 +2,8 @@
 
 namespace Morningtrain\WP\DatabaseModelAdminUi\Classes;
 
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPage;
+
 class Helper
 {
 

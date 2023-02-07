@@ -3,7 +3,7 @@
 namespace Morningtrain\WP\DatabaseModelAdminUi\Services;
 
 use Illuminate\Database\Eloquent\Builder;
-use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPage;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPages;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\AdminTable;
 use Morningtrain\WP\View\View;

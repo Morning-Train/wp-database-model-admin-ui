@@ -6,6 +6,8 @@ if (! class_exists('WP_List_Table')) {
     require_once(ABSPATH . 'wp-admin/includes/class-wp-list-table.php');
 }
 
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPage;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPageRowAction;
 use WP_List_Table;
 
 class AdminTable extends WP_List_Table
