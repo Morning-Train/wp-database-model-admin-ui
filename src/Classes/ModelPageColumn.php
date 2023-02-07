@@ -44,14 +44,19 @@ class ModelPageColumn
         return $this;
     }
 
-    public function render(array $item, ModelPage $modelPage): void
+    public function render(array $item, ModelPage $modelPage): ?string
     {
         if ($this->renderCallback !== null) {
-            echo ($this->renderCallback)($item, $modelPage);
-            return;
+            return ($this->renderCallback)($item, $modelPage);
         }
 
-        echo $item[$this->slug];
+        if ($modelPage->acfEditable && $modelPage->primaryColumn === $this->slug) {
+            $href = admin_url('admin.php') . '?page=' . $modelPage->acfEditablePageSlug . '&model_id=' . $item['id'];
+
+            return '<a href="' . $href . '">' . $item[$this->slug] . '</a>';
+        }
+
+        return $item[$this->slug];
     }
 
 }
