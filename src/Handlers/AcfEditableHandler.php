@@ -10,7 +10,7 @@ class AcfEditableHandler
     public static function addAcfEditMenuPage(): void
     {
         $modelId = $_GET['model_id'] ?? null;
-        $currentModelPage = Helper::getCurrentModePageFromUrlPage();
+        $currentModelPage = Helper::getCurrentModePageFromUrlAcfEditablePage();
 
         if (empty($currentModelPage)) {
             return;
@@ -32,7 +32,7 @@ class AcfEditableHandler
     public static function checkForNonExistingAcfEditableModel(): void
     {
         $modelId = $_GET['model_id'] ?? null;
-        $currentModelPage = Helper::getCurrentModePageFromUrlPage();
+        $currentModelPage = Helper::getCurrentModePageFromUrlAcfEditablePage();
 
         if (empty($modelId) || ! is_numeric($modelId) || empty($currentModelPage)) {
             return;
@@ -51,7 +51,7 @@ class AcfEditableHandler
 
     public static function handleLoadValueForAcfModel($value, int|string $post_id, array $field)
     {
-        $currentModelPage = Helper::getCurrentModePageFromUrlPage();
+        $currentModelPage = Helper::getCurrentModePageFromUrlAcfEditablePage();
 
         if (empty($currentModelPage)) {
             return $value;
@@ -75,7 +75,7 @@ class AcfEditableHandler
 
     public static function handleSaveValueForAcfModel(int|string $post_id): void
     {
-        $currentModelPage = Helper::getCurrentModePageFromUrlPage();
+        $currentModelPage = Helper::getCurrentModePageFromUrlAcfEditablePage();
 
         if (empty($currentModelPage)) {
             return;
@@ -99,7 +99,7 @@ class AcfEditableHandler
     public static function fixSelectedAdminMenuForAcfEditable(string $file): string
     {
         global $plugin_page;
-        $currentModelPage = Helper::getCurrentModePageFromUrlPage();
+        $currentModelPage = Helper::getCurrentModePageFromUrlAcfEditablePage();
 
         if (empty($currentModelPage)) {
             return $file;
