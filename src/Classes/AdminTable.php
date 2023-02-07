@@ -63,8 +63,12 @@ class AdminTable extends WP_List_Table
      */
     protected function column_default($item, $column_name): void
     {
-        if (! empty($this->modelPage->columns[$column_name])) {
-            $this->modelPage->columns[$column_name]->render($item, $this->modelPage);
+        if (! empty($this->modelPage->columns[$column_name]) && $this->modelPage->columns[$column_name]->renderCallback !== null) {
+            echo $this->modelPage->columns[$column_name]->render($item, $this->modelPage);
+        } elseif($this->modelPage->acfEditable && $this->get_primary_column() === $column_name) {
+            $href = admin_url('admin.php') . '?page=' . $this->modelPage->acfEditablePageSlug . '&model_id=' . $item['id'];
+
+            echo '<a href="' . $href . '">' . $item[$column_name] . '</a>';
         } else {
             echo $item[$column_name];
         }
