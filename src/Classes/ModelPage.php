@@ -41,6 +41,8 @@ class ModelPage
         $this->tableColumns = [];
         $this->searchableColumns = [];
         $this->sortableColumns = [];
+        $this->excludeColumns = [];
+
         $this->rowActions = [];
 
         $this->pageTitle = __('Admin table');
