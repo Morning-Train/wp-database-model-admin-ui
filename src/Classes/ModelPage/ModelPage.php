@@ -9,24 +9,27 @@ use Morningtrain\WP\DatabaseModelAdminUi\ModelUI;
 class ModelPage
 {
 
-    public array $columns;
-    public array $tableColumns;
-    public array $searchableColumns;
-    public array $sortableColumns;
-    public array $excludeColumns;
+    public array $columns = [];
+    public array $tableColumns = [];
+    public array $searchableColumns = [];
+    public array $sortableColumns = [];
+    public array $excludeColumns = [];
 
-    public ModelPageAcfSettings $acfSettings;
+    public AcfSettings $acfSettings;
+    /** @var AcfEditableMetaBox[] $metaBoxes */
+    public array $metaBoxes = [];
 
-    public array $rowActions;
+    public array $rowActions = [];
 
-    public bool $acfEditable;
-    public bool $removable;
+    public bool $acfEditable = false;
+    public bool $removable = false;
 
     public string $pageTitle;
     public string $menuTitle;
-    public string $capability;
-    public string $iconUrl;
-    public ?int $position;
+    public string $listCapability = 'manage_options';
+    public string $editCapability = 'manage_options';
+    public string $iconUrl = '';
+    public ?int $position = null;
     public string $searchButtonText;
 
     public string $acfEditablePageSlug;
@@ -37,22 +40,8 @@ class ModelPage
         public string $model
     )
     {
-        $this->acfEditable = false;
-        $this->removable = false;
-
-        $this->columns = [];
-        $this->tableColumns = [];
-        $this->searchableColumns = [];
-        $this->sortableColumns = [];
-        $this->excludeColumns = [];
-
-        $this->rowActions = [];
-
         $this->pageTitle = __('Admin table');
         $this->menuTitle = __('Admin table');
-        $this->capability = 'manage_options';
-        $this->iconUrl = '';
-        $this->position = null;
         $this->searchButtonText = __('Search');
 
         $this->acfEditablePageSlug = 'edit_' . $this->pageSlug;
@@ -67,7 +56,7 @@ class ModelPage
         $this->checkForEditRowAction();
         $this->checkForDeleteRowAction();
 
-        ModelPages::setModelPageForList($this);
+        ModelPages::addModelPageToList($this);
     }
 
     public function withRowActions(array $rowActions): self
@@ -89,11 +78,11 @@ class ModelPage
             array_column($this->columns, 'title')
         );
 
-        $this->searchableColumns = array_column(array_filter($columns, function (ModelPageColumn $column) {
+        $this->searchableColumns = array_column(array_filter($columns, function (Column $column) {
             return $column->searchable;
         }), 'slug');
 
-        $this->sortableColumns = array_column(array_filter($columns, function (ModelPageColumn $column) {
+        $this->sortableColumns = array_column(array_filter($columns, function (Column $column) {
             return $column->sortable;
         }), 'slug');
 
@@ -107,10 +96,17 @@ class ModelPage
         return $this;
     }
 
-    public function withAcfSettings(ModelPageAcfSettings $modelPageAcf): self
+    public function withAcfSettings(AcfSettings $modelPageAcf): self
     {
         $this->acfEditable = true;
         $this->acfSettings = $modelPageAcf;
+
+        return $this;
+    }
+
+    public function withAcfEditableMetaBox(AcfEditableMetaBox $acfEditableMetaBox): self
+    {
+        $this->metaBoxes[$acfEditableMetaBox->slug] = $acfEditableMetaBox;
 
         return $this;
     }
@@ -150,9 +146,10 @@ class ModelPage
         return $this;
     }
 
-    public function withCapability(string $capability): self
+    public function withCapability(string $capability, ?string $editCapability = null): self
     {
-        $this->capability = $capability;
+        $this->listCapability = $capability;
+        $this->editCapability = $editCapability ?? $capability;
 
         return $this;
     }
@@ -203,7 +200,7 @@ class ModelPage
             return;
         }
 
-        $this->rowActions[] = ModelUI::modelPageRowAction(
+        $this->rowActions[] = ModelUI::rowAction(
             'edit',
             function (array $item, ModelPage $modelPage) {
                 $href = admin_url('admin.php') . '?page=' . $modelPage->acfEditablePageSlug . '&model_id=' . $item['id'];
@@ -219,7 +216,7 @@ class ModelPage
             return;
         }
 
-        $this->rowActions[] = ModelUI::modelPageRowAction(
+        $this->rowActions[] = ModelUI::rowAction(
             'delete',
             function (array $item, ModelPage $modelPage) {
                 $href = admin_url('admin.php') . '?page=' . $modelPage->pageSlug . '&model_id=' . $item['id'] . '&action=delete';
