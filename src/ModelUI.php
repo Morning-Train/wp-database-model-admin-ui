@@ -6,10 +6,10 @@ use Morningtrain\PHPLoader\Loader;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\AcfEloquentModelLocation;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\Helper;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPage;
-use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPageAcfSettings;
-use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPageAcfLoad;
-use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPageColumn;
-use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPageRowAction;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\AcfEditableMetaBox;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\AcfSettings;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\Column;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\RowAction;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPages;
 use Morningtrain\WP\Hooks\Hook;
 use Morningtrain\WP\View\View;
@@ -38,19 +38,24 @@ class ModelUI
         return new ModelPage($tableSlug, $model);
     }
 
-    public static function modelPageColumn(string $slug): ModelPageColumn
+    public static function column(string $slug): Column
     {
-        return new ModelPageColumn($slug);
+        return new Column($slug);
     }
 
-    public static function modelPageRowAction(string $slug, callable|string $renderCallback): ModelPageRowAction
+    public static function rowAction(string $slug, callable|string $renderCallback): RowAction
     {
-        return new ModelPageRowAction($slug, $renderCallback);
+        return new RowAction($slug, $renderCallback);
     }
 
-    public static function modelPageAcfSettings(): ModelPageAcfSettings
+    public static function acfSettings(): AcfSettings
     {
-        return new ModelPageAcfSettings();
+        return new AcfSettings();
+    }
+
+    public static function acfEditableMetaBox(string $slug, callable|string $renderCallback): AcfEditableMetaBox
+    {
+        return new AcfEditableMetaBox($slug, $renderCallback);
     }
 
     private static function setupAcf(): void
