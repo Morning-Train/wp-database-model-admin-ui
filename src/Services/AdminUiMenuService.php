@@ -3,6 +3,7 @@
 namespace Morningtrain\WP\DatabaseModelAdminUi\Services;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Schema;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPage;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPages;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\AdminTable;
@@ -75,6 +76,12 @@ class AdminUiMenuService
 
     private static function handleQueryOrderBy(Builder $query, ModelPage $modelPage): Builder
     {
+        $instance = new ($modelPage->model)();
+
+        if (! Schema::hasColumn($instance->getTable(), $modelPage->primaryColumn)) {
+            return $query;
+        }
+
         if (empty($modelPage->primaryColumn)) {
             return $query;
         }
