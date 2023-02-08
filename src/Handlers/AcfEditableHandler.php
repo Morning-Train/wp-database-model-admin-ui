@@ -16,13 +16,18 @@ class AcfEditableHandler
             return;
         }
 
+        $title = __('Edit');
         $acfEditableCurrentModel = $currentModelPage->model::query()
             ->find($modelId);
 
+        if (! empty($acfEditableCurrentModel->{$currentModelPage->primaryColumn})) {
+            $title = $acfEditableCurrentModel->{$currentModelPage->primaryColumn} . ' - ' . $title;
+        }
+
         acf_add_options_sub_page([
             'parent_slug' => 'options-writing.php', // This will hide it from the admin menu
-            'page_title' => $acfEditableCurrentModel->{$currentModelPage->primaryColumn} . ' - ' . __('Edit'),
-            'menu_title' => $acfEditableCurrentModel->{$currentModelPage->primaryColumn} . ' - ' . __('Edit'),
+            'page_title' => $title,
+            'menu_title' => $title,
             'capability' => 'manage_options',
             'menu_slug' => $currentModelPage->acfEditablePageSlug,
             'post_id' => 'eloquent_model__' . $currentModelPage->pageSlug . '__' . $modelId
