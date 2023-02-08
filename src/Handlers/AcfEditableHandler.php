@@ -130,7 +130,7 @@ class AcfEditableHandler
     {
         $currentModelPage = Helper::getCurrentModePageFromUrlAcfEditablePage();
 
-        if (empty($currentModelPage)) {
+        if (empty($currentModelPage) || empty($currentModelPage->metaBoxes)) {
             return;
         }
 
