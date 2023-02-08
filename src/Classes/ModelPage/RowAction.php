@@ -2,7 +2,7 @@
 
 namespace Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage;
 
-class ModelPageRowAction
+class RowAction
 {
 
     public function __construct(

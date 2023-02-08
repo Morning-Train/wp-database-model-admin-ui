@@ -2,7 +2,7 @@
 
 namespace Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage;
 
-class ModelPageAcfSettings
+class AcfSettings
 {
 
     public array $extraLoadCallbacks = [];

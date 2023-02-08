@@ -2,7 +2,7 @@
 
 namespace Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage;
 
-class ModelPageColumn
+class Column
 {
 
     public string $title;
