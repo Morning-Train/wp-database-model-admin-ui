@@ -21,7 +21,8 @@ class ModelUI
     {
         Helper::setEloquentModelsDirs($eloquentModelsDir);
 
-        Loader::create($eloquentModelsDir);
+        Loader::create($eloquentModelsDir)
+            ->callStatic('setupAdminUi');
 
         View::addNamespace('wpdbmodeladminui', dirname(__DIR__) . '/resources/views');
 
