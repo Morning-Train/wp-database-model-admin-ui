@@ -127,7 +127,7 @@ On top of that, there is some options.
 
 ```php
 ->withColumns([
-    \Morningtrain\WP\DatabaseModelAdminUi\ModelUI::modelPageColumn('name')
+    \Morningtrain\WP\DatabaseModelAdminUi\ModelUI::column('name')
         ->withTitle('Name') // Sets the value to the column title
         ->withRender(callback|string) // Custom render, in each table row, for the specific column
         ->makeSearchable() // Make so there can be search for this column value
@@ -144,7 +144,7 @@ It requires a slug and a render callback.
 
 ```php
 ->withRowActions([
-    \Morningtrain\WP\DatabaseModelAdminUi\ModelUI::modelPageRowAction('edit', callback|string)
+    \Morningtrain\WP\DatabaseModelAdminUi\ModelUI::rowAction('edit', callback|string)
 ])
 ```
 

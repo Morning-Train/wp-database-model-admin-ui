@@ -7,7 +7,7 @@ if (! class_exists('WP_List_Table')) {
 }
 
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPage;
-use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPageRowAction;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\RowAction;
 use WP_List_Table;
 
 class AdminTable extends WP_List_Table
@@ -78,7 +78,7 @@ class AdminTable extends WP_List_Table
         if($this->get_primary_column() === $column_name) {
             $rowActions = array_combine(
                 array_column($this->modelPage->rowActions, 'slug'),
-                array_map(function (ModelPageRowAction $rowAction) use ($item) {
+                array_map(function (RowAction $rowAction) use ($item) {
                     return $rowAction->render($item, $this->modelPage);
                 }, $this->modelPage->rowActions)
             );
