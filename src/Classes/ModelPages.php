@@ -31,6 +31,7 @@ class ModelPages
             Hook::filter('acf/load_value', [AcfEditableHandler::class, 'handleLoadValueForAcfModel']);
             Hook::action('acf/save_post', [AcfEditableHandler::class, 'handleSaveValueForAcfModel']);
             Hook::filter('parent_file', [AcfEditableHandler::class, 'fixSelectedAdminMenuForAcfEditable']);
+            Hook::action('acf/admin_head', [AcfEditableHandler::class, 'addMetaBoxes']);
         }
 
         if ($currentModelPage->removable) {
@@ -43,7 +44,7 @@ class ModelPages
         return static::$modelPages;
     }
 
-    public static function setModelPageForList(ModelPage $modelPage): void
+    public static function addModelPageToList(ModelPage $modelPage): void
     {
         static::$modelPages[$modelPage->pageSlug] = $modelPage;
     }

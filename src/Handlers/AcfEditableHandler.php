@@ -3,6 +3,7 @@
 namespace Morningtrain\WP\DatabaseModelAdminUi\Handlers;
 
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\Helper;
+use Morningtrain\WP\DatabaseModelAdminUi\Services\AdminUiMenuService;
 
 class AcfEditableHandler
 {
@@ -123,6 +124,38 @@ class AcfEditableHandler
         }
 
         return $file;
+    }
+
+    public static function addMetaBoxes(): void
+    {
+        $currentModelPage = Helper::getCurrentModePageFromUrlAcfEditablePage();
+
+        if (empty($currentModelPage)) {
+            return;
+        }
+
+        $currentScreen = get_current_screen();
+
+        if ($currentScreen === null || $currentScreen->id !== 'admin_page_' . $currentModelPage->acfEditablePageSlug) {
+            return;
+        }
+
+        foreach ($currentModelPage->metaBoxes as $metaBox) {
+            \add_meta_box(
+                $metaBox->slug,
+                $metaBox->title,
+                function ($post, $metaBoxData) use ($metaBox) {
+                    ($metaBox->renderCallback)(...$metaBoxData['args']);
+                },
+                'acf_options_page',
+                $metaBox->context,
+                $metaBox->priority,
+                [
+                    'model_id' => $_GET['model_id'] ?? null,
+                    'model' => $currentModelPage->model,
+                ]
+            );
+        }
     }
 
 }
