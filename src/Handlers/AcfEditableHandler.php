@@ -28,7 +28,7 @@ class AcfEditableHandler
             'parent_slug' => 'options-writing.php', // This will hide it from the admin menu
             'page_title' => $title,
             'menu_title' => $title,
-            'capability' => 'manage_options',
+            'capability' => $currentModelPage->editCapability,
             'menu_slug' => $currentModelPage->acfEditablePageSlug,
             'post_id' => 'eloquent_model__' . $currentModelPage->pageSlug . '__' . $modelId
         ]);
