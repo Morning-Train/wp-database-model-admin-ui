@@ -2,8 +2,8 @@
 
 namespace Morningtrain\WP\DatabaseModelAdminUi\Handlers;
 
+use Illuminate\Support\Facades\Schema;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\Helper;
-use Morningtrain\WP\DatabaseModelAdminUi\Services\AdminUiMenuService;
 
 class AcfEditableHandler
 {
@@ -55,8 +55,12 @@ class AcfEditableHandler
         exit();
     }
 
-    public static function handleLoadValueForAcfModel($value, int|string $post_id, array $field)
+    public static function handleLoadValueForAcfModel($value, string $post_id, array $field)
     {
+        if (! in_array($field['type'], ['repeater', 'group'], true)) {
+            return $value;
+        }
+
         $currentModelPage = Helper::getCurrentModePageFromUrlAcfEditablePage();
 
         if (empty($currentModelPage)) {
@@ -69,18 +73,69 @@ class AcfEditableHandler
             return $value;
         }
 
-        $instance = $currentModelPage->model::query()
-            ->find($parts[2]);
+        // TODO: Handle load of repeaters and groups!
+        
+        return $value;
+    }
+    
+    public static function handleLoadMetadataForAcfModel($value, string $post_id, string $name, bool $hidden)
+    {
+        $currentModelPage = Helper::getCurrentModePageFromUrlAcfEditablePage();
 
-        if (empty($instance)) {
+        if (empty($currentModelPage)) {
             return $value;
         }
 
-        if (! empty($currentModelPage->acfSettings->extraLoadCallbacks[$field['name']])) {
-            return ($currentModelPage->acfSettings->extraLoadCallbacks[$field['name']])($value, $instance);
+        $parts = explode('__', $post_id);
+
+        if (count($parts) !== 3 || $parts[0] !== 'eloquent_model' || $parts[1] !== $currentModelPage->pageSlug) {
+            return $value;
+        }
+        
+
+        $prefix = $hidden ? '_' : '';
+        if ($prefix . $name === 'steps') {
+            return [
+                'step' => 'step2'
+            ];
         }
 
-        return $instance->{$field['name']} ?? $value;
+        if (! empty($currentModelPage->acfSettings->extraLoadCallbacks[$prefix . $name])) {
+            return ($currentModelPage->acfSettings->extraLoadCallbacks[$prefix . $name])($value, $parts[2], $currentModelPage->model);
+        }
+
+        $instance = $currentModelPage->model::query()
+            ->find($parts[2]);
+
+        return $instance->{$prefix . $name} ?? '__return_null';
+    }
+
+    public static function handleSaveMetadataForAcfModel($return, string $post_id, string $name, $value, bool $hidden)
+    {
+        // TODO: Handle repeaters and groups
+
+        $currentModelPage = Helper::getCurrentModePageFromUrlAcfEditablePage();
+
+        if (empty($currentModelPage)) {
+            return $return;
+        }
+
+        $parts = explode('__', $post_id);
+
+        if (count($parts) !== 3 || $parts[0] !== 'eloquent_model' || $parts[1] !== $currentModelPage->pageSlug) {
+            return $return;
+        }
+
+        $prefix = $hidden ? '_' : '';
+        $modelColumns = Schema::getColumnListing((new ($currentModelPage->model)())->getTable());
+
+        if (in_array($prefix . $name, $modelColumns, true)) {
+            $currentModelPage->model::query()
+                ->find($parts[2])
+                ->update([$prefix . $name => $value]);
+        }
+
+        return true;
     }
 
     public static function handleSaveValueForAcfModel(int|string $post_id): void
@@ -97,16 +152,8 @@ class AcfEditableHandler
             return;
         }
 
-        // ACF 'get_fields()' method, does some validation from the $post_id.
-        // TODO: Maybe another way to get the data for this??
-        $keys = array_keys(get_fields($post_id));
-        $values = array_combine($keys, $_POST['acf']);
-        $currentModelPage->model::query()
-            ->find($parts[2])
-            ->update($values);
-
         if ($currentModelPage->acfSettings->extraSaveCallback !== null) {
-            ($currentModelPage->acfSettings->extraSaveCallback)($parts[2], $currentModelPage->model, $values);
+            ($currentModelPage->acfSettings->extraSaveCallback)($parts[2], $currentModelPage->model, get_fields($post_id));
         }
     }
 
