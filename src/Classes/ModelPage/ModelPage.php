@@ -15,7 +15,7 @@ class ModelPage
     public array $sortableColumns = [];
     public array $excludeColumns = [];
 
-    public AcfSettings $acfSettings;
+    public ?AcfSettings $acfSettings = null;
     /** @var AcfEditableMetaBox[] $metaBoxes */
     public array $metaBoxes = [];
 
