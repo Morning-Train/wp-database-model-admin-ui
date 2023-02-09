@@ -74,6 +74,27 @@ class AcfEditableHandler
         }
 
         // TODO: Handle load of repeaters and groups!
+        $newValue = [];
+        $subfields = array_combine(
+            array_column($field['sub_fields'], 'name'),
+            array_column($field['sub_fields'], 'key')
+        );
+
+        foreach (['name' => 'Test', 'step' => 'step2', 'image_id' => 3] as $key => $item) {
+            $modelValue = [];
+            foreach ($subfields as $_key => $subfield) {
+                if ($key !== $_key) {
+                    continue;
+                }
+
+                $modelValue[$subfield] = $item;
+            }
+
+            $newValue[] = $modelValue;
+        }
+
+        $value = [['field_63e4d9afa5e35' => 'WOW']];
+        ray([$field['name'] => $field]);
         
         return $value;
     }
