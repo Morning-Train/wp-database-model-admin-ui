@@ -31,9 +31,11 @@ class ModelPages
         if ($currentModelPage->acfEditable) {
             Hook::action('admin_menu', [AcfEditableHandler::class, 'addAcfEditMenuPage']);
             Hook::action('admin_init', [AcfEditableHandler::class, 'checkForNonExistingAcfEditableModel']);
+            Hook::filter('acf/pre_load_post_id', [AcfEditableHandler::class, 'handlePreLoadPostIdForAcfModel']);
+            Hook::filter('acf/decode_post_id', [AcfEditableHandler::class, 'handleDecodePostIdForAcfModel']);
             Hook::action('acf/load_value', [AcfEditableHandler::class, 'handleLoadValueForAcfModel']);
-            Hook::action('acf/pre_load_metadata', [AcfEditableHandler::class, 'handleLoadMetadataForAcfModel']);
-            Hook::action('acf/pre_update_metadata', [AcfEditableHandler::class, 'handleSaveMetadataForAcfModel']);
+            Hook::filter('acf/pre_load_metadata', [AcfEditableHandler::class, 'handleLoadMetadataForAcfModel']);
+            Hook::filter('acf/pre_update_metadata', [AcfEditableHandler::class, 'handleSaveMetadataForAcfModel']);
             Hook::action('acf/save_post', [AcfEditableHandler::class, 'handleSaveValueForAcfModel']);
             Hook::filter('parent_file', [AcfEditableHandler::class, 'fixSelectedAdminMenuForAcfEditable']);
             Hook::action('acf/admin_head', [AcfEditableHandler::class, 'addMetaBoxes']);
