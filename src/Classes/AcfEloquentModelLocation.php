@@ -18,10 +18,10 @@ class AcfEloquentModelLocation extends ACF_Location
      * @return  void
      */
     public function initialize() {
-        $this->name = 'eloquent_model';
+        $this->name = 'eloquent-model';
         $this->label = 'Eloquent Model';
-        $this->category = __('Custom');
-        $this->object_type = 'post';
+        $this->category = __('Eloquent');
+        $this->object_type = 'eloquent-model';
     }
 
     /**
@@ -60,19 +60,13 @@ class AcfEloquentModelLocation extends ACF_Location
      */
     public function match($rule, $screen, $field_group)
     {
-        $page = $_GET['page'] ?? null;
-        $currentModelPage = null;
+        $currentModelPage = ModelPages::getCurrentModelPage();
 
-        foreach (ModelPages::getModelPages() as $modelPage) {
-            if (! $modelPage->acfEditable || $page !== $modelPage->acfEditablePageSlug) {
-                continue;
-            }
-
-            $currentModelPage = $modelPage;
-            break;
+        if ($currentModelPage === null || ! $currentModelPage->acfEditable) {
+            return false;
         }
 
-        if (empty($currentModelPage) || empty($screen['options_page']) || $screen['options_page'] !== $currentModelPage->acfEditablePageSlug) {
+        if (empty($screen['options_page']) || $screen['options_page'] !== $currentModelPage->acfEditablePageSlug) {
             return false;
         }
 
