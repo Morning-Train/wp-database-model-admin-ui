@@ -119,7 +119,9 @@ class AcfEditableHandler
         if (! empty($currentModelPage->acfSettings->extraLoadCallbacks[$field['name']])) {
             $newValue = ($currentModelPage->acfSettings->extraLoadCallbacks[$field['name']])($value, $parts[2], $currentModelPage->model);
 
-            return Helper::convertNamesToFieldKeys($newValue);
+            if (is_array($newValue)) {
+                return Helper::convertNamesToFieldKeys($newValue);
+            }
         }
         
         return $value;
@@ -141,7 +143,11 @@ class AcfEditableHandler
         }
 
         if (! empty($currentModelPage->acfSettings->extraLoadCallbacks[$prefix . $name])) {
-            return ($currentModelPage->acfSettings->extraLoadCallbacks[$prefix . $name])($value, $parts[2], $currentModelPage->model);
+            $newValue = ($currentModelPage->acfSettings->extraLoadCallbacks[$prefix . $name])($value, $parts[2], $currentModelPage->model);
+
+            if (! is_array($newValue)) {
+                return ($currentModelPage->acfSettings->extraLoadCallbacks[$prefix . $name])($value, $parts[2], $currentModelPage->model);
+            }
         }
 
         $instance = $currentModelPage->model::query()
