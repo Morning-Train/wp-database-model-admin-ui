@@ -12,16 +12,19 @@ class ModelPages
 
     /** @var ModelPage[] $modelPages */
     private static array $modelPages = [];
+    private static ?ModelPage $currentModelPage = null;
 
     public static function setupModelPages(): void
     {
+        static::setupCurrentModelPage();
+
         Hook::action('admin_menu', [AdminUiHandler::class, 'addModelMenuPages']);
         Hook::filter('set-screen-option', [AdminUiHandler::class, 'setPerPageScreenOption']);
         Hook::action('current_screen', [AdminUiHandler::class, 'addScreenOption']);
 
-        $currentModelPage = Helper::getCurrentModePageFromUrlPage();
+        $currentModelPage = static::getCurrentModelPage();
 
-        if (empty($currentModelPage)) {
+        if ($currentModelPage === null) {
             return;
         }
 
@@ -51,4 +54,26 @@ class ModelPages
         static::$modelPages[$modelPage->pageSlug] = $modelPage;
     }
 
+    public static function getCurrentModelPage(): ?ModelPage
+    {
+        return static::$currentModelPage;
+    }
+
+    private static function setupCurrentModelPage(): void
+    {
+        $page = $_GET['page'] ?? null;
+
+        if (empty($page)) {
+            return;
+        }
+
+        foreach (static::getModelPages() as $modelPage) {
+            if ($page === $modelPage->pageSlug || ! $modelPage->acfEditable || $page !== $modelPage->acfEditablePageSlug) {
+                continue;
+            }
+
+            static::$currentModelPage = $modelPage;
+            break;
+        }
+    }
 }
