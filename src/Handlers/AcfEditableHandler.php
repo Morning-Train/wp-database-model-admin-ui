@@ -31,7 +31,7 @@ class AcfEditableHandler
             'menu_title' => $title,
             'capability' => $currentModelPage->editCapability,
             'menu_slug' => $currentModelPage->acfEditablePageSlug,
-            'post_id' => 'eloquent-model_' . $currentModelPage->pageSlug . '_' . $modelId
+            'post_id' => 'eloquent-model__' . $currentModelPage->pageSlug . '__' . $modelId
         ]);
     }
 
@@ -59,8 +59,8 @@ class AcfEditableHandler
         exit();
     }
 
-    public static function handlePreLoadPostIdForAcfModel($return, $post_id) {
-        if($post_id instanceof \WP_Term){
+    public static function handlePreLoadPostIdForAcfModel($return, $postId) {
+        if($postId instanceof \WP_Term){
             return $return;
         }
 
@@ -70,16 +70,16 @@ class AcfEditableHandler
             return $return;
         }
 
-        $parts = explode('_', $post_id);
+        $parts = explode('__', $postId);
 
         if (count($parts) !== 3 || $parts[0] !== 'eloquent-model' || $parts[1] !== $currentModelPage->pageSlug) {
             return $return;
         }
 
-        return $post_id;
+        return $postId;
     }
 
-    public static function handleDecodePostIdForAcfModel($return, $post_id)
+    public static function handleDecodePostIdForAcfModel($return, $postId)
     {
         $currentModelPage = ModelPages::getCurrentModelPage();
 
@@ -87,7 +87,7 @@ class AcfEditableHandler
             return $return;
         }
 
-        $parts = explode('_', $post_id);
+        $parts = explode('__', $postId);
 
         if (count($parts) !== 3 || $parts[0] !== 'eloquent-model' || $parts[1] !== $currentModelPage->pageSlug) {
             return $return;
@@ -98,7 +98,7 @@ class AcfEditableHandler
         return $return;
     }
 
-    public static function handleLoadValueForAcfModel($value, $post_id, array $field)
+    public static function handleLoadValueForAcfModel($value, $postId, array $field)
     {
         if (! in_array($field['type'], ['repeater', 'group'], true)) {
             return $value;
@@ -110,7 +110,7 @@ class AcfEditableHandler
             return $value;
         }
 
-        $parts = explode('_', $post_id);
+        $parts = explode('__', $postId);
 
         if (count($parts) !== 3 || $parts[0] !== 'eloquent-model' || $parts[1] !== $currentModelPage->pageSlug) {
             return $value;
@@ -127,7 +127,7 @@ class AcfEditableHandler
         return $value;
     }
 
-    public static function handleLoadMetadataForAcfModel($value, $post_id, string $name, bool $hidden)
+    public static function handleLoadMetadataForAcfModel($value, $postId, string $name, bool $hidden)
     {
         $currentModelPage = ModelPages::getCurrentModelPage();
 
@@ -136,7 +136,7 @@ class AcfEditableHandler
         }
 
         $prefix = $hidden ? '_' : '';
-        $parts = explode('_', $post_id);
+        $parts = explode('__', $postId);
 
         if (count($parts) !== 3 || $parts[0] !== 'eloquent-model' || $parts[1] !== $currentModelPage->pageSlug) {
             return $value;
@@ -156,7 +156,7 @@ class AcfEditableHandler
         return $instance->{$prefix . $name} ?? '__return_null';
     }
 
-    public static function handleSaveMetadataForAcfModel($return, $post_id, string $name, $value, bool $hidden)
+    public static function handleSaveMetadataForAcfModel($return, $postId, string $name, $value, bool $hidden)
     {
         $currentModelPage = ModelPages::getCurrentModelPage();
 
@@ -164,7 +164,7 @@ class AcfEditableHandler
             return $return;
         }
 
-        $parts = explode('_', $post_id);
+        $parts = explode('__', $postId);
 
         if (count($parts) !== 3 || $parts[0] !== 'eloquent-model' || $parts[1] !== $currentModelPage->pageSlug) {
             return $return;
@@ -184,7 +184,7 @@ class AcfEditableHandler
         return true;
     }
 
-    public static function handleSaveValueForAcfModel(int|string $post_id): void
+    public static function handleSaveValueForAcfModel(int|string $postId): void
     {
         $currentModelPage = ModelPages::getCurrentModelPage();
 
@@ -192,7 +192,7 @@ class AcfEditableHandler
             return;
         }
 
-        $parts = explode('_', $post_id);
+        $parts = explode('__', $postId);
 
         if (count($parts) !== 3 || $parts[0] !== 'eloquent-model' || $parts[1] !== $currentModelPage->pageSlug) {
             return;
@@ -248,7 +248,7 @@ class AcfEditableHandler
                 $metaBox->context,
                 $metaBox->priority,
                 [
-                    'model_id' => $_GET['model_id'] ?? null,
+                    'modelId' => $_GET['model_id'] ?? null,
                     'model' => $currentModelPage->model,
                 ]
             );
