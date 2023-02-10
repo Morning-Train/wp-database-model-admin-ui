@@ -23,5 +23,8 @@
     "morningtrain/php-loader": "^0.3",
     "morningtrain/wp-view": "^0.4.1",
     "morningtrain/wp-hooks": "^0.3.2"
+  },
+  "require-dev": {
+    "laravel/pint": "^1.4"
   }
 }
