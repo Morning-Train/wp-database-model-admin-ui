@@ -4,8 +4,8 @@ namespace Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage;
 
 class AcfSettings
 {
-
     public array $extraLoadCallbacks = [];
+
     public $extraSaveCallback = null;
 
     public function withExtraLoadCallback(string $slug, callable|string $callback): self
@@ -21,5 +21,4 @@ class AcfSettings
 
         return $this;
     }
-
 }

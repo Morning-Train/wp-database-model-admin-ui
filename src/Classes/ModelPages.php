@@ -9,9 +9,9 @@ use Morningtrain\WP\Hooks\Hook;
 
 class ModelPages
 {
-
-    /** @var ModelPage[] $modelPages */
+    /** @var ModelPage[] */
     private static array $modelPages = [];
+
     private static ?ModelPage $currentModelPage = null;
 
     public static function setupModelPages(): void

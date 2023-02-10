@@ -4,9 +4,10 @@ namespace Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage;
 
 class AcfEditableMetaBox
 {
-
     public string $title;
+
     public string $context = 'normal';
+
     public string $priority = 'default';
 
     public function __construct(
@@ -50,5 +51,4 @@ class AcfEditableMetaBox
 
         return $this;
     }
-
 }

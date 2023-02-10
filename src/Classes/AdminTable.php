@@ -3,7 +3,7 @@
 namespace Morningtrain\WP\DatabaseModelAdminUi\Classes;
 
 if (! class_exists('WP_List_Table')) {
-    require_once(ABSPATH . 'wp-admin/includes/class-wp-list-table.php');
+    require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPage;
@@ -12,9 +12,10 @@ use WP_List_Table;
 
 class AdminTable extends WP_List_Table
 {
-
     private ModelPage $modelPage;
+
     private array $columns = [];
+
     private array $sortableColumns = [];
 
     public function __construct(string $slug)
@@ -45,14 +46,14 @@ class AdminTable extends WP_List_Table
         $this->_column_headers = [
             $this->get_columns(),
             [],
-            $this->get_sortable_columns()
+            $this->get_sortable_columns(),
         ];
 
         $this->items = $data;
 
         $total_items = count($this->items);
 
-        if(count($this->items) > $per_page) {
+        if (count($this->items) > $per_page) {
             $this->items = array_slice($this->items, ($this->get_pagenum() - 1) * $per_page, $per_page);
         }
 
@@ -60,14 +61,14 @@ class AdminTable extends WP_List_Table
     }
 
     /**
-     * @param object|array $item
-     * @param string $column_name
+     * @param  object|array  $item
+     * @param  string  $column_name
      */
     protected function column_default($item, $column_name): void
     {
         if (! empty($this->modelPage->columns[$column_name]) && $this->modelPage->columns[$column_name]->renderCallback !== null) {
             echo $this->modelPage->columns[$column_name]->render($item, $this->modelPage);
-        } elseif($this->modelPage->acfEditable && $this->get_primary_column() === $column_name) {
+        } elseif ($this->modelPage->acfEditable && $this->get_primary_column() === $column_name) {
             $href = admin_url('admin.php') . '?page=' . $this->modelPage->acfEditablePageSlug . '&model_id=' . $item['id'];
 
             echo '<a href="' . $href . '">' . $item[$column_name] . '</a>';
@@ -75,7 +76,7 @@ class AdminTable extends WP_List_Table
             echo $item[$column_name];
         }
 
-        if($this->get_primary_column() === $column_name) {
+        if ($this->get_primary_column() === $column_name) {
             $rowActions = array_combine(
                 array_column($this->modelPage->rowActions, 'slug'),
                 array_map(function (RowAction $rowAction) use ($item) {
@@ -94,14 +95,14 @@ class AdminTable extends WP_List_Table
 
     public function addColumns(array $columns = []): void
     {
-        foreach($columns as $id => $title) {
+        foreach ($columns as $id => $title) {
             $this->columns[$id] = $title;
         }
     }
 
     public function addSortableColumns(array $sortableColumns = []): void
     {
-        foreach($sortableColumns as $key) {
+        foreach ($sortableColumns as $key) {
             $this->sortableColumns[$key] = [$key, 'asc'];
         }
     }
@@ -116,5 +117,4 @@ class AdminTable extends WP_List_Table
 
         return $this->get_items_per_page($screen->get_option('per_page', 'option'), 20);
     }
-
 }

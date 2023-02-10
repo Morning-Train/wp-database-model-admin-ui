@@ -4,7 +4,6 @@ namespace Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage;
 
 class RowAction
 {
-
     public function __construct(
         public string $slug,
         public $renderCallback
@@ -15,5 +14,4 @@ class RowAction
     {
         return ($this->renderCallback)($item, $modelPage);
     }
-
 }

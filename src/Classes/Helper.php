@@ -4,7 +4,6 @@ namespace Morningtrain\WP\DatabaseModelAdminUi\Classes;
 
 class Helper
 {
-
     private static array $eloquentModelsDirs;
 
     public static function setEloquentModelsDirs(array|string $eloquentModelsDirs): void
@@ -29,6 +28,7 @@ class Helper
                 $value = static::getAcfValuesWithNames($value);
 
                 $newArray[$field['name']] = $value;
+
                 continue;
             }
 
@@ -40,9 +40,9 @@ class Helper
                 }
 
                 $newArray[$field['name']] = $newValue;
+
                 continue;
             }
-
 
             $newArray[$field['name']] = $value;
         }
@@ -61,6 +61,7 @@ class Helper
                 foreach ($value as $_key => $_value) {
                     if (is_array($_value)) {
                         $newValue[] = static::convertNamesToFieldKeys($_value);
+
                         continue;
                     }
 
@@ -74,11 +75,13 @@ class Helper
                 }
 
                 $newArray[] = $newValue;
+
                 continue;
             }
 
             if (is_numeric($key)) {
                 $newArray[$key] = $value;
+
                 continue;
             }
 
@@ -88,5 +91,4 @@ class Helper
 
         return $newArray;
     }
-
 }

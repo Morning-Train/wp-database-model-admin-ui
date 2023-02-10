@@ -11,7 +11,6 @@ use Morningtrain\WP\View\View;
 
 class AdminUiMenuService
 {
-
     public static function displayMenuPage(): void
     {
         $page = $_GET['page'] ?? null;
@@ -118,5 +117,4 @@ class AdminUiMenuService
 
         return $data;
     }
-
 }

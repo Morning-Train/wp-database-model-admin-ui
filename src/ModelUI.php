@@ -16,7 +16,6 @@ use Morningtrain\WP\View\View;
 
 class ModelUI
 {
-
     public static function setup(string|array $eloquentModelsDir): void
     {
         Helper::setEloquentModelsDirs($eloquentModelsDir);
@@ -68,5 +67,4 @@ class ModelUI
             acf_register_location_type(AcfEloquentModelLocation::class);
         });
     }
-
 }

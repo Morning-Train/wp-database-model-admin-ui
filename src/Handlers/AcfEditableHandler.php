@@ -31,7 +31,7 @@ class AcfEditableHandler
             'menu_title' => $title,
             'capability' => $currentModelPage->editCapability,
             'menu_slug' => $currentModelPage->acfEditablePageSlug,
-            'post_id' => 'eloquent-model__' . $currentModelPage->pageSlug . '__' . $modelId
+            'post_id' => 'eloquent-model__' . $currentModelPage->pageSlug . '__' . $modelId,
         ]);
     }
 
@@ -59,8 +59,9 @@ class AcfEditableHandler
         exit();
     }
 
-    public static function handlePreLoadPostIdForAcfModel($return, $postId) {
-        if($postId instanceof \WP_Term){
+    public static function handlePreLoadPostIdForAcfModel($return, $postId)
+    {
+        if ($postId instanceof \WP_Term) {
             return $return;
         }
 
@@ -124,7 +125,7 @@ class AcfEditableHandler
                 return $newValue;
             }
         }
-        
+
         return $value;
     }
 
@@ -255,5 +256,4 @@ class AcfEditableHandler
             );
         }
     }
-
 }

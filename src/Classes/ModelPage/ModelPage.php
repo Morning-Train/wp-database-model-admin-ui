@@ -8,38 +8,49 @@ use Morningtrain\WP\DatabaseModelAdminUi\ModelUI;
 
 class ModelPage
 {
-
     public array $columns = [];
+
     public array $tableColumns = [];
+
     public array $searchableColumns = [];
+
     public array $sortableColumns = [];
+
     public array $excludeColumns = [];
 
     public ?AcfSettings $acfSettings = null;
-    /** @var AcfEditableMetaBox[] $metaBoxes */
+
+    /** @var AcfEditableMetaBox[] */
     public array $metaBoxes = [];
 
     public array $rowActions = [];
 
     public bool $acfEditable = false;
+
     public bool $removable = false;
 
     public string $pageTitle;
+
     public string $menuTitle;
+
     public string $listCapability = 'manage_options';
+
     public string $editCapability = 'manage_options';
+
     public string $iconUrl = '';
+
     public ?int $position = null;
+
     public string $searchButtonText;
 
     public string $acfEditablePageSlug;
+
     public string $primaryColumn;
 
     public function __construct(
         public string $pageSlug,
         public string $model
-    )
-    {
+    ) {
         $this->pageTitle = __('Admin table');
         $this->menuTitle = __('Admin table');
         $this->searchButtonText = __('Search');
@@ -221,9 +232,8 @@ class ModelPage
             function (array $item, ModelPage $modelPage) {
                 $href = admin_url('admin.php') . '?page=' . $modelPage->pageSlug . '&model_id=' . $item['id'] . '&action=delete';
 
-                return '<a href="' . $href . '" onclick="return confirm(\'' .  __('Are you sure?') . '\')">' . __('Delete') . '</a>';
+                return '<a href="' . $href . '" onclick="return confirm(\'' . __('Are you sure?') . '\')">' . __('Delete') . '</a>';
             }
         );
     }
-
 }

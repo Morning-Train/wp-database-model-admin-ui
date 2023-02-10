@@ -8,7 +8,6 @@ use WP_Screen;
 
 class AdminUiHandler
 {
-
     public static function addModelMenuPages(): void
     {
         foreach (ModelPages::getModelPages() as $modelPage) {
@@ -67,5 +66,4 @@ class AdminUiHandler
         header('Location: ' . $url);
         exit();
     }
-
 }
