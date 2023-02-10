@@ -65,6 +65,11 @@ class Helper
                     }
 
                     $_field = acf_get_field($_key);
+
+                    if (empty($_field)) {
+                        continue;
+                    }
+
                     $newValue[$_field['key']] = $_value;
                 }
 

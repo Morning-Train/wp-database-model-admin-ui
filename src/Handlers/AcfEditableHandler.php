@@ -120,7 +120,8 @@ class AcfEditableHandler
             $newValue = ($currentModelPage->acfSettings->extraLoadCallbacks[$field['name']])($value, $parts[2], $currentModelPage->model);
 
             if (is_array($newValue)) {
-                return Helper::convertNamesToFieldKeys($newValue);
+                //return Helper::convertNamesToFieldKeys($newValue);
+                return $newValue;
             }
         }
         
