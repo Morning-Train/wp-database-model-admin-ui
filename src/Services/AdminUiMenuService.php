@@ -13,6 +13,7 @@ class AdminUiMenuService
 {
     public static function displayMenuPage(): void
     {
+        global $wp_meta_boxes;
         $page = $_GET['page'] ?? null;
         $modelPage = ModelPages::getModelPages()[$page];
 
@@ -24,6 +25,7 @@ class AdminUiMenuService
                 'wpdbmodeladminui::admin-ui-form',
             ],
             [
+                'hasSideMetaBoxes' => ! empty($wp_meta_boxes['toplevel_page_' . $_GET['page']]['side']),
                 'pageTitle' => $modelPage->pageTitle,
                 'page' => $modelPage->pageSlug,
                 'useSearchBox' => ! empty($modelPage->searchableColumns),

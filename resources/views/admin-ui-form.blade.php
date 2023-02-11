@@ -1,5 +1,6 @@
 @php
     /**
+     * @var bool $hasSideMetaBoxes
      * @var string $pageTitle
      * @var int $page
      * @var bool $useSearchBox
@@ -8,18 +9,56 @@
      * @var \Morningtrain\WP\DatabaseModelAdminUi\Classes\AdminTable $adminTable
      */
 @endphp
-<div class="wrap">
+<style>
+    .model-ui-wrap .handle-actions {
+        display: none;
+    }
+    .model-ui-wrap .postbox .hndle {
+        cursor: default;
+    }
+    .model-ui-wrap form#post {
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="wrap model-ui-wrap">
+
     <h1 class="wp-heading-inline">{{ $pageTitle }}</h1>
 
-    <hr class="wp-header-end">
+    <div id="poststuff" class="poststuff">
 
-    <form method="get">
-        <input type="hidden" name="page" value="{{ $page }}"/>
+        <div id="post-body" class="metabox-holder columns-{{ $hasSideMetaBoxes ? '2' : '1' }}">
 
-        @if($useSearchBox)
-            {!! $adminTable->search_box($searchBoxText, $searchBoxInputId) !!}
-        @endif
+            @if($hasSideMetaBoxes)
+                <div id="postbox-container-1" class="postbox-container">
 
-        {!! $adminTable->display() !!}
-    </form>
+                    @php(do_meta_boxes('toplevel_page_' . $_GET ['page'], 'side', null))
+
+                </div>
+            @endif
+
+            <div id="postbox-container-2" class="postbox-container">
+
+                <form id="post" method="post" name="post">
+
+                    <input type="hidden" name="page" value="{{ $page }}"/>
+
+                    @if($useSearchBox)
+                        {!! $adminTable->search_box($searchBoxText, $searchBoxInputId) !!}
+                    @endif
+
+                    {!! $adminTable->display() !!}
+
+                </form>
+
+                @php(do_meta_boxes('toplevel_page_' . $_GET ['page'], 'normal', null))
+
+            </div>
+
+        </div>
+
+        <br class="clear">
+
+    </div>
+
 </div>
