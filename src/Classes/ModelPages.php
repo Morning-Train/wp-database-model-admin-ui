@@ -21,6 +21,7 @@ class ModelPages
         Hook::action('admin_menu', [AdminUiHandler::class, 'addModelMenuPages']);
         Hook::filter('set-screen-option', [AdminUiHandler::class, 'setPerPageScreenOption']);
         Hook::action('current_screen', [AdminUiHandler::class, 'addScreenOption']);
+        Hook::action('current_screen', [AdminUiHandler::class, 'addMetaBoxes']);
 
         $currentModelPage = static::getCurrentModelPage();
 
@@ -38,7 +39,6 @@ class ModelPages
             Hook::filter('acf/pre_update_metadata', [AcfEditableHandler::class, 'handleSaveMetadataForAcfModel']);
             Hook::action('acf/save_post', [AcfEditableHandler::class, 'handleSaveValueForAcfModel']);
             Hook::filter('parent_file', [AcfEditableHandler::class, 'fixSelectedAdminMenuForAcfEditable']);
-            Hook::action('acf/admin_head', [AcfEditableHandler::class, 'addMetaBoxes']);
         }
 
         if ($currentModelPage->removable) {
@@ -70,12 +70,15 @@ class ModelPages
         }
 
         foreach (static::getModelPages() as $modelPage) {
-            if ($page === $modelPage->pageSlug || ! $modelPage->acfEditable || $page !== $modelPage->acfEditablePageSlug) {
-                continue;
+            if ($page === $modelPage->pageSlug) {
+                static::$currentModelPage = $modelPage;
+                break;
             }
 
-            static::$currentModelPage = $modelPage;
-            break;
+            if ($modelPage->acfEditable && $page === $modelPage->acfEditablePageSlug) {
+                static::$currentModelPage = $modelPage;
+                break;
+            }
         }
     }
 }
