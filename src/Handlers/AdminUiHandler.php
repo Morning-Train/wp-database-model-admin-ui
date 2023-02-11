@@ -84,7 +84,7 @@ class AdminUiHandler
                 $metaBox->context,
                 $metaBox->priority,
                 [
-                    'modelId' => $_GET['model_id'] ?? null,
+                    'modelId' => ! empty($_GET['model_id']) ? (int) $_GET['model_id'] : null,
                     'model' => $currentModelPage->model,
                 ]
             );
