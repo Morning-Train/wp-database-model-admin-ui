@@ -6,8 +6,8 @@ use Morningtrain\PHPLoader\Loader;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\AcfEloquentModelLocation;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\Helper;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPage;
-use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\AcfEditableMetaBox;
-use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\AcfSettings;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\MetaBox;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\AcfEditPage;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\Column;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\RowAction;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPages;
@@ -47,14 +47,14 @@ class ModelUI
         return new RowAction($slug, $renderCallback);
     }
 
-    public static function acfSettings(): AcfSettings
+    public static function acfEditPage(): AcfEditPage
     {
-        return new AcfSettings();
+        return new AcfEditPage();
     }
 
-    public static function acfEditableMetaBox(string $slug, callable|string $renderCallback): AcfEditableMetaBox
+    public static function metaBox(string $slug, callable|string $renderCallback): MetaBox
     {
-        return new AcfEditableMetaBox($slug, $renderCallback);
+        return new MetaBox($slug, $renderCallback);
     }
 
     private static function setupAcf(): void
