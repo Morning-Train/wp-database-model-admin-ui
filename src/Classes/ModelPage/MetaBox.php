@@ -2,13 +2,14 @@
 
 namespace Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage;
 
-class AcfEditableMetaBox
+use Morningtrain\WP\DatabaseModelAdminUi\Enums\MetaBoxPage;
+
+class MetaBox
 {
     public string $title;
-
     public string $context = 'normal';
-
     public string $priority = 'default';
+    public string $onPage = MetaBoxPage::ADMIN_TABLE;
 
     public function __construct(
         public string $slug,
@@ -20,13 +21,6 @@ class AcfEditableMetaBox
     public function withTitle(string $title): self
     {
         $this->title = $title;
-
-        return $this;
-    }
-
-    public function withSideContext(): self
-    {
-        $this->context = 'side';
 
         return $this;
     }
@@ -48,6 +42,20 @@ class AcfEditableMetaBox
     public function withLowPriority(): self
     {
         $this->priority = 'low';
+
+        return $this;
+    }
+
+    public function onSideContext(): self
+    {
+        $this->context = 'side';
+
+        return $this;
+    }
+
+    public function onAcfEditPage(): self
+    {
+        $this->onPage = MetaBoxPage::ACF_EDIT;
 
         return $this;
     }
