@@ -8,43 +8,28 @@ use Morningtrain\WP\DatabaseModelAdminUi\ModelUI;
 
 class ModelPage
 {
-    public array $columns = [];
-
-    public array $tableColumns = [];
-
-    public array $searchableColumns = [];
-
-    public array $sortableColumns = [];
-
-    public array $excludeColumns = [];
-
-    public ?AcfSettings $acfSettings = null;
-
-    /** @var AcfEditableMetaBox[] */
-    public array $metaBoxes = [];
-
-    public array $rowActions = [];
-
     public bool $acfEditable = false;
-
     public bool $removable = false;
+    public ?string $acfEditablePageSlug = null;
+    public ?string $pageScreen = null;
+    public ?string $acfEditPageScreen = null;
+    public array $columns = [];
+    public array $tableColumns = [];
+    public array $searchableColumns = [];
+    public array $sortableColumns = [];
+    public array $excludeColumns = [];
+    public ?AcfEditPage $acfEditPage = null;
 
+    /** @var MetaBox[] */
+    public array $metaBoxes = [];
+    public array $rowActions = [];
     public string $pageTitle;
-
     public string $menuTitle;
-
     public string $listCapability = 'manage_options';
-
     public string $editCapability = 'manage_options';
-
     public string $iconUrl = '';
-
     public ?int $position = null;
-
     public string $searchButtonText;
-
-    public string $acfEditablePageSlug;
-
     public string $primaryColumn;
 
     public function __construct(
@@ -54,8 +39,6 @@ class ModelPage
         $this->pageTitle = __('Admin table');
         $this->menuTitle = __('Admin table');
         $this->searchButtonText = __('Search');
-
-        $this->acfEditablePageSlug = 'edit_' . $this->pageSlug;
     }
 
     public function register(): void
@@ -64,6 +47,7 @@ class ModelPage
             return;
         }
 
+        $this->setupScreens();
         $this->checkForEditRowAction();
         $this->checkForDeleteRowAction();
 
@@ -107,17 +91,18 @@ class ModelPage
         return $this;
     }
 
-    public function withAcfSettings(AcfSettings $modelPageAcf): self
+    public function withAcfEditPage(AcfEditPage $acfEditPage): self
     {
         $this->acfEditable = true;
-        $this->acfSettings = $modelPageAcf;
+        $this->acfEditablePageSlug = 'edit_' . $this->pageSlug;
+        $this->acfEditPage = $acfEditPage;
 
         return $this;
     }
 
-    public function withAcfEditableMetaBox(AcfEditableMetaBox $acfEditableMetaBox): self
+    public function withMetaBox(MetaBox $metaBox): self
     {
-        $this->metaBoxes[$acfEditableMetaBox->slug] = $acfEditableMetaBox;
+        $this->metaBoxes[$metaBox->slug] = $metaBox;
 
         return $this;
     }
@@ -125,13 +110,6 @@ class ModelPage
     public function makeRemovable(): self
     {
         $this->removable = true;
-
-        return $this;
-    }
-
-    public function makeAcfEditable(): self
-    {
-        $this->acfEditable = true;
 
         return $this;
     }
@@ -203,6 +181,15 @@ class ModelPage
         $this->primaryColumn = array_keys($this->tableColumns)[0];
 
         return true;
+    }
+
+    private function setupScreens(): void
+    {
+        $this->pageScreen = 'toplevel_page_' . $this->pageSlug;
+
+        if ($this->acfEditable) {
+            $this->acfEditPageScreen = 'admin_page_' . $this->acfEditablePageSlug;
+        }
     }
 
     private function checkForEditRowAction(): void
