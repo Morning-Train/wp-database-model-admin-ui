@@ -117,8 +117,8 @@ class AcfEditableHandler
             return $value;
         }
 
-        if (! empty($currentModelPage->acfSettings->extraLoadCallbacks[$field['name']])) {
-            $newValue = ($currentModelPage->acfSettings->extraLoadCallbacks[$field['name']])($value, $parts[2], $currentModelPage->model);
+        if (! empty($currentModelPage->acfEditPage->extraLoadCallbacks[$field['name']])) {
+            $newValue = ($currentModelPage->acfEditPage->extraLoadCallbacks[$field['name']])($value, $parts[2], $currentModelPage->model);
 
             if (is_array($newValue)) {
                 //return Helper::convertNamesToFieldKeys($newValue);
@@ -144,11 +144,11 @@ class AcfEditableHandler
             return $value;
         }
 
-        if (! empty($currentModelPage->acfSettings->extraLoadCallbacks[$prefix . $name])) {
-            $newValue = ($currentModelPage->acfSettings->extraLoadCallbacks[$prefix . $name])($value, $parts[2], $currentModelPage->model);
+        if (! empty($currentModelPage->acfEditPage->extraLoadCallbacks[$prefix . $name])) {
+            $newValue = ($currentModelPage->acfEditPage->extraLoadCallbacks[$prefix . $name])($value, $parts[2], $currentModelPage->model);
 
             if (! is_array($newValue)) {
-                return ($currentModelPage->acfSettings->extraLoadCallbacks[$prefix . $name])($value, $parts[2], $currentModelPage->model);
+                return ($currentModelPage->acfEditPage->extraLoadCallbacks[$prefix . $name])($value, $parts[2], $currentModelPage->model);
             }
         }
 
@@ -200,8 +200,8 @@ class AcfEditableHandler
             return;
         }
 
-        if ($currentModelPage->acfSettings !== null && $currentModelPage->acfSettings->extraSaveCallback !== null) {
-            ($currentModelPage->acfSettings->extraSaveCallback)(
+        if ($currentModelPage->acfEditPage !== null && $currentModelPage->acfEditPage->extraSaveCallback !== null) {
+            ($currentModelPage->acfEditPage->extraSaveCallback)(
                 $parts[2],
                 $currentModelPage->model,
                 Helper::getAcfValuesWithNames($_POST['acf'])
@@ -223,37 +223,5 @@ class AcfEditableHandler
         }
 
         return $file;
-    }
-
-    public static function addMetaBoxes(): void
-    {
-        $currentModelPage = ModelPages::getCurrentModelPage();
-
-        if ($currentModelPage === null || empty($currentModelPage->metaBoxes)) {
-            return;
-        }
-
-        $currentScreen = get_current_screen();
-
-        if ($currentScreen === null || $currentScreen->id !== 'admin_page_' . $currentModelPage->acfEditablePageSlug) {
-            return;
-        }
-
-        foreach ($currentModelPage->metaBoxes as $metaBox) {
-            \add_meta_box(
-                $metaBox->slug,
-                $metaBox->title,
-                function ($post, $metaBoxData) use ($metaBox) {
-                    ($metaBox->renderCallback)(...$metaBoxData['args']);
-                },
-                'acf_options_page',
-                $metaBox->context,
-                $metaBox->priority,
-                [
-                    'modelId' => $_GET['model_id'] ?? null,
-                    'model' => $currentModelPage->model,
-                ]
-            );
-        }
     }
 }
