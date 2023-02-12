@@ -11,7 +11,6 @@ class ModelPages
 {
     /** @var ModelPage[] */
     private static array $modelPages = [];
-
     private static ?ModelPage $currentModelPage = null;
 
     public static function setupModelPages(): void

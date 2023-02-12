@@ -57,6 +57,11 @@ class ModelUI
         return new MetaBox($slug, $renderCallback);
     }
 
+    public static function getCurrentModelPage(): ?ModelPage
+    {
+        return ModelPages::getCurrentModelPage();
+    }
+
     private static function setupAcf(): void
     {
         if (! class_exists('ACF')) {

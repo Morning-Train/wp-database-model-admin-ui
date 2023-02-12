@@ -13,9 +13,7 @@ use WP_List_Table;
 class AdminTable extends WP_List_Table
 {
     private ModelPage $modelPage;
-
     private array $columns = [];
-
     private array $sortableColumns = [];
 
     public function __construct(string $slug)
