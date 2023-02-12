@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Schema;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\Helper;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPages;
 
-class AcfEditableHandler
+class AcfEditPageHandler
 {
     public static function addAcfEditMenuPage(): void
     {

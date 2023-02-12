@@ -5,7 +5,7 @@ namespace Morningtrain\WP\DatabaseModelAdminUi\Handlers;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPages;
 use Morningtrain\WP\DatabaseModelAdminUi\Services\ViewPageMenuService;
 
-class ReadableHandler
+class ViewPageHandler
 {
     public static function addReadableMenuPage(): void
     {
