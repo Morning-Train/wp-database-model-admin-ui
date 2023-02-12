@@ -29,8 +29,8 @@ class AcfEditableHandler
             'parent_slug' => 'options-writing.php', // This will hide it from the admin menu
             'page_title' => $title,
             'menu_title' => $title,
-            'capability' => $currentModelPage->editCapability,
-            'menu_slug' => $currentModelPage->acfEditablePageSlug,
+            'capability' => $currentModelPage->acfEditPage->capability,
+            'menu_slug' => $currentModelPage->acfEditPage->pageSlug,
             'post_id' => 'eloquent-model__' . $currentModelPage->pageSlug . '__' . $modelId,
         ]);
     }
@@ -218,7 +218,7 @@ class AcfEditableHandler
             return $file;
         }
 
-        if ($plugin_page === $currentModelPage->acfEditablePageSlug) {
+        if ($plugin_page === $currentModelPage->acfEditPage->pageSlug) {
             $plugin_page = $currentModelPage->pageSlug;
         }
 

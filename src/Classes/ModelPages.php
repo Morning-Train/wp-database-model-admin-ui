@@ -34,7 +34,7 @@ class ModelPages
             Hook::filter('parent_file', [ReadableHandler::class, 'fixSelectedAdminMenuForViewPage']);
         }
 
-        if ($currentModelPage->acfEditable) {
+        if ($currentModelPage->acfEditPage !== null) {
             Hook::action('admin_menu', [AcfEditableHandler::class, 'addAcfEditMenuPage']);
             Hook::action('admin_init', [AcfEditableHandler::class, 'checkForNonExistingAcfEditableModel']);
             Hook::filter('acf/pre_load_post_id', [AcfEditableHandler::class, 'handlePreLoadPostIdForAcfModel']);
@@ -85,7 +85,7 @@ class ModelPages
                 break;
             }
 
-            if ($modelPage->acfEditable && $page === $modelPage->acfEditablePageSlug) {
+            if ($modelPage->acfEditPage !== null && $page === $modelPage->acfEditPage->pageSlug) {
                 static::$currentModelPage = $modelPage;
                 break;
             }

@@ -60,7 +60,7 @@ class AdminUiHandler
         }
 
         foreach ($currentModelPage->metaBoxes as $metaBox) {
-            if ($metaBox->onPage === MetaBoxPage::ACF_EDIT && $currentScreen->id !== $currentModelPage->acfEditPageScreen) {
+            if ($metaBox->onPage === MetaBoxPage::ACF_EDIT && $currentScreen->id !== $currentModelPage->acfEditPage->pageSlug) {
                 continue;
             }
 

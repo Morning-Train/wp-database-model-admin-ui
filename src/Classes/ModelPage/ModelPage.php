@@ -8,11 +8,8 @@ use Morningtrain\WP\DatabaseModelAdminUi\ModelUI;
 
 class ModelPage
 {
-    public bool $acfEditable = false;
     public bool $removable = false;
-    public ?string $acfEditablePageSlug = null;
     public ?string $pageScreen = null;
-    public ?string $acfEditPageScreen = null;
     public array $columns = [];
     public array $tableColumns = [];
     public array $searchableColumns = [];
@@ -37,6 +34,8 @@ class ModelPage
         public string $pageSlug,
         public string $model
     ) {
+        $this->pageScreen = 'toplevel_page_' . $this->pageSlug;
+
         $this->pageTitle = __('Admin table');
         $this->menuTitle = __('Admin table');
         $this->searchButtonText = __('Search');
@@ -56,10 +55,9 @@ class ModelPage
         return $this;
     }
 
-    public function withCapability(string $capability, ?string $editCapability = null): self
+    public function withCapability(string $capability): self
     {
         $this->listCapability = $capability;
-        $this->editCapability = $editCapability ?? $capability;
 
         return $this;
     }
@@ -118,16 +116,15 @@ class ModelPage
     public function withViewPage(ViewPage $viewPage): self
     {
         $this->viewPage = $viewPage;
-        $this->viewPage->setPageSlug('view_' . $this->pageSlug);
+        $this->viewPage->setPageSlugAndCapability('view_' . $this->pageSlug, $this->listCapability);
 
         return $this;
     }
 
     public function withAcfEditPage(AcfEditPage $acfEditPage): self
     {
-        $this->acfEditable = true;
-        $this->acfEditablePageSlug = 'edit_' . $this->pageSlug;
         $this->acfEditPage = $acfEditPage;
+        $this->acfEditPage->setPageSlugAndCapability('edit_' . $this->pageSlug, $this->listCapability);
 
         return $this;
     }
@@ -159,7 +156,6 @@ class ModelPage
             return;
         }
 
-        $this->setupScreens();
         $this->checkForViewRowAction();
         $this->checkForEditRowAction();
         $this->checkForDeleteRowAction();
@@ -193,15 +189,6 @@ class ModelPage
         return true;
     }
 
-    private function setupScreens(): void
-    {
-        $this->pageScreen = 'toplevel_page_' . $this->pageSlug;
-
-        if ($this->acfEditable) {
-            $this->acfEditPageScreen = 'admin_page_' . $this->acfEditablePageSlug;
-        }
-    }
-
     private function checkForViewRowAction(): void
     {
         if (empty($this->viewPage) || ! empty($this->rowActions['view'])) {
@@ -220,14 +207,14 @@ class ModelPage
 
     private function checkForEditRowAction(): void
     {
-        if (! $this->acfEditable || ! empty($this->rowActions['edit'])) {
+        if ($this->acfEditPage === null || ! empty($this->rowActions['edit'])) {
             return;
         }
 
         $this->rowActions[] = ModelUI::rowAction(
             'edit',
             function (array $item, ModelPage $modelPage) {
-                $href = admin_url('admin.php') . '?page=' . $modelPage->acfEditablePageSlug . '&model_id=' . $item['id'];
+                $href = admin_url('admin.php') . '?page=' . $modelPage->acfEditPage->pageSlug . '&model_id=' . $item['id'];
 
                 return '<a href="' . $href . '">' . __('Edit') . '</a>';
             }

@@ -66,8 +66,12 @@ class AdminTable extends WP_List_Table
     {
         if (! empty($this->modelPage->columns[$column_name]) && $this->modelPage->columns[$column_name]->renderCallback !== null) {
             echo $this->modelPage->columns[$column_name]->render($item, $this->modelPage);
-        } elseif ($this->modelPage->acfEditable && $this->get_primary_column() === $column_name) {
-            $href = admin_url('admin.php') . '?page=' . $this->modelPage->acfEditablePageSlug . '&model_id=' . $item['id'];
+        } elseif ($this->modelPage->viewPage !== null && $this->get_primary_column() === $column_name) {
+            $href = admin_url('admin.php') . '?page=' . $this->modelPage->viewPage->pageSlug . '&model_id=' . $item['id'];
+
+            echo '<a href="' . $href . '">' . $item[$column_name] . '</a>';
+        } elseif ($this->modelPage->acfEditPage !== null && $this->get_primary_column() === $column_name) {
+            $href = admin_url('admin.php') . '?page=' . $this->modelPage->acfEditPage->pageSlug . '&model_id=' . $item['id'];
 
             echo '<a href="' . $href . '">' . $item[$column_name] . '</a>';
         } else {
