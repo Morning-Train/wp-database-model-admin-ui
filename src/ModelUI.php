@@ -23,7 +23,7 @@ class ModelUI
         Loader::create($eloquentModelsDir)
             ->callStatic('setupAdminUi');
 
-        View::addNamespace('wpdbmodeladminui', dirname(__DIR__) . '/resources/views');
+        View::addNamespace('wpdbmodeladminui', dirname(__DIR__) . '/views');
 
         static::setupAcf();
 
