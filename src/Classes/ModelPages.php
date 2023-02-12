@@ -3,9 +3,9 @@
 namespace Morningtrain\WP\DatabaseModelAdminUi\Classes;
 
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPage;
-use Morningtrain\WP\DatabaseModelAdminUi\Handlers\AcfEditableHandler;
+use Morningtrain\WP\DatabaseModelAdminUi\Handlers\AcfEditPageHandler;
 use Morningtrain\WP\DatabaseModelAdminUi\Handlers\AdminUiHandler;
-use Morningtrain\WP\DatabaseModelAdminUi\Handlers\ReadableHandler;
+use Morningtrain\WP\DatabaseModelAdminUi\Handlers\ViewPageHandler;
 use Morningtrain\WP\Hooks\Hook;
 
 class ModelPages
@@ -30,20 +30,20 @@ class ModelPages
         }
 
         if ($currentModelPage->viewPage !== null) {
-            Hook::action('admin_menu', [ReadableHandler::class, 'addReadableMenuPage']);
-            Hook::filter('parent_file', [ReadableHandler::class, 'fixSelectedAdminMenuForViewPage']);
+            Hook::action('admin_menu', [ViewPageHandler::class, 'addReadableMenuPage']);
+            Hook::filter('parent_file', [ViewPageHandler::class, 'fixSelectedAdminMenuForViewPage']);
         }
 
         if ($currentModelPage->acfEditPage !== null) {
-            Hook::action('admin_menu', [AcfEditableHandler::class, 'addAcfEditMenuPage']);
-            Hook::action('admin_init', [AcfEditableHandler::class, 'checkForNonExistingAcfEditableModel']);
-            Hook::filter('acf/pre_load_post_id', [AcfEditableHandler::class, 'handlePreLoadPostIdForAcfModel']);
-            Hook::filter('acf/decode_post_id', [AcfEditableHandler::class, 'handleDecodePostIdForAcfModel']);
-            Hook::action('acf/load_value', [AcfEditableHandler::class, 'handleLoadValueForAcfModel']);
-            Hook::filter('acf/pre_load_metadata', [AcfEditableHandler::class, 'handleLoadMetadataForAcfModel']);
-            Hook::filter('acf/pre_update_metadata', [AcfEditableHandler::class, 'handleSaveMetadataForAcfModel']);
-            Hook::action('acf/save_post', [AcfEditableHandler::class, 'handleSaveValueForAcfModel']);
-            Hook::filter('parent_file', [AcfEditableHandler::class, 'fixSelectedAdminMenuForAcfEditable']);
+            Hook::action('admin_menu', [AcfEditPageHandler::class, 'addAcfEditMenuPage']);
+            Hook::action('admin_init', [AcfEditPageHandler::class, 'checkForNonExistingAcfEditableModel']);
+            Hook::filter('acf/pre_load_post_id', [AcfEditPageHandler::class, 'handlePreLoadPostIdForAcfModel']);
+            Hook::filter('acf/decode_post_id', [AcfEditPageHandler::class, 'handleDecodePostIdForAcfModel']);
+            Hook::action('acf/load_value', [AcfEditPageHandler::class, 'handleLoadValueForAcfModel']);
+            Hook::filter('acf/pre_load_metadata', [AcfEditPageHandler::class, 'handleLoadMetadataForAcfModel']);
+            Hook::filter('acf/pre_update_metadata', [AcfEditPageHandler::class, 'handleSaveMetadataForAcfModel']);
+            Hook::action('acf/save_post', [AcfEditPageHandler::class, 'handleSaveValueForAcfModel']);
+            Hook::filter('parent_file', [AcfEditPageHandler::class, 'fixSelectedAdminMenuForAcfEditable']);
         }
 
         if ($currentModelPage->removable) {

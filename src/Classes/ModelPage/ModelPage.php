@@ -23,8 +23,7 @@ class ModelPage
     public array $rowActions = [];
     public string $pageTitle;
     public string $menuTitle;
-    public string $listCapability = 'manage_options';
-    public string $editCapability = 'manage_options';
+    public string $capability = 'manage_options';
     public string $iconUrl = '';
     public ?int $position = null;
     public string $searchButtonText;
@@ -57,7 +56,7 @@ class ModelPage
 
     public function withCapability(string $capability): self
     {
-        $this->listCapability = $capability;
+        $this->capability = $capability;
 
         return $this;
     }
@@ -116,7 +115,7 @@ class ModelPage
     public function withViewPage(ViewPage $viewPage): self
     {
         $this->viewPage = $viewPage;
-        $this->viewPage->setPageSlugAndCapability('view_' . $this->pageSlug, $this->listCapability);
+        $this->viewPage->setPageSlugAndCapability('view_' . $this->pageSlug, $this->capability);
 
         return $this;
     }
@@ -124,7 +123,7 @@ class ModelPage
     public function withAcfEditPage(AcfEditPage $acfEditPage): self
     {
         $this->acfEditPage = $acfEditPage;
-        $this->acfEditPage->setPageSlugAndCapability('edit_' . $this->pageSlug, $this->listCapability);
+        $this->acfEditPage->setPageSlugAndCapability('edit_' . $this->pageSlug, $this->capability);
 
         return $this;
     }

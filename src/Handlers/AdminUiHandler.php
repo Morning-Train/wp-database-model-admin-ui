@@ -15,7 +15,7 @@ class AdminUiHandler
             add_menu_page(
                 $modelPage->pageTitle,
                 $modelPage->menuTitle,
-                $modelPage->listCapability,
+                $modelPage->capability,
                 $modelPage->pageSlug,
                 [AdminUiMenuService::class, 'displayMenuPage'],
                 $modelPage->iconUrl,
