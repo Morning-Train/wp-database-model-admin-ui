@@ -1,4 +1,4 @@
 /vendor
 /.idea
 auth.json
-/resources/views/_cache
+/views/_cache
