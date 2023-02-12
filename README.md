@@ -162,8 +162,6 @@ The RowAction can be customized, with different things. To se a list of all the 
 ->withRowActions(array)
 ```
 
----
-
 ##### _With ACF Edit Page_
 Setup an ACF edit page, for the Admin Table.  
 Default: `null`
@@ -175,6 +173,17 @@ The AcfEditPage can be customized, with different things. To se a list of all th
 ->withAcfEditPage()
 ```
 
+##### _With View Page_
+Setup an view page, for the Admin Table.  
+Default: `null`
+
+This one takes an instance of the `ViewPage` class.  
+The `ViewPage` can be customized, with different things. To se a list of all the settings, see [ViewPage](#viewpage).
+
+```php
+->withViewPage()
+```
+
 ##### _Meta Box_
 Render a meta box.  
 Default: `null`
@@ -183,7 +192,7 @@ This one takes an instance of the `MetaBox` class.
 The `MetaBox` can be customized, with different things. To se a list of all the settings, see [MetaBox](#metabox).
 
 ```php
-->withAcfEditPage()
+->withMetaBox()
 ```
 
 ##### _Without Columns_
@@ -193,7 +202,15 @@ Default: `[]`
 Each item in the array, is the slug on the column.
 
 ```php
-->withoutColumns([])
+->withoutColumns(array)
+```
+
+##### _Parent Slug_
+Sets the value as parent slug, for the Model Page.  
+Default: `null`
+
+```php
+->makeSubMenu(string)
 ```
 
 ##### _Removable_
@@ -217,13 +234,15 @@ Sets the value to the column title.
 Default: `slug, with first letter uppercase`
 
 ```php
-->withTitle(title)
+->withTitle(string)
 ```
 
 ##### _Render_
 Render the `callback|string` in each row, for the specific column.  
 Default: `output the value`
-Parameters: `array $item`, `ModelPage $modelPage`
+Parameters in callback:
+- `array $item`
+- `ModelPage $modelPage`
 
 ```php
 ->withRender(callback|string)
@@ -245,27 +264,6 @@ Default: `false`
 ->makeSortable()
 ```
 
-[//]: # (##### _ACF Editable_)
-
-[//]: # (Add a ACF edit page.  )
-
-[//]: # (Default: `false`)
-
-[//]: # ()
-[//]: # (If this is set, there will be check if there is a row action with the slug `edit`. If this isn't present, it will add a default.  )
-
-[//]: # (To make this work, there is needed to create an ACF group, that has the fields, like the Eloquent Model, that can be edited.  )
-
-[//]: # (Under the ACF group locations, there is a new rule called **Eloquent Model**, that should be chosen to show the ACF group on the edit page.)
-
-[//]: # ()
-[//]: # (```php)
-
-[//]: # (->makeAcfEditable&#40;&#41;)
-
-[//]: # (```)
-
-
 ---
 
 ### RowAction
@@ -279,8 +277,36 @@ The wrapper method has the following parameters:
 
 ---
 
+### ViewPage
+To get an instance of a `ViewPage`, use the wrapper method: `\Morningtrain\WP\DatabaseModelAdminUi\ModelUI::viewPage()`.
+
+##### _Render_
+Render the `callback|string`, on the view page.  
+Default: `shows a table, with all data in a <table>`
+Parameters in callback:
+- `array $data`
+- `$currentModelPage`
+
+```php
+->withRender(callback|string)
+```
+
+##### _Capability_
+Sets the value to the capability.  
+Default: `ModelPage::capability`
+
+```php
+->withCapability(string)
+```
+
+---
+
 ### AcfEditPage
 To get an instance of a AcfEditPage, use the wrapper method: `\Morningtrain\WP\DatabaseModelAdminUi\ModelUI::acfEditPage()`.
+
+To make this work, it's needed to create an ACF group, that has the fields, like the Eloquent Model, that can be edited.  
+Under the ACF group locations, there is a new rule called **Eloquent Model**, that should be chosen to show the ACF group on the edit page.
+
 
 ##### _Load Field Callback_
 Calls the `callback|string`, when a field, on the Model, is loaded.  
@@ -323,7 +349,7 @@ Sets the value to the meta box title.
 Default: `slug, with first letter uppercase`
 
 ```php
-->withTitle(title)
+->withTitle(string)
 ```
 
 ##### _High Priority_
