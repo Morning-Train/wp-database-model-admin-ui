@@ -18,6 +18,7 @@ class ModelPage
     public array $searchableColumns = [];
     public array $sortableColumns = [];
     public array $excludeColumns = [];
+    public ?ViewPage $viewPage = null;
     public ?AcfEditPage $acfEditPage = null;
 
     /** @var MetaBox[] */
@@ -114,6 +115,14 @@ class ModelPage
         return $this;
     }
 
+    public function withViewPage(ViewPage $viewPage): self
+    {
+        $this->viewPage = $viewPage;
+        $this->viewPage->setPageSlug('view_' . $this->pageSlug);
+
+        return $this;
+    }
+
     public function withAcfEditPage(AcfEditPage $acfEditPage): self
     {
         $this->acfEditable = true;
@@ -151,6 +160,7 @@ class ModelPage
         }
 
         $this->setupScreens();
+        $this->checkForViewRowAction();
         $this->checkForEditRowAction();
         $this->checkForDeleteRowAction();
 
@@ -190,6 +200,22 @@ class ModelPage
         if ($this->acfEditable) {
             $this->acfEditPageScreen = 'admin_page_' . $this->acfEditablePageSlug;
         }
+    }
+
+    private function checkForViewRowAction(): void
+    {
+        if (empty($this->viewPage) || ! empty($this->rowActions['view'])) {
+            return;
+        }
+
+        $this->rowActions[] = ModelUI::rowAction(
+            'view',
+            function (array $item, ModelPage $modelPage) {
+                $href = admin_url('admin.php') . '?page=' . $modelPage->viewPage->pageSlug . '&model_id=' . $item['id'];
+
+                return '<a href="' . $href . '">' . __('View') . '</a>';
+            }
+        );
     }
 
     private function checkForEditRowAction(): void
