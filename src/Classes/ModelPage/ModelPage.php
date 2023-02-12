@@ -41,22 +41,45 @@ class ModelPage
         $this->searchButtonText = __('Search');
     }
 
-    public function register(): void
+    public function withPageTitle(string $pageTitle): self
     {
-        if (! $this->checkForTableColumns()) {
-            return;
-        }
+        $this->pageTitle = $pageTitle;
 
-        $this->setupScreens();
-        $this->checkForEditRowAction();
-        $this->checkForDeleteRowAction();
-
-        ModelPages::addModelPageToList($this);
+        return $this;
     }
 
-    public function withRowActions(array $rowActions): self
+    public function withMenuTitle(string $menuTitle): self
     {
-        $this->rowActions = $rowActions;
+        $this->menuTitle = $menuTitle;
+
+        return $this;
+    }
+
+    public function withCapability(string $capability, ?string $editCapability = null): self
+    {
+        $this->listCapability = $capability;
+        $this->editCapability = $editCapability ?? $capability;
+
+        return $this;
+    }
+
+    public function withIconUrl(string $iconUrl): self
+    {
+        $this->iconUrl = $iconUrl;
+
+        return $this;
+    }
+
+    public function withPosition(int $position): self
+    {
+        $this->position = $position;
+
+        return $this;
+    }
+
+    public function withSearchButtonText(string $searchButtonText): self
+    {
+        $this->searchButtonText = $searchButtonText;
 
         return $this;
     }
@@ -84,9 +107,9 @@ class ModelPage
         return $this;
     }
 
-    public function withoutColumns(array $columnSlugs): self
+    public function withRowActions(array $rowActions): self
     {
-        $this->excludeColumns = $columnSlugs;
+        $this->rowActions = $rowActions;
 
         return $this;
     }
@@ -107,6 +130,13 @@ class ModelPage
         return $this;
     }
 
+    public function withoutColumns(array $columnSlugs): self
+    {
+        $this->excludeColumns = $columnSlugs;
+
+        return $this;
+    }
+
     public function makeRemovable(): self
     {
         $this->removable = true;
@@ -114,47 +144,17 @@ class ModelPage
         return $this;
     }
 
-    public function withIconUrl(string $iconUrl): self
+    public function register(): void
     {
-        $this->iconUrl = $iconUrl;
+        if (! $this->checkForTableColumns()) {
+            return;
+        }
 
-        return $this;
-    }
+        $this->setupScreens();
+        $this->checkForEditRowAction();
+        $this->checkForDeleteRowAction();
 
-    public function withPageTitle(string $pageTitle): self
-    {
-        $this->pageTitle = $pageTitle;
-
-        return $this;
-    }
-
-    public function withMenuTitle(string $menuTitle): self
-    {
-        $this->menuTitle = $menuTitle;
-
-        return $this;
-    }
-
-    public function withCapability(string $capability, ?string $editCapability = null): self
-    {
-        $this->listCapability = $capability;
-        $this->editCapability = $editCapability ?? $capability;
-
-        return $this;
-    }
-
-    public function withPosition(int $position): self
-    {
-        $this->position = $position;
-
-        return $this;
-    }
-
-    public function withSearchButtonText(string $searchButtonText): self
-    {
-        $this->searchButtonText = $searchButtonText;
-
-        return $this;
+        ModelPages::addModelPageToList($this);
     }
 
     private function checkForTableColumns(): bool
