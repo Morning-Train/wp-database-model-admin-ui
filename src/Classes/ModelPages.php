@@ -5,6 +5,7 @@ namespace Morningtrain\WP\DatabaseModelAdminUi\Classes;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPage;
 use Morningtrain\WP\DatabaseModelAdminUi\Handlers\AcfEditableHandler;
 use Morningtrain\WP\DatabaseModelAdminUi\Handlers\AdminUiHandler;
+use Morningtrain\WP\DatabaseModelAdminUi\Handlers\ReadableHandler;
 use Morningtrain\WP\Hooks\Hook;
 
 class ModelPages
@@ -26,6 +27,11 @@ class ModelPages
 
         if ($currentModelPage === null) {
             return;
+        }
+
+        if ($currentModelPage->viewPage !== null) {
+            Hook::action('admin_menu', [ReadableHandler::class, 'addReadableMenuPage']);
+            Hook::filter('parent_file', [ReadableHandler::class, 'fixSelectedAdminMenuForViewPage']);
         }
 
         if ($currentModelPage->acfEditable) {
@@ -70,6 +76,11 @@ class ModelPages
 
         foreach (static::getModelPages() as $modelPage) {
             if ($page === $modelPage->pageSlug) {
+                static::$currentModelPage = $modelPage;
+                break;
+            }
+
+            if ($modelPage->viewPage !== null && $page === $modelPage->viewPage->pageSlug) {
                 static::$currentModelPage = $modelPage;
                 break;
             }
