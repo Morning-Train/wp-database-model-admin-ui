@@ -10,6 +10,7 @@ use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\MetaBox;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\AcfEditPage;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\Column;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\RowAction;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ViewPage;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPages;
 use Morningtrain\WP\Hooks\Hook;
 use Morningtrain\WP\View\View;
@@ -45,6 +46,11 @@ class ModelUI
     public static function rowAction(string $slug, callable|string $renderCallback): RowAction
     {
         return new RowAction($slug, $renderCallback);
+    }
+
+    public static function viewPage(): ViewPage
+    {
+        return new ViewPage();
     }
 
     public static function acfEditPage(): AcfEditPage
