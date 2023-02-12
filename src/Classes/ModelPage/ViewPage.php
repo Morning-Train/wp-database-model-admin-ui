@@ -6,8 +6,7 @@ class ViewPage
 {
     public $renderCallback = null;
     public ?string $pageSlug = null;
-    public ?string $screen = null;
-    public string $capability = 'manage_options';
+    public ?string $capability = null;
 
     public function withRender(callable|string $renderCallback): self
     {
@@ -23,10 +22,10 @@ class ViewPage
         return $this;
     }
 
-    public function setPageSlug(string $pageSlug): self
+    public function setPageSlugAndCapability(string $pageSlug, string $capability): self
     {
         $this->pageSlug = $pageSlug;
-        $this->screen = 'admin_page_' . $this->pageSlug;
+        $this->capability = $this->capability ?? $capability;
 
         return $this;
     }
