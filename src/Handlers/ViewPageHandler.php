@@ -41,7 +41,7 @@ class ViewPageHandler
 
     public static function fixSelectedAdminMenuForViewPage(string $file): string
     {
-        global $plugin_page;
+        global $plugin_page, $submenu_file;
         $currentModelPage = ModelPages::getCurrentModelPage();
 
         if ($currentModelPage === null || $currentModelPage->viewPage === null) {
@@ -50,6 +50,7 @@ class ViewPageHandler
 
         if ($plugin_page === $currentModelPage->viewPage->pageSlug) {
             $plugin_page = $currentModelPage->pageSlug;
+            $submenu_file = $currentModelPage->pageSlug;
         }
 
         return $file;

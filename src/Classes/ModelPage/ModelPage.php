@@ -21,6 +21,7 @@ class ModelPage
     /** @var MetaBox[] */
     public array $metaBoxes = [];
     public array $rowActions = [];
+    public ?string $parentSlug = null;
     public string $pageTitle;
     public string $menuTitle;
     public string $capability = 'manage_options';
@@ -138,6 +139,13 @@ class ModelPage
     public function withoutColumns(array $columnSlugs): self
     {
         $this->excludeColumns = $columnSlugs;
+
+        return $this;
+    }
+
+    public function makeSubMenu(string $parentSlug): self
+    {
+        $this->parentSlug = $parentSlug;
 
         return $this;
     }

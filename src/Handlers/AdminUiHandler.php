@@ -12,13 +12,26 @@ class AdminUiHandler
     public static function addModelMenuPages(): void
     {
         foreach (ModelPages::getModelPages() as $modelPage) {
-            add_menu_page(
+            if ($modelPage->parentSlug === null) {
+                add_menu_page(
+                    $modelPage->pageTitle,
+                    $modelPage->menuTitle,
+                    $modelPage->capability,
+                    $modelPage->pageSlug,
+                    [AdminUiMenuService::class, 'displayMenuPage'],
+                    $modelPage->iconUrl,
+                    $modelPage->position
+                );
+                continue;
+            }
+
+            add_submenu_page(
+                $modelPage->parentSlug,
                 $modelPage->pageTitle,
                 $modelPage->menuTitle,
                 $modelPage->capability,
                 $modelPage->pageSlug,
                 [AdminUiMenuService::class, 'displayMenuPage'],
-                $modelPage->iconUrl,
                 $modelPage->position
             );
         }

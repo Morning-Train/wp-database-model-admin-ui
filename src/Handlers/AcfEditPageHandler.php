@@ -211,7 +211,7 @@ class AcfEditPageHandler
 
     public static function fixSelectedAdminMenuForAcfEditable(string $file): string
     {
-        global $plugin_page;
+        global $plugin_page, $submenu_file;
         $currentModelPage = ModelPages::getCurrentModelPage();
 
         if ($currentModelPage === null) {
@@ -220,6 +220,7 @@ class AcfEditPageHandler
 
         if ($plugin_page === $currentModelPage->acfEditPage->pageSlug) {
             $plugin_page = $currentModelPage->pageSlug;
+            $submenu_file = $currentModelPage->pageSlug;
         }
 
         return $file;
