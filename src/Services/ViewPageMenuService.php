@@ -25,6 +25,11 @@ class ViewPageMenuService
 
         $data = $instance->toArray();
 
+        if ($currentModelPage->viewPage->renderCallback !== null) {
+            ($currentModelPage->viewPage->renderCallback)($data, $currentModelPage);
+            return;
+        }
+
         echo View::first(
             [
                 'wpdbmodeladminui/admin-ui-view-page',

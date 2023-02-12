@@ -35,9 +35,7 @@ class ReadableHandler
             $title,
             $currentModelPage->viewPage->capability,
             $currentModelPage->viewPage->pageSlug,
-            $currentModelPage->viewPage->renderCallback !== null ?
-                ($currentModelPage->viewPage->renderCallback)() :
-                [ViewPageMenuService::class, 'displayMenuPage']
+            [ViewPageMenuService::class, 'displayMenuPage'],
         );
     }
 
