@@ -36,7 +36,12 @@ class Helper
             if (is_array($value) && ! str_starts_with(array_key_first($value), 'field_')) {
                 $newValue = [];
                 foreach ($value as $_value) {
-                    $newValue[] = static::getAcfValuesWithNames($_value);
+                    if (is_array($_value)) {
+                        $newValue[] = static::getAcfValuesWithNames($_value);
+                        continue;
+                    }
+
+                    $newValue[] = $_value;
                 }
 
                 $newArray[$field['name']] = $newValue;

@@ -145,11 +145,7 @@ class AcfEditPageHandler
         }
 
         if (! empty($currentModelPage->acfEditPage->loadFieldCallbacks[$prefix . $name])) {
-            $newValue = ($currentModelPage->acfEditPage->loadFieldCallbacks[$prefix . $name])($value, $prefix . $name, $parts[2], $currentModelPage->model);
-
-            if (! is_array($newValue)) {
-                return ($currentModelPage->acfEditPage->loadFieldCallbacks[$prefix . $name])($value, $prefix . $name, $parts[2], $currentModelPage->model);
-            }
+            return ($currentModelPage->acfEditPage->loadFieldCallbacks[$prefix . $name])($value, $prefix . $name, $parts[2], $currentModelPage->model);
         }
 
         $instance = $currentModelPage->model::query()
