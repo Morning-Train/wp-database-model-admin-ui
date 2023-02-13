@@ -317,6 +317,7 @@ Default: `null`
 Parameters in callback|string:
 
 - `mixed $return`
+- `string $slug`
 - `int $modelId`
 - `$model`
 
