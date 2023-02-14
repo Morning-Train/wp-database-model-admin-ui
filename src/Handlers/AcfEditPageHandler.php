@@ -117,11 +117,12 @@ class AcfEditPageHandler
             return $value;
         }
 
-        if (! empty($currentModelPage->acfEditPage->loadFieldCallbacks[$field['name']])) {
-            $newValue = ($currentModelPage->acfEditPage->loadFieldCallbacks[$field['name']])($value, $field['name'], $parts[2], $currentModelPage->model);
+        $fieldCallback = $currentModelPage->acfEditPage->loadFieldCallbacks[$field['name']] ?? null;
+
+        if ($fieldCallback !== null) {
+            $newValue = ($fieldCallback->renderCallback)($value, $field['name'], $parts[2], $currentModelPage->model);
 
             if (is_array($newValue)) {
-                //return Helper::convertNamesToFieldKeys($newValue);
                 return $newValue;
             }
         }
@@ -144,8 +145,10 @@ class AcfEditPageHandler
             return $value;
         }
 
-        if (! empty($currentModelPage->acfEditPage->loadFieldCallbacks[$prefix . $name])) {
-            return ($currentModelPage->acfEditPage->loadFieldCallbacks[$prefix . $name])($value, $prefix . $name, $parts[2], $currentModelPage->model);
+        $fieldCallback = $currentModelPage->acfEditPage->loadFieldCallbacks[$prefix . $name] ?? null;
+
+        if ($fieldCallback !== null) {
+            return ($fieldCallback->renderCallback)($value, $prefix . $name, $parts[2], $currentModelPage->model);
         }
 
         $instance = $currentModelPage->model::query()
