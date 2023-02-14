@@ -74,11 +74,13 @@ class AcfEloquentModelLocation extends ACF_Location
             return false;
         }
 
-        if ($rule['operator'] === '==' && $rule['value'] === basename($currentModelPage->model)) {
+        $basename = basename(str_replace('\\', '/', $currentModelPage->model));
+
+        if ($rule['operator'] === '==' && $rule['value'] === $basename) {
             return true;
         }
 
-        if ($rule['operator'] === '!=' && $rule['value'] !== basename($currentModelPage->model)) {
+        if ($rule['operator'] === '!=' && $rule['value'] !== $basename) {
             return true;
         }
 
