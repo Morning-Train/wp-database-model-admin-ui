@@ -5,6 +5,7 @@ namespace Morningtrain\WP\DatabaseModelAdminUi;
 use Morningtrain\PHPLoader\Loader;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\AcfEloquentModelLocation;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\Helper;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\AcfLoadField;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPage;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\MetaBox;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\AcfEditPage;
@@ -56,6 +57,11 @@ class ModelUI
     public static function acfEditPage(): AcfEditPage
     {
         return new AcfEditPage();
+    }
+
+    public static function acfLoadField(string $slug, callable|string $renderCallback): AcfLoadField
+    {
+        return new AcfLoadField($slug, $renderCallback);
     }
 
     public static function metaBox(string $slug, callable|string $renderCallback): MetaBox
