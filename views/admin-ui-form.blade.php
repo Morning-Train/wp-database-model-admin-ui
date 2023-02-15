@@ -1,12 +1,8 @@
 @php
     /**
      * @var bool $hasSideMetaBoxes
-     * @var string $pageTitle
-     * @var string $page
+     * @var \Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPage $modelPage
      * @var string $postType
-     * @var bool $useSearchBox
-     * @var int $searchBoxText
-     * @var string $searchBoxInputId
      * @var \Morningtrain\WP\DatabaseModelAdminUi\Classes\AdminTable $adminTable
      */
 @endphp
@@ -24,7 +20,11 @@
 
 <div class="wrap model-ui-wrap">
 
-    <h1 class="wp-heading-inline">{{ $pageTitle }}</h1>
+    <h1 class="wp-heading-inline">{{ $modelPage->pageTitle }}</h1>
+
+    @if($modelPage->acfCreatePage !== null && current_user_can($modelPage->acfCreatePage->capability))
+        <a href="{{ $modelPage->getAcfCreatePageUrl() }}" class="page-title-action aria-button-if-js">{{ __('Add New') }}</a>
+    @endif
 
     <div id="poststuff" class="poststuff">
 
@@ -33,7 +33,7 @@
             @if($hasSideMetaBoxes)
                 <div id="postbox-container-1" class="postbox-container">
 
-                    @php(do_meta_boxes('toplevel_page_' . $_GET ['page'], 'side', null))
+                    @php(do_meta_boxes($modelPage->pageScreen, 'side', null))
 
                 </div>
             @endif
@@ -42,18 +42,18 @@
 
                 <form id="post" method="get">
 
-                    <input type="hidden" name="page" value="{{ $page }}"/>
+                    <input type="hidden" name="page" value="{{ $modelPage->pageSlug }}"/>
                     <input type="hidden" name="post_type" value="{{ $postType }}"/>
 
-                    @if($useSearchBox)
-                        {!! $adminTable->search_box($searchBoxText, $searchBoxInputId) !!}
+                    @if(! empty($modelPage->searchableColumns))
+                        {!! $adminTable->search_box($modelPage->searchButtonText, $modelPage->pageSlug) !!}
                     @endif
 
                     {!! $adminTable->display() !!}
 
                 </form>
 
-                @php(do_meta_boxes('toplevel_page_' . $_GET ['page'], 'normal', null))
+                @php(do_meta_boxes($modelPage->pageScreen, 'normal', null))
 
             </div>
 

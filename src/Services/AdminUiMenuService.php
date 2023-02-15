@@ -24,13 +24,9 @@ class AdminUiMenuService
                 'wpdbmodeladminui::admin-ui-form',
             ],
             [
-                'hasSideMetaBoxes' => ! empty($wp_meta_boxes['toplevel_page_' . $_GET['page']]['side']),
-                'pageTitle' => $modelPage->pageTitle,
+                'hasSideMetaBoxes' => ! empty($wp_meta_boxes[$modelPage->pageScreen]['side']),
+                'modelPage' => $modelPage,
                 'postType' => $_GET['post_type'] ?? null,
-                'page' => $modelPage->pageSlug,
-                'useSearchBox' => ! empty($modelPage->searchableColumns),
-                'searchBoxText' => $modelPage->searchButtonText,
-                'searchBoxInputId' => $modelPage->pageSlug,
                 'adminTable' => $adminTable,
             ]
         );
