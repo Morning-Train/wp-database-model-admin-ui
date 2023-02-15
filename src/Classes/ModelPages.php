@@ -23,6 +23,8 @@ class ModelPages
         Hook::action('current_screen', [AdminUiHandler::class, 'addScreenOption']);
         Hook::action('current_screen', [AdminUiHandler::class, 'addMetaBoxes']);
 
+        Hook::filter('acf/pre_load_metadata', [AdminUiHandler::class, 'handleGetFieldReturnValue']);
+
         $currentModelPage = static::getCurrentModelPage();
 
         if ($currentModelPage === null) {

@@ -126,4 +126,31 @@ class AdminUiHandler
         header('Location: ' . $url);
         exit();
     }
+
+    public static function handleGetFieldReturnValue($value, $postId, string $name, bool $hidden)
+    {
+        $parts = explode('__', $postId);
+
+        if (count($parts) !== 3 || $parts[0] !== 'eloquent-model') {
+            return $value;
+        }
+
+        $prefix = $hidden ? '_' : '';
+        $currentModelPage = ModelPages::getModelPages()[$parts[1]] ?? null;
+
+        if ($currentModelPage === null) {
+            return $value;
+        }
+
+        $fieldCallback = $currentModelPage->acfEditPage->loadFieldCallbacks[$prefix . $name] ?? null;
+
+        if ($fieldCallback !== null) {
+            return ($fieldCallback->renderCallback)($value, $prefix . $name, $parts[2], $currentModelPage->model);
+        }
+
+        $instance = $currentModelPage->model::query()
+            ->find($parts[2]);
+
+        return $instance->{$prefix . $name} ?? '__return_null';
+    }
 }
