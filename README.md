@@ -176,6 +176,17 @@ The `ViewPage` can be customized, with different things. To se a list of all the
 ->withViewPage()
 ```
 
+##### _ACF Create Page_
+Set up an ACF create page, for the Admin Table.  
+Default: `null`
+
+This one takes an instance of the `AcfCreatePage` class.  
+The `AcfCreatePage` can be customized, with different things. To se a list of all the settings, see [AcfCreatePage](#acfcreatepage).
+
+```php
+->withAcfCreatePage()
+```
+
 ##### _ACF Edit Page_
 Set up an ACF edit page, for the Admin Table.  
 Default: `null`
@@ -245,7 +256,7 @@ Default: `slug, with first letter uppercase`
 Render the `callback|string` in each row, for the specific column.  
 Default: `output the value`
 Parameters in callback:
-- `array $item`
+- `$instance`
 - `ModelPage $modelPage`
 
 ```php
@@ -305,8 +316,37 @@ Default: `ModelPage::capability`
 
 ---
 
+### AcfCreatePage
+To get an instance of a `AcfCreatePage`, use the wrapper method: `\Morningtrain\WP\DatabaseModelAdminUi\ModelUI::acfCreatePage()`.
+
+To make this work, it's needed to create an ACF group, that has the fields, like the Eloquent Model, that can be created.  
+Under the ACF group locations, there is a new rule called **Eloquent Model**, that should be chosen to show the ACF group on the create page.
+
+##### _Save Callback_
+Calls the `callback|string`, when a Model is updated, through ACF.  
+Default: `null`  
+Parameters in callback|string:
+
+- `$instance`
+- `$model`
+- `array $values`
+
+```php
+->withSaveCallback(callback|string)
+```
+
+##### _Capability_
+Sets the value to the capability.  
+Default: `ModelPage::capability`
+
+```php
+->withCapability(string)
+```
+
+---
+
 ### AcfEditPage
-To get an instance of a AcfEditPage, use the wrapper method: `\Morningtrain\WP\DatabaseModelAdminUi\ModelUI::acfEditPage()`.
+To get an instance of a `AcfEditPage`, use the wrapper method: `\Morningtrain\WP\DatabaseModelAdminUi\ModelUI::acfEditPage()`.
 
 To make this work, it's needed to create an ACF group, that has the fields, like the Eloquent Model, that can be edited.  
 Under the ACF group locations, there is a new rule called **Eloquent Model**, that should be chosen to show the ACF group on the edit page.
@@ -314,13 +354,13 @@ Under the ACF group locations, there is a new rule called **Eloquent Model**, th
 
 ##### _Load Field Callbacks_
 Calls the `AcfLoadField` `callback|string`, when a field, on the Model, is loaded.  
-Default: `[]`  
+Default: `[]`
 
 This one takes an array of the `AcfLoadField` classes.  
 The `AcfLoadField` can be customized, with different things. To se a list of all the settings, see [AcfLoadField](#acfloadfield).
 
 ```php
-->withLoadFieldCallback(slug, callback|string)
+->withLoadFieldCallbacks([])
 ```
 
 ##### _Save Callback_
