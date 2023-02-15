@@ -64,18 +64,20 @@ class AdminTable extends WP_List_Table
      */
     protected function column_default($item, $column_name): void
     {
+        $value = $item[$column_name] ?? '';
+
         if (! empty($this->modelPage->columns[$column_name]) && $this->modelPage->columns[$column_name]->renderCallback !== null) {
             echo $this->modelPage->columns[$column_name]->render($item, $this->modelPage);
-        } elseif ($this->modelPage->viewPage !== null && $this->get_primary_column() === $column_name) {
+        }
+
+        if (! empty($value) && $this->modelPage->viewPage !== null && $this->get_primary_column() === $column_name) {
             $href = admin_url('admin.php') . '?page=' . $this->modelPage->viewPage->pageSlug . '&model_id=' . $item['id'];
 
-            echo '<a href="' . $href . '">' . $item[$column_name] . '</a>';
-        } elseif ($this->modelPage->acfEditPage !== null && $this->get_primary_column() === $column_name) {
+            echo '<a href="' . $href . '">' . $value . '</a>';
+        } elseif (! empty($value) && $this->modelPage->acfEditPage !== null && $this->get_primary_column() === $column_name) {
             $href = admin_url('admin.php') . '?page=' . $this->modelPage->acfEditPage->pageSlug . '&model_id=' . $item['id'];
 
-            echo '<a href="' . $href . '">' . $item[$column_name] . '</a>';
-        } else {
-            echo $item[$column_name];
+            echo '<a href="' . $href . '">' . $value . '</a>';
         }
 
         if ($this->get_primary_column() === $column_name) {
