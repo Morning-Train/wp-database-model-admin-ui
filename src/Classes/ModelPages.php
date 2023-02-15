@@ -47,7 +47,6 @@ class ModelPages
 
         if ($currentModelPage->acfEditPage !== null) {
             Hook::action('admin_menu', [AcfEditPageHandler::class, 'addAcfEditMenuPage']);
-            Hook::action('admin_init', [AcfEditPageHandler::class, 'checkForNonExistingAcfEditableModel']);
             Hook::filter('acf/pre_load_post_id', [AcfEditPageHandler::class, 'handlePreLoadPostIdForAcfModel']);
             Hook::filter('acf/decode_post_id', [AcfEditPageHandler::class, 'handleDecodePostIdForAcfModel']);
             Hook::action('acf/load_value', [AcfEditPageHandler::class, 'handleLoadValueForAcfModel']);

@@ -21,6 +21,10 @@ class AcfEditPageHandler
         $acfEditableCurrentModel = $currentModelPage->model::query()
             ->find($modelId);
 
+        if (empty($acfEditableCurrentModel)) {
+            return;
+        }
+
         if (! empty($acfEditableCurrentModel->{$currentModelPage->primaryColumn})) {
             $title = $acfEditableCurrentModel->{$currentModelPage->primaryColumn} . ' - ' . $title;
         }
@@ -33,30 +37,6 @@ class AcfEditPageHandler
             'menu_slug' => $currentModelPage->acfEditPage->pageSlug,
             'post_id' => 'eloquent-model__' . $currentModelPage->pageSlug . '__' . $modelId,
         ]);
-    }
-
-    public static function checkForNonExistingAcfEditableModel(): void
-    {
-        $currentModelPage = ModelPages::getCurrentModelPage();
-        $modelId = $_GET['model_id'] ?? null;
-
-        if ($currentModelPage === null) {
-            return;
-        }
-
-        if (empty($modelId) || ! is_numeric($modelId)) {
-            return;
-        }
-
-        $acfEditableCurrentModel = $currentModelPage->model::query()
-            ->find($_GET['model_id']);
-
-        if (! empty($acfEditableCurrentModel)) {
-            return;
-        }
-
-        header('Location: ' . admin_url('admin.php?page=' . $currentModelPage->pageSlug));
-        exit();
     }
 
     public static function handlePreLoadPostIdForAcfModel($return, $postId)
