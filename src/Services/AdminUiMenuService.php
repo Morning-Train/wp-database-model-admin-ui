@@ -84,7 +84,7 @@ class AdminUiMenuService
 
         foreach ($modelPage->searchableColumns as $searchableColumn) {
             foreach ($data as $values) {
-                if (empty($values[$searchableColumn]) || ! str_contains($values[$searchableColumn], $searchWord)) {
+                if (empty($values[$searchableColumn]) || ! str_contains(strtolower($values[$searchableColumn]), strtolower($searchWord))) {
                     continue;
                 }
 
@@ -107,11 +107,13 @@ class AdminUiMenuService
         usort(
             $data,
             function (array $itemOne, array $itemTwo) use($orderby, $order) {
+                $valueOne = strtolower($itemOne[$orderby]);
+                $valueTwo = strtolower($itemTwo[$orderby]);
                 if ($order === 'asc') {
-                    return strcmp($itemOne[$orderby], $itemTwo[$orderby]);
+                    return strcmp($valueOne, $valueTwo);
                 }
 
-                return strcmp($itemTwo[$orderby], $itemOne[$orderby]);
+                return strcmp($valueTwo, $valueOne);
             }
         );
 
