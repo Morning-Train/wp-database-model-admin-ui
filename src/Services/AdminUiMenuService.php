@@ -108,10 +108,10 @@ class AdminUiMenuService
             $data,
             function (array $itemOne, array $itemTwo) use($orderby, $order) {
                 if ($order === 'asc') {
-                    return strcmp($itemTwo[$orderby], $itemOne[$orderby]);
+                    return strcmp($itemOne[$orderby], $itemTwo[$orderby]);
                 }
 
-                return strcmp($itemOne[$orderby], $itemTwo[$orderby]);
+                return strcmp($itemTwo[$orderby], $itemOne[$orderby]);
             }
         );
 
