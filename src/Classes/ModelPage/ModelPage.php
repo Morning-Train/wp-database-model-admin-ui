@@ -35,8 +35,6 @@ class ModelPage
         public string $pageSlug,
         public string $model
     ) {
-        $this->pageScreen = 'toplevel_page_' . $this->pageSlug;
-
         $this->pageTitle = __('Admin table');
         $this->menuTitle = __('Admin table');
         $this->searchButtonText = __('Search');
@@ -177,6 +175,13 @@ class ModelPage
         $this->checkForDeleteRowAction();
 
         ModelPages::addModelPageToList($this);
+    }
+
+    public function setPageScreen(string $screen): self
+    {
+        $this->pageScreen = $screen;
+
+        return $this;
     }
 
     private function checkForTableColumns(): bool
