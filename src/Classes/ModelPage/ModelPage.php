@@ -184,6 +184,59 @@ class ModelPage
         return $this;
     }
 
+    public function getOverviewPageUrl(): ?string
+    {
+        $pageParams = 'page=' . $this->pageSlug;
+
+        if ($this->parentSlug === null) {
+            return admin_url('admin.php') . '?' . $pageParams;
+        }
+
+        if (str_contains($this->parentSlug, '?')) {
+            return admin_url($this->parentSlug) . '&' . $pageParams;
+        }
+
+        return admin_url($this->parentSlug) . '?' . $pageParams;
+    }
+
+    public function getAcfCreatePageUrl(): ?string
+    {
+        if ($this->acfCreatePage === null) {
+            return null;
+        }
+
+        $acfCreatePageParams = 'page=' . $this->acfCreatePage->pageSlug;
+
+        if ($this->parentSlug === null) {
+            return admin_url('admin.php') . '?' . $acfCreatePageParams;
+        }
+
+        if (str_contains($this->parentSlug, '?')) {
+            return admin_url($this->parentSlug) . '&' . $acfCreatePageParams;
+        }
+
+        return admin_url($this->parentSlug) . '?' . $acfCreatePageParams;
+    }
+
+    public function getAcfEditPageUrl(int $modelId): ?string
+    {
+        if ($this->acfEditPage === null) {
+            return null;
+        }
+
+        $acfEditPageParams = 'page=' . $this->acfEditPage->pageSlug . '&model_id=' . $modelId;
+
+        if ($this->parentSlug === null) {
+            return admin_url('admin.php') . '?' . $acfEditPageParams;
+        }
+
+        if (str_contains($this->parentSlug, '?')) {
+            return admin_url($this->parentSlug) . '&' . $acfEditPageParams;
+        }
+
+        return admin_url($this->parentSlug) . '?' . $acfEditPageParams;
+    }
+
     private function checkForTableColumns(): bool
     {
         if (empty($this->tableColumns)) {

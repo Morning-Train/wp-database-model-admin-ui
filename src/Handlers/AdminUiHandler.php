@@ -125,9 +125,7 @@ class AdminUiHandler
 
         $modelPage->model::query()->where('id', $modelId)->delete();
 
-        $url = $_SERVER['HTTP_REFERER'] ?? admin_url('admin.php?page=' . $modelPage->pageSlug);
-
-        header('Location: ' . $url);
+        header('Location: ' . $_SERVER['HTTP_REFERER'] ?? $modelPage->getOverviewPageUrl());
         exit();
     }
 
