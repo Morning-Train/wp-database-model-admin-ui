@@ -27,6 +27,7 @@ class AdminUiMenuService
             [
                 'hasSideMetaBoxes' => ! empty($wp_meta_boxes['toplevel_page_' . $_GET['page']]['side']),
                 'pageTitle' => $modelPage->pageTitle,
+                'postType' => $_GET['post_type'] ?? null,
                 'page' => $modelPage->pageSlug,
                 'useSearchBox' => ! empty($modelPage->searchableColumns),
                 'searchBoxText' => $modelPage->searchButtonText,
@@ -38,14 +39,13 @@ class AdminUiMenuService
 
     private static function prepareAdminTable(ModelPage $modelPage): AdminTable
     {
-        $query = $modelPage->model::query();
-        $query = static::handleQueryWheres($query, $modelPage);
-        $query = static::handleQueryOrderBy($query, $modelPage);
-
-        $data = $query
+        $data = $modelPage->model::query()
             ->get()
             ->toArray();
 
+        $data = static::handleExtraColumnsData($data, $modelPage);
+        $data = static::handleWheres($data, $modelPage);
+        $data = static::handleOrderBy($data, $modelPage);
         $data = static::markSearchWordInSearchableColumns($data, $modelPage);
 
         $adminTable = new AdminTable($modelPage->pageSlug);
@@ -57,41 +57,65 @@ class AdminUiMenuService
         return $adminTable;
     }
 
-    private static function handleQueryWheres(Builder $query, ModelPage $modelPage): Builder
+    private static function handleExtraColumnsData(array $data, ModelPage $modelPage): array
+    {
+        foreach ($data as $key => $item) {
+            foreach ($modelPage->columns as $columnName => $value) {
+                if ($modelPage->columns[$columnName]->renderCallback === null) {
+                    continue;
+                }
+
+                $data[$key][$columnName] = $modelPage->columns[$columnName]->render($item, $modelPage);
+            }
+        }
+
+        return $data;
+    }
+
+    private static function handleWheres(array $data, ModelPage $modelPage): array
     {
         $searchWord = $_GET['s'] ?? null;
 
         if (empty($searchWord) || empty($modelPage->searchableColumns)) {
-            return $query;
+            return $data;
         }
 
-        return $query
-            ->where(function (Builder $query) use ($searchWord, $modelPage) {
-                foreach ($modelPage->searchableColumns as $searchableColumn) {
-                    $query->orWhere($searchableColumn, 'LIKE', '%' . $searchWord . '%');
+        $filteredData = [];
+
+        foreach ($modelPage->searchableColumns as $searchableColumn) {
+            foreach ($data as $values) {
+                if (empty($values[$searchableColumn]) || ! str_contains($values[$searchableColumn], $searchWord)) {
+                    continue;
                 }
 
-                return $query;
-            });
+                $filteredData[] = $values;
+            }
+        }
+        
+        return $filteredData;
     }
 
-    private static function handleQueryOrderBy(Builder $query, ModelPage $modelPage): Builder
+    private static function handleOrderBy(array $data, ModelPage $modelPage): array
     {
-        $instance = new ($modelPage->model)();
-
-        if (! Schema::hasColumn($instance->getTable(), $modelPage->primaryColumn)) {
-            return $query;
-        }
-
         if (empty($modelPage->primaryColumn)) {
-            return $query;
+            return $data;
         }
 
         $orderby = $_GET['orderby'] ?? $modelPage->primaryColumn;
         $order = $_GET['order'] ?? 'asc';
 
-        return $query
-            ->orderBy($orderby, $order);
+        usort(
+            $data,
+            function (array $itemOne, array $itemTwo) use($orderby, $order) {
+                if ($order === 'asc') {
+                    return strcmp($itemTwo[$orderby], $itemOne[$orderby]);
+                }
+
+                return strcmp($itemOne[$orderby], $itemTwo[$orderby]);
+            }
+        );
+
+        return $data;
     }
 
     private static function markSearchWordInSearchableColumns($data, ModelPage $modelPage): array
@@ -104,6 +128,10 @@ class AdminUiMenuService
 
         foreach ($data as $key => $item) {
             foreach ($modelPage->searchableColumns as $searchableColumn) {
+                if (empty($data[$key][$searchableColumn])) {
+                    continue;
+                }
+
                 $pos = stripos($data[$key][$searchableColumn], $searchWord);
 
                 while ($pos !== false) {

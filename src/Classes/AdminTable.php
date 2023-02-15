@@ -66,10 +66,6 @@ class AdminTable extends WP_List_Table
     {
         $value = $item[$column_name] ?? '';
 
-        if (! empty($this->modelPage->columns[$column_name]) && $this->modelPage->columns[$column_name]->renderCallback !== null) {
-            echo $this->modelPage->columns[$column_name]->render($item, $this->modelPage);
-        }
-
         if (! empty($value) && $this->modelPage->viewPage !== null && $this->get_primary_column() === $column_name) {
             $href = admin_url('admin.php') . '?page=' . $this->modelPage->viewPage->pageSlug . '&model_id=' . $item['id'];
 
@@ -78,6 +74,8 @@ class AdminTable extends WP_List_Table
             $href = admin_url('admin.php') . '?page=' . $this->modelPage->acfEditPage->pageSlug . '&model_id=' . $item['id'];
 
             echo '<a href="' . $href . '">' . $value . '</a>';
+        } else {
+            echo $value;
         }
 
         if ($this->get_primary_column() === $column_name) {

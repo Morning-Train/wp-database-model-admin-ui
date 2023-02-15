@@ -2,7 +2,8 @@
     /**
      * @var bool $hasSideMetaBoxes
      * @var string $pageTitle
-     * @var int $page
+     * @var string $page
+     * @var string $postType
      * @var bool $useSearchBox
      * @var int $searchBoxText
      * @var string $searchBoxInputId
@@ -39,9 +40,10 @@
 
             <div id="postbox-container-2" class="postbox-container">
 
-                <form id="post" method="post" name="post">
+                <form id="post" method="get">
 
                     <input type="hidden" name="page" value="{{ $page }}"/>
+                    <input type="hidden" name="post_type" value="{{ $postType }}"/>
 
                     @if($useSearchBox)
                         {!! $adminTable->search_box($searchBoxText, $searchBoxInputId) !!}
