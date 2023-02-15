@@ -3,6 +3,7 @@
 namespace Morningtrain\WP\DatabaseModelAdminUi\Classes;
 
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPage;
+use Morningtrain\WP\DatabaseModelAdminUi\Handlers\AcfCreatePageHandler;
 use Morningtrain\WP\DatabaseModelAdminUi\Handlers\AcfEditPageHandler;
 use Morningtrain\WP\DatabaseModelAdminUi\Handlers\AdminUiHandler;
 use Morningtrain\WP\DatabaseModelAdminUi\Handlers\ViewPageHandler;
@@ -34,6 +35,14 @@ class ModelPages
         if ($currentModelPage->viewPage !== null) {
             Hook::action('admin_menu', [ViewPageHandler::class, 'addReadableMenuPage']);
             Hook::filter('parent_file', [ViewPageHandler::class, 'fixSelectedAdminMenuForViewPage']);
+        }
+
+        if ($currentModelPage->acfCreatePage !== null) {
+            Hook::action('admin_menu', [AcfCreatePageHandler::class, 'addAcfEditMenuPage']);
+            Hook::filter('acf/pre_load_post_id', [AcfCreatePageHandler::class, 'handlePreLoadPostIdForAcfModel']);
+            Hook::filter('acf/decode_post_id', [AcfCreatePageHandler::class, 'handleDecodePostIdForAcfModel']);
+            Hook::action('acf/save_post', [AcfCreatePageHandler::class, 'handleSaveValueForAcfModel']);
+            Hook::filter('parent_file', [AcfCreatePageHandler::class, 'fixSelectedAdminMenuForAcfCreatePage']);
         }
 
         if ($currentModelPage->acfEditPage !== null) {
@@ -83,6 +92,11 @@ class ModelPages
             }
 
             if ($modelPage->viewPage !== null && $page === $modelPage->viewPage->pageSlug) {
+                static::$currentModelPage = $modelPage;
+                break;
+            }
+
+            if ($modelPage->acfCreatePage !== null && $page === $modelPage->acfCreatePage->pageSlug) {
                 static::$currentModelPage = $modelPage;
                 break;
             }

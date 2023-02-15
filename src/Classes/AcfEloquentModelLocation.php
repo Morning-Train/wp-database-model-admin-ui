@@ -66,11 +66,14 @@ class AcfEloquentModelLocation extends ACF_Location
     {
         $currentModelPage = ModelPages::getCurrentModelPage();
 
-        if ($currentModelPage === null || $currentModelPage->acfEditPage === null) {
+        if ($currentModelPage === null || ($currentModelPage->acfCreatePage === null && $currentModelPage->acfEditPage === null)) {
             return false;
         }
 
-        if (empty($screen['options_page']) || $screen['options_page'] !== $currentModelPage->acfEditPage->pageSlug) {
+        if (
+            empty($screen['options_page']) ||
+            ! in_array($screen['options_page'], [$currentModelPage->acfCreatePage->pageSlug, $currentModelPage->acfEditPage->pageSlug])
+        ) {
             return false;
         }
 

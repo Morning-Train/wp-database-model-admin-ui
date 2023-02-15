@@ -16,6 +16,7 @@ class ModelPage
     public array $sortableColumns = [];
     public array $excludeColumns = [];
     public ?ViewPage $viewPage = null;
+    public ?AcfCreatePage $acfCreatePage = null;
     public ?AcfEditPage $acfEditPage = null;
 
     /** @var MetaBox[] */
@@ -117,6 +118,14 @@ class ModelPage
     {
         $this->viewPage = $viewPage;
         $this->viewPage->setPageSlugAndCapability('view_' . $this->pageSlug, $this->capability);
+
+        return $this;
+    }
+
+    public function withAcfCreatePage(AcfCreatePage $acfCreatePage): self
+    {
+        $this->acfCreatePage = $acfCreatePage;
+        $this->acfCreatePage->setPageSlugAndCapability('create_' . $this->pageSlug, $this->capability);
 
         return $this;
     }
