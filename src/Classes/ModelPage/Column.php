@@ -43,18 +43,18 @@ class Column
         return $this;
     }
 
-    public function render(array $item, ModelPage $modelPage): ?string
+    public function render($instance, ModelPage $modelPage): ?string
     {
         if ($this->renderCallback !== null) {
-            return ($this->renderCallback)($item, $modelPage);
+            return ($this->renderCallback)($instance, $modelPage);
         }
 
         if ($modelPage->acfEditPage !== null && $modelPage->primaryColumn === $this->slug) {
-            $href = admin_url('admin.php') . '?page=' . $modelPage->acfEditPage->pageSlug . '&model_id=' . $item['id'];
+            $href = admin_url('admin.php') . '?page=' . $modelPage->acfEditPage->pageSlug . '&model_id=' . $instance->id;
 
-            return '<a href="' . $href . '">' . $item[$this->slug] . '</a>';
+            return '<a href="' . $href . '">' . $instance->{$this->slug} . '</a>';
         }
 
-        return $item[$this->slug];
+        return $instance->{$this->slug};
     }
 }

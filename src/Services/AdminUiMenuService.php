@@ -2,11 +2,10 @@
 
 namespace Morningtrain\WP\DatabaseModelAdminUi\Services;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Collection;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\AdminTable;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPage;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPages;
-use Morningtrain\WP\DatabaseModelAdminUi\Classes\AdminTable;
 use Morningtrain\WP\View\View;
 
 class AdminUiMenuService
@@ -40,8 +39,7 @@ class AdminUiMenuService
     private static function prepareAdminTable(ModelPage $modelPage): AdminTable
     {
         $data = $modelPage->model::query()
-            ->get()
-            ->toArray();
+            ->get();
 
         $data = static::handleExtraColumnsData($data, $modelPage);
         $data = static::handleWheres($data, $modelPage);
@@ -57,19 +55,21 @@ class AdminUiMenuService
         return $adminTable;
     }
 
-    private static function handleExtraColumnsData(array $data, ModelPage $modelPage): array
+    private static function handleExtraColumnsData(Collection $data, ModelPage $modelPage): array
     {
+        $dataArray = $data->toArray();
+
         foreach ($data as $key => $item) {
             foreach ($modelPage->columns as $columnName => $value) {
                 if ($modelPage->columns[$columnName]->renderCallback === null) {
                     continue;
                 }
 
-                $data[$key][$columnName] = $modelPage->columns[$columnName]->render($item, $modelPage);
+                $dataArray[$key][$columnName] = $modelPage->columns[$columnName]->render($item, $modelPage);
             }
         }
 
-        return $data;
+        return $dataArray;
     }
 
     private static function handleWheres(array $data, ModelPage $modelPage): array
@@ -120,7 +120,7 @@ class AdminUiMenuService
         return $data;
     }
 
-    private static function markSearchWordInSearchableColumns($data, ModelPage $modelPage): array
+    private static function markSearchWordInSearchableColumns(array $data, ModelPage $modelPage): array
     {
         $searchWord = $_GET['s'] ?? null;
 
