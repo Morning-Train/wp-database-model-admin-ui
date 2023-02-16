@@ -23,8 +23,10 @@
     <h1 class="wp-heading-inline">{{ $modelPage->pageTitle }}</h1>
 
     @if($modelPage->acfCreatePage !== null && current_user_can($modelPage->acfCreatePage->capability))
-        <a href="{{ $modelPage->getAcfCreatePageUrl() }}" class="page-title-action aria-button-if-js">{{ __('Add New') }}</a>
+        <a href="{{ $modelPage->getAcfCreatePageUrl() }}" class="page-title-action">{{ __('Add New') }}</a>
     @endif
+
+    <hr class="wp-header-end" />
 
     <div id="poststuff" class="poststuff">
 
