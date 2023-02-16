@@ -70,9 +70,12 @@ class AcfEloquentModelLocation extends ACF_Location
             return false;
         }
 
+        $acfCreatePageSlug = $currentModelPage->acfCreatePage->pageSlug ?? null;
+        $acfEditPageSlug = $currentModelPage->acfEditPage->pageSlug ?? null;
+
         if (
             empty($screen['options_page']) ||
-            ! in_array($screen['options_page'], [$currentModelPage->acfCreatePage->pageSlug, $currentModelPage->acfEditPage->pageSlug])
+            ! in_array($screen['options_page'], [$acfCreatePageSlug, $acfEditPageSlug])
         ) {
             return false;
         }
