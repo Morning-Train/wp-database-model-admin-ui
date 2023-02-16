@@ -205,17 +205,7 @@ class ModelPage
             return null;
         }
 
-        $acfCreatePageParams = 'page=' . $this->acfCreatePage->pageSlug;
-
-        if ($this->parentSlug === null) {
-            return admin_url('admin.php') . '?' . $acfCreatePageParams;
-        }
-
-        if (str_contains($this->parentSlug, '?')) {
-            return admin_url($this->parentSlug) . '&' . $acfCreatePageParams;
-        }
-
-        return admin_url($this->parentSlug) . '?' . $acfCreatePageParams;
+        return admin_url('admin.php') . '?page=' . $this->acfCreatePage->pageSlug;
     }
 
     public function getAcfEditPageUrl(int $modelId): ?string
@@ -224,17 +214,7 @@ class ModelPage
             return null;
         }
 
-        $acfEditPageParams = 'page=' . $this->acfEditPage->pageSlug . '&model_id=' . $modelId;
-
-        if ($this->parentSlug === null) {
-            return admin_url('admin.php') . '?' . $acfEditPageParams;
-        }
-
-        if (str_contains($this->parentSlug, '?')) {
-            return admin_url($this->parentSlug) . '&' . $acfEditPageParams;
-        }
-
-        return admin_url($this->parentSlug) . '?' . $acfEditPageParams;
+        return admin_url('admin.php') . '?page=' . $this->acfEditPage->pageSlug . '&model_id=' . $modelId;
     }
 
     private function checkForTableColumns(): bool
