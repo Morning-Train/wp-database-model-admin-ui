@@ -25,8 +25,11 @@ class ViewPageHandler
 
         $title = __('View');
 
-        if (! empty($acfEditableCurrentModel->{$currentModelPage->primaryColumn})) {
-            $title = $acfEditableCurrentModel->{$currentModelPage->primaryColumn} . ' - ' . $title;
+        if (
+            ! empty($currentModelPage->columns[$currentModelPage->primaryColumn]) &&
+            $currentModelPage->columns[$currentModelPage->primaryColumn]->renderCallback !== null
+        ) {
+            $title = ($currentModelPage->columns[$currentModelPage->primaryColumn]->renderCallback)($acfEditableCurrentModel, $currentModelPage) . ' - ' . $title;
         }
 
         add_submenu_page(

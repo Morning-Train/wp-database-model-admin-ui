@@ -25,8 +25,11 @@ class AcfEditPageHandler
             return;
         }
 
-        if (! empty($acfEditableCurrentModel->{$currentModelPage->primaryColumn})) {
-            $title = $acfEditableCurrentModel->{$currentModelPage->primaryColumn} . ' - ' . $title;
+        if (
+            ! empty($currentModelPage->columns[$currentModelPage->primaryColumn]) &&
+            $currentModelPage->columns[$currentModelPage->primaryColumn]->renderCallback !== null
+        ) {
+            $title = ($currentModelPage->columns[$currentModelPage->primaryColumn]->renderCallback)($acfEditableCurrentModel, $currentModelPage) . ' - ' . $title;
         }
 
         acf_add_options_sub_page([
