@@ -16,10 +16,10 @@ class ViewPageHandler
             return;
         }
 
-        $acfEditableCurrentModel = $currentModelPage->model::query()
+        $acfViewableCurrentModel = $currentModelPage->model::query()
             ->find($modelId);
 
-        if (empty($acfEditableCurrentModel)) {
+        if (empty($acfViewableCurrentModel)) {
             return;
         }
 
@@ -29,7 +29,7 @@ class ViewPageHandler
             ! empty($currentModelPage->columns[$currentModelPage->primaryColumn]) &&
             $currentModelPage->columns[$currentModelPage->primaryColumn]->renderCallback !== null
         ) {
-            $title = ($currentModelPage->columns[$currentModelPage->primaryColumn]->renderCallback)($acfEditableCurrentModel, $currentModelPage) . ' - ' . $title;
+            $title = ($currentModelPage->columns[$currentModelPage->primaryColumn]->renderCallback)($acfViewableCurrentModel, $currentModelPage) . ' - ' . $title;
         }
 
         add_submenu_page(
