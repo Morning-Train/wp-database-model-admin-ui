@@ -83,6 +83,7 @@ class AdminUiHandler
 
             $screen = match ($metaBox->onPage) {
                 MetaBoxPage::ADMIN_TABLE => $currentModelPage->pageScreen,
+                MetaBoxPage::VIEW => $currentModelPage->viewPage->pageScreen,
                 MetaBoxPage::ACF_EDIT => 'acf_options_page',
                 default => null
             };

@@ -53,6 +53,13 @@ class MetaBox
         return $this;
     }
 
+    public function onViewPage(): self
+    {
+        $this->onPage = MetaBoxPage::VIEW;
+
+        return $this;
+    }
+
     public function onAcfEditPage(): self
     {
         $this->onPage = MetaBoxPage::ACF_EDIT;

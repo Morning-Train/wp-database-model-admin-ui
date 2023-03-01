@@ -32,13 +32,15 @@ class ViewPageHandler
             $title = ($currentModelPage->columns[$currentModelPage->primaryColumn]->renderCallback)($acfViewableCurrentModel, $currentModelPage) . ' - ' . $title;
         }
 
-        add_submenu_page(
-            'options-writing.php',
-            $title,
-            $title,
-            $currentModelPage->viewPage->capability,
-            $currentModelPage->viewPage->pageSlug,
-            [ViewPageMenuService::class, 'displayMenuPage'],
+        $currentModelPage->viewPage->setPageScreen(
+            add_submenu_page(
+                'options-writing.php',
+                $title,
+                $title,
+                $currentModelPage->viewPage->capability,
+                $currentModelPage->viewPage->pageSlug,
+                [ViewPageMenuService::class, 'displayMenuPage'],
+            )
         );
     }
 

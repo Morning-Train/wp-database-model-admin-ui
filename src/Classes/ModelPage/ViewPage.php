@@ -6,6 +6,7 @@ class ViewPage
 {
     public $renderCallback = null;
     public ?string $pageSlug = null;
+    public ?string $pageScreen = null;
     public ?string $capability = null;
 
     public function withRender(callable|string $renderCallback): self
@@ -26,6 +27,13 @@ class ViewPage
     {
         $this->pageSlug = $pageSlug;
         $this->capability = $this->capability ?? $capability;
+
+        return $this;
+    }
+
+    public function setPageScreen(string $pageScreen): self
+    {
+        $this->pageScreen = $pageScreen;
 
         return $this;
     }

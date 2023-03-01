@@ -30,6 +30,8 @@ class ViewPageMenuService
             return;
         }
 
+        global $wp_meta_boxes;
+
         echo View::first(
             [
                 'wpdbmodeladminui/admin-ui-view-page',
@@ -39,6 +41,8 @@ class ViewPageMenuService
                 'title' => $data[$currentModelPage->primaryColumn],
                 'data' => $data,
                 'columns' => $currentModelPage->tableColumns ?? [],
+                'hasSideMetaBoxes' => ! empty($wp_meta_boxes[$currentModelPage->viewPage->pageScreen]['side']),
+                'pageScreen' => $currentModelPage->viewPage->pageScreen,
             ]
         );
     }
