@@ -8,6 +8,7 @@ class ViewPage
     public ?string $pageSlug = null;
     public ?string $pageScreen = null;
     public ?string $capability = null;
+    public bool $showDefaultView = true;
 
     public function withRender(callable|string $renderCallback): self
     {
@@ -19,6 +20,13 @@ class ViewPage
     public function withCapability(string $capability): self
     {
         $this->capability = $capability;
+
+        return $this;
+    }
+
+    public function hideDefaultView(): self
+    {
+        $this->showDefaultView = false;
 
         return $this;
     }

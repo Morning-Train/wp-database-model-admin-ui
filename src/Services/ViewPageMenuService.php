@@ -35,10 +35,11 @@ class ViewPageMenuService
         echo View::first(
             [
                 'wpdbmodeladminui/admin-ui-view-page',
-                'wpdbmodeladminui::admin-ui-view-page',
+                'admin-ui-view-page',
             ],
             [
                 'title' => $data[$currentModelPage->primaryColumn],
+                'showDefaultView' => $currentModelPage->viewPage->showDefaultView,
                 'data' => $data,
                 'columns' => $currentModelPage->tableColumns ?? [],
                 'hasSideMetaBoxes' => ! empty($wp_meta_boxes[$currentModelPage->viewPage->pageScreen]['side']),

@@ -21,7 +21,7 @@ class AdminUiMenuService
         echo View::first(
             [
                 'wpdbmodeladminui/admin-ui-form',
-                'wpdbmodeladminui::admin-ui-form',
+                'admin-ui-form',
             ],
             [
                 'hasSideMetaBoxes' => ! empty($wp_meta_boxes[$modelPage->pageScreen]['side']),
