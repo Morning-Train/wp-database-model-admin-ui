@@ -175,6 +175,17 @@ The `RowAction` can be customized, with different things. To se a list of all th
 ->withRowActions(array)
 ```
 
+##### _Admin Table Views_
+Set up the Admin Table views.  
+Default: `[]`
+
+This one takes an array of the `AdminTableViews` classes.  
+The `AdminTableViews` can be customized, with different things. To se a list of all the settings, see [AdminTableViews](#admintableview).
+
+```php
+->withAdminTableViews(array)
+```
+
 ##### _View Page_
 Set up a view page, for the Admin Table.  
 Default: `null`
@@ -302,6 +313,39 @@ The wrapper method has the following parameters:
 
 ---
 
+### AdminTableView
+To get an instance of a `AdminTableView`, use the wrapper method: `\Morningtrain\WP\DatabaseModelAdminUi\ModelUI::adminTableView()`.  
+The wrapper method has the following parameters:
+
+- `string $urlKey`
+- `null|string $urlValue`
+
+##### _Title_
+Sets the value to the view title.  
+Default: `urlKey, with first letter uppercase`
+
+```php
+->withTitle(string)
+```
+
+##### _Count_
+Sets the value to the view count.  
+Default: `null`
+
+```php
+->withCount(string)
+```
+
+##### _Count Callback_
+Sets the callback value to the view count.  
+Default: `null`
+
+```php
+->withCountCallback(callback|string)
+```
+
+---
+
 ### ViewPage
 To get an instance of a `ViewPage`, use the wrapper method: `\Morningtrain\WP\DatabaseModelAdminUi\ModelUI::viewPage()`.
 
@@ -322,6 +366,14 @@ Default: `ModelPage::capability`
 
 ```php
 ->withCapability(string)
+```
+
+##### _Hide default view_
+Hide the default view.  
+Default: `true`
+
+```php
+->hideDefaultView()
 ```
 
 ---
