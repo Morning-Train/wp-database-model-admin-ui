@@ -2,6 +2,8 @@
 
 namespace Morningtrain\WP\DatabaseModelAdminUi\Services;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\AdminTable;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPage;
@@ -35,6 +37,13 @@ class AdminUiMenuService
     private static function prepareAdminTable(ModelPage $modelPage): AdminTable
     {
         $data = $modelPage->model::query()
+            ->when($modelPage->extraWhereClausesCallback !== null, function (Builder $query) use ($modelPage) {
+                $extraWhereClauses = ($modelPage->extraWhereClausesCallback)();
+
+                foreach ($extraWhereClauses as $value) {
+                    $query->where(...$value);
+                }
+            })
             ->get();
 
         $data = static::handleExtraColumnsData($data, $modelPage);
@@ -87,7 +96,7 @@ class AdminUiMenuService
                 $filteredData[] = $values;
             }
         }
-        
+
         return $filteredData;
     }
 

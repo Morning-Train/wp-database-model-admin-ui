@@ -15,6 +15,7 @@ class ModelPage
     public array $searchableColumns = [];
     public array $sortableColumns = [];
     public array $excludeColumns = [];
+    public $extraWhereClausesCallback = null;
 
     /** @var AdminTableView[] $adminTableViews */
     public array $adminTableViews = [];
@@ -111,6 +112,13 @@ class ModelPage
     public function withRowActions(array $rowActions): self
     {
         $this->rowActions = $rowActions;
+
+        return $this;
+    }
+
+    public function withExtraWhereClausesCallback(callable|string $callback): self
+    {
+        $this->extraWhereClausesCallback = $callback;
 
         return $this;
     }
