@@ -175,6 +175,24 @@ The `RowAction` can be customized, with different things. To se a list of all th
 ->withRowActions(array)
 ```
 
+##### _Extra Where Clauses Callback_
+Return the `callback|string` value, and adds the where clauses to the Eloquent where's.  
+Default: `null`
+
+The format for this array, follows the following format:
+```php
+[
+    ['type', 'car']
+    ['type', '=', 'car']
+]
+```
+
+Either of this can be used.
+
+```php
+->withAdminTableViews(array)
+```
+
 ##### _Admin Table Views_
 Set up the Admin Table views.  
 Default: `[]`
