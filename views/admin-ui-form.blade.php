@@ -47,6 +47,8 @@
                     <input type="hidden" name="page" value="{{ $modelPage->pageSlug }}"/>
                     <input type="hidden" name="post_type" value="{{ $postType }}"/>
 
+                    @php($adminTable->views())
+
                     @if(! empty($modelPage->searchableColumns))
                         {!! $adminTable->search_box($modelPage->searchButtonText, $modelPage->pageSlug) !!}
                     @endif

@@ -89,6 +89,32 @@ class AdminTable extends WP_List_Table
             echo $this->row_actions($rowActions);
         }
     }
+    
+    protected function get_views()
+    {
+        $views = [];
+
+        foreach ($this->modelPage->adminTableViews as $view) {
+            $title = $view->title;
+            $url = add_query_arg($view->urlKey, $view->urlValue);
+            $class = '';
+
+            if ($view->count !== null) {
+                $title .= " ({$view->count})";
+            }
+
+            if (
+                (empty($_GET[$view->urlKey]) && empty($view->urlValue)) ||
+                (! empty($_GET[$view->urlKey]) && $_GET[$view->urlKey] == $view->urlValue)
+            ) {
+                $class = ' class="current"';
+            }
+
+            $views[$view->urlKey . '_' . $view->urlValue] = "<a href='$url'$class>$title</a>";
+        }
+
+        return $views;
+    }
 
     public function addModelPage(ModelPage $modelPage): void
     {

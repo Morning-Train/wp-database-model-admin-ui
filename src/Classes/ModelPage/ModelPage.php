@@ -15,11 +15,14 @@ class ModelPage
     public array $searchableColumns = [];
     public array $sortableColumns = [];
     public array $excludeColumns = [];
+
+    /** @var AdminTableView[] $adminTableViews */
+    public array $adminTableViews = [];
     public ?ViewPage $viewPage = null;
     public ?AcfCreatePage $acfCreatePage = null;
     public ?AcfEditPage $acfEditPage = null;
 
-    /** @var MetaBox[] */
+    /** @var MetaBox[] $metaBoxes */
     public array $metaBoxes = [];
     public array $rowActions = [];
     public ?string $parentSlug = null;
@@ -108,6 +111,13 @@ class ModelPage
     public function withRowActions(array $rowActions): self
     {
         $this->rowActions = $rowActions;
+
+        return $this;
+    }
+
+    public function withAdminTableViews(array $views): self
+    {
+        $this->adminTableViews = $views;
 
         return $this;
     }
