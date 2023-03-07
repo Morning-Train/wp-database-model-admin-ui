@@ -38,6 +38,7 @@ class Helper
                 foreach ($value as $_value) {
                     if (is_array($_value)) {
                         $newValue[] = static::getAcfValuesWithNames($_value);
+
                         continue;
                     }
 

@@ -9,30 +9,49 @@ use Morningtrain\WP\DatabaseModelAdminUi\ModelUI;
 class ModelPage
 {
     public bool $removable = false;
+
     public ?string $pageScreen = null;
+
     public array $columns = [];
+
     public array $tableColumns = [];
+
     public array $searchableColumns = [];
+
     public array $sortableColumns = [];
+
     public array $excludeColumns = [];
+
     public $extraWhereClausesCallback = null;
 
-    /** @var AdminTableView[] $adminTableViews */
+    /** @var AdminTableView[] */
     public array $adminTableViews = [];
+
     public ?ViewPage $viewPage = null;
+
     public ?AcfCreatePage $acfCreatePage = null;
+
     public ?AcfEditPage $acfEditPage = null;
 
-    /** @var MetaBox[] $metaBoxes */
+    /** @var MetaBox[] */
     public array $metaBoxes = [];
+
     public array $rowActions = [];
+
     public ?string $parentSlug = null;
+
     public string $pageTitle;
+
     public string $menuTitle;
+
     public string $capability = 'manage_options';
+
     public string $iconUrl = '';
+
     public ?int $position = null;
+
     public string $searchButtonText;
+
     public string $primaryColumn;
 
     public function __construct(
@@ -154,9 +173,9 @@ class ModelPage
         return $this;
     }
 
-    public function withMetaBox(MetaBox $metaBox): self
+    public function withMetaBoxes(array $metaBoxes): self
     {
-        $this->metaBoxes[$metaBox->slug] = $metaBox;
+        $this->metaBoxes = $metaBoxes;
 
         return $this;
     }

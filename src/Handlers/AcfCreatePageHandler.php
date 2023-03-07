@@ -26,7 +26,6 @@ class AcfCreatePageHandler
         ]);
     }
 
-
     public static function handlePreLoadPostIdForAcfModel($return, $postId)
     {
         if ($postId instanceof \WP_Term) {
@@ -85,14 +84,14 @@ class AcfCreatePageHandler
         $modelColumns = Schema::getColumnListing((new ($currentModelPage->model)())->getTable());
         $modelValues = array_filter(
             $values,
-            function ($key) use($modelColumns) {
+            function ($key) use ($modelColumns) {
                 return in_array($key, $modelColumns);
             },
             ARRAY_FILTER_USE_KEY
         );
 
-         $instance = $currentModelPage->model::query()
-            ->create($modelValues);
+        $instance = $currentModelPage->model::query()
+           ->create($modelValues);
 
         if ($currentModelPage->acfCreatePage !== null && $currentModelPage->acfCreatePage->saveCallback !== null) {
             ($currentModelPage->acfCreatePage->saveCallback)(

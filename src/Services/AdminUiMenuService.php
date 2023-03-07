@@ -3,7 +3,6 @@
 namespace Morningtrain\WP\DatabaseModelAdminUi\Services;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\AdminTable;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPage;
@@ -111,7 +110,7 @@ class AdminUiMenuService
 
         usort(
             $data,
-            function (array $itemOne, array $itemTwo) use($orderby, $order) {
+            function (array $itemOne, array $itemTwo) use ($orderby, $order) {
                 $valueOne = strtolower($itemOne[$orderby]);
                 $valueTwo = strtolower($itemTwo[$orderby]);
                 if ($order === 'asc') {

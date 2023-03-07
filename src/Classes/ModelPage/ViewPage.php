@@ -5,9 +5,13 @@ namespace Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage;
 class ViewPage
 {
     public $renderCallback = null;
+
     public ?string $pageSlug = null;
+
     public ?string $pageScreen = null;
+
     public ?string $capability = null;
+
     public bool $showDefaultView = true;
 
     public function withRender(callable|string $renderCallback): self

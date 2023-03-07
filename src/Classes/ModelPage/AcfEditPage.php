@@ -4,11 +4,15 @@ namespace Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage;
 
 class AcfEditPage
 {
-    /** @var AcfLoadField[] $loadFieldCallbacks */
+    /** @var AcfLoadField[] */
     public array $loadFieldCallbacks = [];
+
     public $saveCallback = null;
+
     public ?string $pageSlug = null;
+
     public ?string $screen = null;
+
     public ?string $capability = null;
 
     public function withLoadFieldCallbacks(array $callbacks): self

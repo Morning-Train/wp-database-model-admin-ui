@@ -5,8 +5,11 @@ namespace Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage;
 class Column
 {
     public string $title;
+
     public $renderCallback = null;
+
     public bool $searchable = false;
+
     public bool $sortable = false;
 
     public function __construct(

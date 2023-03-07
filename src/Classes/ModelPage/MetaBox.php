@@ -7,8 +7,11 @@ use Morningtrain\WP\DatabaseModelAdminUi\Enums\MetaBoxPage;
 class MetaBox
 {
     public string $title;
+
     public string $context = 'normal';
+
     public string $priority = 'default';
+
     public string $onPage = MetaBoxPage::ADMIN_TABLE;
 
     public function __construct(

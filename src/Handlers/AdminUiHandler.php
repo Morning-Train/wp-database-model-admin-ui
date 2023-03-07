@@ -24,6 +24,7 @@ class AdminUiHandler
                         $modelPage->position
                     )
                 );
+
                 continue;
             }
 
@@ -77,7 +78,7 @@ class AdminUiHandler
         }
 
         foreach ($currentModelPage->metaBoxes as $metaBox) {
-            if ($metaBox->onPage === MetaBoxPage::ACF_EDIT && $currentScreen->id !== $currentModelPage->acfEditPage->pageSlug) {
+            if ($metaBox->onPage === MetaBoxPage::ACF_EDIT && ! str_ends_with($currentScreen->id, $currentModelPage->acfEditPage->pageSlug)) {
                 continue;
             }
 

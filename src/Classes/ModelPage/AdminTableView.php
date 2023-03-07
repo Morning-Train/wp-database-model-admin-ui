@@ -5,6 +5,7 @@ namespace Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage;
 class AdminTableView
 {
     public string $title;
+
     public ?string $count = null;
 
     public function __construct(

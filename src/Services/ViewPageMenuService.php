@@ -27,6 +27,7 @@ class ViewPageMenuService
 
         if ($currentModelPage->viewPage->renderCallback !== null) {
             ($currentModelPage->viewPage->renderCallback)($data, $currentModelPage);
+
             return;
         }
 
