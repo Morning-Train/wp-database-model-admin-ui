@@ -238,15 +238,15 @@ The `AcfEditPage` can be customized, with different things. To se a list of all 
 ```
 
 
-##### _Meta Box_
-Render a meta box.  
+##### _Meta Boxes_
+Render meta boxes.  
 Default: `null`
 
-This one takes an instance of the `MetaBox` class.  
+This one takes an array, of instances, of the `MetaBox` class.  
 The `MetaBox` can be customized, with different things. To se a list of all the settings, see [MetaBox](#metabox).
 
 ```php
-->withMetaBox()
+->withMetaBoxes(array)
 ```
 
 ##### _Without Columns_
