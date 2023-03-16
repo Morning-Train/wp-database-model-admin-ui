@@ -133,6 +133,10 @@ class AdminUiHandler
 
     public static function handleGetFieldReturnValue($value, $postId, string $name, bool $hidden)
     {
+        if (! is_string($postId)) {
+            return $value;
+        }
+
         $parts = explode('__', $postId);
 
         if (count($parts) !== 3 || $parts[0] !== 'eloquent-model') {
