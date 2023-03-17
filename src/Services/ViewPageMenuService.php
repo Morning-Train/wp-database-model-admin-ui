@@ -35,7 +35,7 @@ class ViewPageMenuService
 
         echo View::first(
             [
-                'wpdbmodeladminui/admin-ui-view-page',
+                'wpdbmodeladminui::admin-ui-view-page',
                 'admin-ui-view-page',
             ],
             [
