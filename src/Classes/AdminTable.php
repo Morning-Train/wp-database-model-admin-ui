@@ -105,6 +105,11 @@ class AdminTable extends WP_List_Table
                 $title .= " ({$view->count})";
             }
 
+            if ($view->countCallback !== null) {
+                $count = ($view->countCallback)();
+                $title .= " ({$count})";
+            }
+
             if (
                 (empty($_GET[$view->urlKey]) && empty($view->urlValue)) ||
                 (! empty($_GET[$view->urlKey]) && $_GET[$view->urlKey] == $view->urlValue)
