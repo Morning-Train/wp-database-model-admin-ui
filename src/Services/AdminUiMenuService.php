@@ -111,8 +111,20 @@ class AdminUiMenuService
         usort(
             $data,
             function (array $itemOne, array $itemTwo) use ($orderby, $order) {
-                $valueOne = strtolower($itemOne[$orderby]);
-                $valueTwo = strtolower($itemTwo[$orderby]);
+                $valueOne = $itemOne[$orderby];
+                $valueTwo = $itemTwo[$orderby];
+
+                if (is_numeric($valueOne) && is_numeric($valueTwo)) {
+                    if ($order === 'asc') {
+                        return $valueOne - $valueTwo;
+                    }
+
+                    return $valueTwo - $valueOne;
+                }
+
+                $valueOne = strtolower($valueOne);
+                $valueTwo = strtolower($valueTwo);
+
                 if ($order === 'asc') {
                     return strcmp($valueOne, $valueTwo);
                 }
