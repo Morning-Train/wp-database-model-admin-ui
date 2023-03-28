@@ -245,7 +245,7 @@ class ModelPage
         return admin_url('admin.php') . '?page=' . $this->acfCreatePage->pageSlug;
     }
 
-    public function getAcfEditPageUrl(int $modelId): ?string
+    public function getAcfEditPageUrl(string|int $modelId): ?string
     {
         if ($this->acfEditPage === null) {
             return null;
