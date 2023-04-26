@@ -20,7 +20,7 @@ class ModelPages
     {
         static::setupCurrentModelPage();
 
-        Hook::action('admin_menu', [AdminUiHandler::class, 'addModelMenuPages']);
+        Hook::action('admin_menu', [AdminUiHandler::class, 'addModelMenuPages'])->priority(101);
         Hook::filter('set-screen-option', [AdminUiHandler::class, 'setPerPageScreenOption']);
         Hook::action('current_screen', [AdminUiHandler::class, 'addScreenOption']);
         Hook::action('current_screen', [AdminUiHandler::class, 'addMetaBoxes']);
