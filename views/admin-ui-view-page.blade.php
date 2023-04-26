@@ -30,6 +30,7 @@
     .wpdbmodeladminui-view-page__content table th {
         background: #F9F9F9;
         text-align: left;
+        vertical-align: top;
         padding: 8px;
         border-bottom: 1px solid #ccd0d4;
         border-right: 1px solid #ccd0d4;
@@ -66,9 +67,16 @@
                     <div class='wpdbmodeladminui-view-page__content-table postbox'>
                         <table>
                             @foreach($data as $column => $value)
+                                @php($maybeDecodedValue = json_decode($value))
                                 <tr>
                                     <th>{{ ! empty($columns[$column]) ? $columns[$column] . ' (' . $column . ')' : $column }}</th>
-                                    <td>{{ $value }}</td>
+                                    <td>
+                                        @if(is_string($value) && is_array($maybeDecodedValue) && json_last_error() === JSON_ERROR_NONE)
+                                            <pre>{{ print_r($maybeDecodedValue, true) }}</pre>
+                                        @else
+                                            {{ $value }}
+                                        @endif
+                                    </td>
                                 </tr>
                             @endforeach
                         </table>
