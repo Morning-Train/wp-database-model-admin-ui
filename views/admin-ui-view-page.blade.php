@@ -55,14 +55,6 @@
         line-height: 15px;
     }
 
-    .wpdbmodeladminui-view-page__content table td pre.lines {
-        float: left;
-        border-right: 1px solid gray;
-        margin-right: 6px;
-        padding-right: 6px;
-        width: fit-content;
-    }
-
     .wpdbmodeladminui-view-page__content table td pre.code {
         overflow-x: auto;
     }
@@ -98,8 +90,6 @@
                                     <th>{{ ! empty($columns[$column]) ? $columns[$column] . ' (' . $column . ')' : $column }}</th>
                                     @if(is_string($value) && (is_array($maybeDecodedValue) || is_object($maybeDecodedValue)) && json_last_error() === JSON_ERROR_NONE)
                                         <td class="has-code">
-                                            @php($linesCount = count(explode("\n", json_encode($maybeDecodedValue, JSON_PRETTY_PRINT))))
-                                            <pre class="lines">@for($i = 1; $i <= $linesCount; $i++){{ $i }}<br />@endfor</pre>
                                             <pre class="code">{{ json_encode($maybeDecodedValue, JSON_PRETTY_PRINT) }}</pre>
                                         </td>
                                     @else
