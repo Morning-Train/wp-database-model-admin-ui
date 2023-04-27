@@ -71,7 +71,7 @@
                                 <tr>
                                     <th>{{ ! empty($columns[$column]) ? $columns[$column] . ' (' . $column . ')' : $column }}</th>
                                     <td>
-                                        @if(is_string($value) && is_array($maybeDecodedValue) && json_last_error() === JSON_ERROR_NONE)
+                                        @if(is_string($value) && (is_array($maybeDecodedValue) || is_object($maybeDecodedValue)) && json_last_error() === JSON_ERROR_NONE)
                                             <pre>{{ print_r($maybeDecodedValue, true) }}</pre>
                                         @else
                                             {{ $value }}
