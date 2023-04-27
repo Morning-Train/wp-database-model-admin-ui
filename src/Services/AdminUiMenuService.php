@@ -106,7 +106,7 @@ class AdminUiMenuService
         }
 
         $orderby = $_GET['orderby'] ?? $modelPage->primaryColumn;
-        $order = $_GET['order'] ?? 'asc';
+        $order = $_GET['order'] ?? $modelPage->primaryOrder;
 
         usort(
             $data,
