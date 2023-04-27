@@ -59,6 +59,7 @@ class ModelPages
 
         if ($currentModelPage->removable) {
             Hook::action('admin_init', [AdminUiHandler::class, 'checkForModelDeleting']);
+            Hook::action('acf/options_page/submitbox_major_actions', [AdminUiHandler::class, 'showDeleteLinkOnViewPage']);
         }
     }
 
