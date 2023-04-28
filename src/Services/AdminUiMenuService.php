@@ -37,7 +37,7 @@ class AdminUiMenuService
     {
         $data = $modelPage->model::query()
             ->when($modelPage->extraWhereClausesCallback !== null, function (Builder $query) use ($modelPage) {
-                $extraWhereClauses = ($modelPage->extraWhereClausesCallback)();
+                $extraWhereClauses = call_user_func($modelPage->extraWhereClausesCallback);
 
                 foreach ($extraWhereClauses as $value) {
                     $query->where(...$value);

@@ -357,6 +357,8 @@ Default: `null`
 ##### _Count Callback_
 Sets the callback value to the view count.  
 Default: `null`
+Parameters in callback:
+- `AdminTableView $view`
 
 ```php
 ->withCountCallback(callback|string)
