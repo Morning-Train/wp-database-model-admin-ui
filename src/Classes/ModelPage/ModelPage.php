@@ -54,12 +54,14 @@ class ModelPage
 
     public string $primaryColumn;
 
+    public string $primaryOrder = 'DESC';
+
     public function __construct(
         public string $pageSlug,
         public string $model
     ) {
-        $this->pageTitle = __('Admin table');
-        $this->menuTitle = __('Admin table');
+        $this->pageTitle = ucfirst($pageSlug);
+        $this->menuTitle = ucfirst($pageSlug);
         $this->searchButtonText = __('Search');
     }
 
@@ -101,6 +103,20 @@ class ModelPage
     public function withSearchButtonText(string $searchButtonText): self
     {
         $this->searchButtonText = $searchButtonText;
+
+        return $this;
+    }
+
+    public function addPrimaryColumn(string $column): self
+    {
+        $this->primaryColumn = $column;
+
+        return $this;
+    }
+
+    public function addPrimaryOrder(string $order): self
+    {
+        $this->primaryOrder = $order;
 
         return $this;
     }
@@ -274,8 +290,10 @@ class ModelPage
             return ! in_array($tableColumnKey, $this->excludeColumns, true);
         }, ARRAY_FILTER_USE_KEY);
 
-        /*** @see \WP_List_Table::get_default_primary_column_name */
-        $this->primaryColumn = array_keys($this->tableColumns)[0];
+        if (empty($this->primaryColumn)) {
+            /*** @see \WP_List_Table::get_default_primary_column_name */
+            $this->primaryColumn = array_keys($this->tableColumns)[0];
+        }
 
         return true;
     }

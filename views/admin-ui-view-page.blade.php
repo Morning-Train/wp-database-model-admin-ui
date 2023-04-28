@@ -30,17 +30,33 @@
     .wpdbmodeladminui-view-page__content table th {
         background: #F9F9F9;
         text-align: left;
+        vertical-align: top;
         padding: 8px;
         border-bottom: 1px solid #ccd0d4;
         border-right: 1px solid #ccd0d4;
+        width: 200px;
         min-width: 200px;
-        width: 30%;
     }
 
     .wpdbmodeladminui-view-page__content table td {
         padding: 8px;
         border-bottom: 1px solid #ccd0d4;
-        min-width: 300px;
+        width: 100%;
+    }
+
+    .wpdbmodeladminui-view-page__content table td.has-code {
+        max-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .wpdbmodeladminui-view-page__content table td pre {
+        line-height: 15px;
+    }
+
+    .wpdbmodeladminui-view-page__content table td pre.code {
+        overflow-x: auto;
     }
 </style>
 
@@ -62,13 +78,23 @@
 
             <div id="postbox-container-2" class="postbox-container">
 
+                @php(do_meta_boxes($pageScreen, 'advanced', null))
+
                 @if($showDefaultView)
                     <div class='wpdbmodeladminui-view-page__content-table postbox'>
                         <table>
                             @foreach($data as $column => $value)
+                                @php($maybeDecodedValue = json_decode($value))
+
                                 <tr>
                                     <th>{{ ! empty($columns[$column]) ? $columns[$column] . ' (' . $column . ')' : $column }}</th>
-                                    <td>{{ $value }}</td>
+                                    @if(is_string($value) && (is_array($maybeDecodedValue) || is_object($maybeDecodedValue)) && json_last_error() === JSON_ERROR_NONE)
+                                        <td class="has-code">
+                                            <pre class="code">{{ json_encode($maybeDecodedValue, JSON_PRETTY_PRINT) }}</pre>
+                                        </td>
+                                    @else
+                                        <td>{{ $value }}</td>
+                                    @endif
                                 </tr>
                             @endforeach
                         </table>

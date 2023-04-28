@@ -127,8 +127,22 @@ class AdminUiHandler
 
         $modelPage->model::query()->where('id', $modelId)->delete();
 
-        header('Location: ' . $_SERVER['HTTP_REFERER'] ?? $modelPage->getOverviewPageUrl());
+        header('Location: ' . $modelPage->getOverviewPageUrl());
         exit();
+    }
+
+    public static function showDeleteLinkOnViewPage(array $pageData): void
+    {
+        $currentModelPage = ModelPages::getCurrentModelPage();
+
+        if ($currentModelPage === null || $currentModelPage->acfEditPage?->pageSlug !== $pageData['menu_slug']) {
+            return;
+        }
+
+        $modelId = $_GET['model_id'] ?? null;
+        $href = admin_url('admin.php') . '?page=' . $currentModelPage->pageSlug . '&model_id=' . $modelId . '&action=delete';
+
+        echo '<a href="' . $href . '" onclick="return confirm(\'' . __('Are you sure?') . '\')" style="color: #b32d2e;">' . __('Delete') . '</a>';
     }
 
     public static function handleGetFieldReturnValue($value, $postId, string $name, bool $hidden)

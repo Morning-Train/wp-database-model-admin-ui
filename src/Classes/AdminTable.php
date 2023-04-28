@@ -106,7 +106,7 @@ class AdminTable extends WP_List_Table
             }
 
             if ($view->countCallback !== null) {
-                $count = ($view->countCallback)();
+                $count = call_user_func($view->countCallback, $view);
                 $title .= " ({$count})";
             }
 
