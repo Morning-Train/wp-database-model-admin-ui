@@ -35,15 +35,11 @@ class AdminUiMenuService
 
     private static function prepareAdminTable(ModelPage $modelPage): AdminTable
     {
-        $data = $modelPage->model::query()
-            ->when($modelPage->extraWhereClausesCallback !== null, function (Builder $query) use ($modelPage) {
-                $extraWhereClauses = call_user_func($modelPage->extraWhereClausesCallback);
-
-                foreach ($extraWhereClauses as $value) {
-                    $query->where(...$value);
-                }
-            })
-            ->get();
+        $dataQuery = $modelPage->model::query();
+        if ($modelPage->modifyQueryCallback !== null) {
+            $dataQuery = call_user_func($modelPage->modifyQueryCallback, $dataQuery);
+        }
+        $data = $dataQuery->get();
 
         $data = static::handleExtraColumnsData($data, $modelPage);
         $data = static::handleWheres($data, $modelPage);
