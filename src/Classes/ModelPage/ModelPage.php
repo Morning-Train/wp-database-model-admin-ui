@@ -22,7 +22,7 @@ class ModelPage
 
     public array $excludeColumns = [];
 
-    public $extraWhereClausesCallback = null;
+    public $modifyQueryCallback = null;
 
     /** @var AdminTableView[] */
     public array $adminTableViews = [];
@@ -151,9 +151,9 @@ class ModelPage
         return $this;
     }
 
-    public function withExtraWhereClausesCallback(callable|string $callback): self
+    public function withModifyQueryCallback(callable|string $callback): self
     {
-        $this->extraWhereClausesCallback = $callback;
+        $this->modifyQueryCallback = $callback;
 
         return $this;
     }
