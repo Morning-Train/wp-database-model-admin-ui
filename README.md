@@ -175,22 +175,14 @@ The `RowAction` can be customized, with different things. To se a list of all th
 ->withRowActions(array)
 ```
 
-##### _Extra Where Clauses Callback_
-Return the `callback|string` value, and adds the where clauses to the Eloquent where's.  
+##### _Modify Query Callback_
+Return the `callback|string` modified `\Illuminate\Database\Eloquent\Builder`.  
 Default: `null`
-
-The format for this array, follows the following format:
-```php
-[
-    ['type', 'car']
-    ['type', '=', 'car']
-]
-```
-
-Either of this can be used.
+Parameters in callback:
+- `\Illuminate\Database\Eloquent\Builder $query`
 
 ```php
-->withAdminTableViews(array)
+->withModifyQueryCallback(\Illuminate\Database\Eloquent\Builder)
 ```
 
 ##### _Admin Table Views_
