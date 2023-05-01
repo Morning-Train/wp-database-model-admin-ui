@@ -560,6 +560,7 @@ We do not provide support for this package.
 
 ## Credits
 
+- [Martin Schadegg Brønniche](https://github.com/mschadegg)
 - [Mathias Bærentsen](https://github.com/matbaek)
 - [All Contributors](../../contributors)
 
