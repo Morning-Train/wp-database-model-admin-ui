@@ -86,6 +86,19 @@ class ModelUI
         return ModelPages::getCurrentModelPage();
     }
 
+    public static function getCurrentModelInstance(): \Illuminate\Database\Eloquent\Model|null
+    {
+        $modelPage = ModelPages::getCurrentModelPage();
+        $modelId = $_GET['model_id'] ?? null;
+
+        if ($modelPage === null || empty($modelId)) {
+            return null;
+        }
+
+        return $modelPage->model::query()
+            ->find($modelId);
+    }
+
     private static function setupAcf(): void
     {
         if (! class_exists('ACF')) {
