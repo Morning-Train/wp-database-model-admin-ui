@@ -3,6 +3,7 @@
 namespace Morningtrain\WP\DatabaseModelAdminUi\Handlers;
 
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPages;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPage;
 use Morningtrain\WP\DatabaseModelAdminUi\Enums\MetaBoxPage;
 use Morningtrain\WP\DatabaseModelAdminUi\Services\AdminUiMenuService;
 use WP_Screen;
@@ -11,7 +12,11 @@ class AdminUiHandler
 {
     public static function addModelMenuPages(): void
     {
-        foreach (ModelPages::getModelPages() as $modelPage) {
+        // Ensure that pages with a parent are registered those without
+        $modelPages = ModelPages::getModelPages();
+        usort($modelPages, fn(ModelPage $a, ModelPage $b) => $a->parentSlug <=> $b->parentSlug);
+
+        foreach ($modelPages as $modelPage) {
             if ($modelPage->parentSlug === null) {
                 $modelPage->setPageScreen(
                     add_menu_page(
