@@ -96,7 +96,13 @@ class AdminTable extends WP_List_Table
     {
         $views = [];
 
-        foreach ($this->modelPage->adminTableViews as $view) {
+        $adminTableViews = $this->modelPage->adminTableViews ;
+
+        if($this->modelPage->adminTableViewsCallback !== null) {
+            $adminTableViews = call_user_func($this->modelPage->adminTableViewsCallback, $this->modelPage);
+        }
+
+        foreach ($adminTableViews as $view) {
             $title = $view->title;
             $url = add_query_arg($view->urlKey, $view->urlValue);
             $class = '';

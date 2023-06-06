@@ -27,6 +27,8 @@ class ModelPage
     /** @var AdminTableView[] */
     public array $adminTableViews = [];
 
+    public $adminTableViewsCallback = null;
+
     public ?ViewPage $viewPage = null;
 
     public ?AcfCreatePage $acfCreatePage = null;
@@ -161,6 +163,13 @@ class ModelPage
     public function withAdminTableViews(array $views): self
     {
         $this->adminTableViews = $views;
+
+        return $this;
+    }
+
+    public function withAdminTableViewsCallback(callable|string $callback): self
+    {
+        $this->adminTableViewsCallback = $callback;
 
         return $this;
     }

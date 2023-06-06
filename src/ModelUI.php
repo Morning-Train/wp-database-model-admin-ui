@@ -22,14 +22,21 @@ class ModelUI
 {
     public static function setup(string|array $eloquentModelsDir): void
     {
-        Helper::setEloquentModelsDirs($eloquentModelsDir);
+        // If we are not on the admin side, we do not need to do load the admin UI
+        if(!is_admin()) {
+            return;
+        }
 
-        Loader::create($eloquentModelsDir)
-            ->callStatic('setupAdminUi');
+        Helper::setEloquentModelsDirs($eloquentModelsDir);
 
         View::addNamespace('wpdbmodeladminui', dirname(__DIR__) . '/views');
 
-        static::setupAcf();
+        Hook::action('init', function () use ($eloquentModelsDir) {
+            static::setupAcf();
+
+            Loader::create($eloquentModelsDir)
+                ->callStatic('setupAdminUi');
+        })->priority(1);
 
         Hook::action('wp_loaded', function () {
             ModelPages::setupModelPages();

@@ -196,6 +196,19 @@ The `AdminTableViews` can be customized, with different things. To se a list of 
 ->withAdminTableViews(array)
 ```
 
+You can also add views by using the `->addAdminTableViewsCallback()` method instead. This should be used when having dynamic views to avoid using resources when not necessary.
+
+Return the an array  array of `AdminTableViews` instances.    
+Default: `null`  
+Parameters in callback:
+- `ModelPage $modelPage`
+
+The `AdminTableViews` can be customized, with different things. To se a list of all the settings, see [AdminTableViews](#admintableview).
+
+```php
+->addAdminTableViewsCallback(callback)
+```
+
 ##### _View Page_
 Set up a view page, for the Admin Table.  
 Default: `null`
