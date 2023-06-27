@@ -258,7 +258,8 @@ class ModelPage
             return admin_url($this->parentSlug) . '&' . $pageParams;
         }
 
-        return admin_url($this->parentSlug) . '?' . $pageParams;
+        // Does have a parent slug, but it's a page
+        return admin_url('admin.php') . '?' . $pageParams;
     }
 
     public function getAcfCreatePageUrl(): ?string
