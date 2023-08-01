@@ -29,6 +29,9 @@ class ModelPage
 
     public $adminTableViewsCallback = null;
 
+    /** @var AdminTableExtraTablenav[] */
+    public array $adminTableExtraTablenavs = [];
+
     public ?ViewPage $viewPage = null;
 
     public ?AcfCreatePage $acfCreatePage = null;
@@ -170,6 +173,13 @@ class ModelPage
     public function withAdminTableViewsCallback(callable|string $callback): self
     {
         $this->adminTableViewsCallback = $callback;
+
+        return $this;
+    }
+
+    public function withAdminTableExtraTablenavs(array $extraTablenavs): self
+    {
+        $this->adminTableExtraTablenavs = $extraTablenavs;
 
         return $this;
     }
