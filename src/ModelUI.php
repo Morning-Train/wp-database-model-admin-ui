@@ -8,6 +8,7 @@ use Morningtrain\WP\DatabaseModelAdminUi\Classes\Helper;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\AcfCreatePage;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\AcfLoadField;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\AdminTableView;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\AdminTableExtraTablenav;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPage;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\MetaBox;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\AcfEditPage;
@@ -61,6 +62,11 @@ class ModelUI
     public static function adminTableView(string $urlKey, ?string $urlValue = null): AdminTableView
     {
         return new AdminTableView($urlKey, $urlValue);
+    }
+
+    public static function adminTableExtraTablenav(callable|string $renderCallback): AdminTableExtraTablenav
+    {
+        return new AdminTableExtraTablenav($renderCallback);
     }
 
     public static function viewPage(): ViewPage
