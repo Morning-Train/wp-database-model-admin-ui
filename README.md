@@ -209,6 +209,17 @@ The `AdminTableViews` can be customized, with different things. To se a list of 
 ->addAdminTableViewsCallback(callback)
 ```
 
+##### _Admin Table Extra Tablenavns_
+Set up the Admin Table extra tablenavns.  
+Default: `[]`
+
+This one takes an array of the `AdminTableExtraTablenav` classes.  
+The `AdminTableExtraTablenav` can be customized, with different things. To se a list of all the settings, see [AdminTableExtraTablenav](#admintableextratablenav).
+
+```php
+->withAdminTableExtraTablenavs(array)
+```
+
 ##### _View Page_
 Set up a view page, for the Admin Table.  
 Default: `null`
@@ -367,6 +378,23 @@ Parameters in callback:
 
 ```php
 ->withCountCallback(callback|string)
+```
+
+---
+
+### AdminTableExtraTablenav
+To get an instance of a `AdminTableExtraTablenav`, use the wrapper method: `\Morningtrain\WP\DatabaseModelAdminUi\ModelUI::adminTableExtraTablenav()`.  
+The wrapper method has the following parameters:
+
+- `callback|string $renderCallback`
+
+##### _Set Which To Bottom_
+Sets the value to the extra tablenav position.  
+Default: `top`
+Accepts: `top|bottom`
+
+```php
+->setWhichToBottom(string)
 ```
 
 ---
