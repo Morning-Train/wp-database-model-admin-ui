@@ -6,6 +6,7 @@ if (! class_exists('WP_List_Table')) {
     require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\AdminTableExtraTablenav;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPage;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\RowAction;
 use WP_List_Table;
@@ -89,6 +90,17 @@ class AdminTable extends WP_List_Table
             );
 
             echo $this->row_actions($rowActions);
+        }
+    }
+
+    protected function extra_tablenav($which)
+    {
+        foreach ($this->modelPage->adminTableExtraTablenavs as $adminTableExtraTablenav) {
+            if ($adminTableExtraTablenav->which !== $which) {
+                continue;
+            }
+
+            echo $adminTableExtraTablenav->render($which, $this->modelPage);
         }
     }
 
