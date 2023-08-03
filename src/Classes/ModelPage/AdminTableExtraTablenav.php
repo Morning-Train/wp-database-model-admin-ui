@@ -18,6 +18,6 @@ class AdminTableExtraTablenav
             return '';
         }
 
-        return ($this->renderCallback)($this->which, $modelPage);
+        return ($this->renderCallback)($modelPage);
     }
 }
