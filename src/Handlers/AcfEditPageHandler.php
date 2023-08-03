@@ -84,7 +84,7 @@ class AcfEditPageHandler
 
     public static function handleLoadValueForAcfModel($value, $postId, array $field)
     {
-        if (! in_array($field['type'], ['repeater', 'group'], true)) {
+        if (empty($postId) || ! in_array($field['type'], ['repeater', 'group'], true)) {
             return $value;
         }
 
@@ -117,7 +117,7 @@ class AcfEditPageHandler
     {
         $currentModelPage = ModelPages::getCurrentModelPage();
 
-        if ($currentModelPage === null) {
+        if ($currentModelPage === null || empty($postId)) {
             return $value;
         }
 
@@ -137,7 +137,13 @@ class AcfEditPageHandler
         $instance = $currentModelPage->model::query()
             ->find($parts[2]);
 
-        return $instance->{$prefix . $name} ?? '__return_null';
+        $returnValue = $instance->{$prefix . $name} ?? '__return_null';
+
+        if (is_a($returnValue, '\Illuminate\Support\Collection')) {
+            $returnValue = $returnValue->toArray();
+        }
+
+        return $returnValue;
     }
 
     public static function handleSaveMetadataForAcfModel($return, $postId, string $name, $value, bool $hidden)
