@@ -25,7 +25,7 @@ class ModelUI
     public static function setup(string|array $eloquentModelsDir): void
     {
         // If we are not on the admin side, we do not need to do load the admin UI
-        if(!is_admin()) {
+        if (! is_admin()) {
             return;
         }
 

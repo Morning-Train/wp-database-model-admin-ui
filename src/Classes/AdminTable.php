@@ -6,7 +6,6 @@ if (! class_exists('WP_List_Table')) {
     require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
-use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\AdminTableExtraTablenav;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPage;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\RowAction;
 use Morningtrain\WP\DatabaseModelAdminUi\Enums\AdminTableExtraTablenavWhich;
@@ -111,9 +110,9 @@ class AdminTable extends WP_List_Table
     {
         $views = [];
 
-        $adminTableViews = $this->modelPage->adminTableViews ;
+        $adminTableViews = $this->modelPage->adminTableViews;
 
-        if($this->modelPage->adminTableViewsCallback !== null) {
+        if ($this->modelPage->adminTableViewsCallback !== null) {
             $adminTableViews = call_user_func($this->modelPage->adminTableViewsCallback, $this->modelPage);
         }
 

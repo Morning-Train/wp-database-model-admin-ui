@@ -14,8 +14,8 @@ class AdminUiHandler
     {
         // Ensure that pages with a parent are registered before those without and in correct order
         $modelPages = ModelPages::getModelPages();
-        usort($modelPages, fn(ModelPage $a, ModelPage $b) => $a->position <=> $b->position);
-        usort($modelPages, fn(ModelPage $a, ModelPage $b) => $a->parentSlug <=> $b->parentSlug);
+        usort($modelPages, fn (ModelPage $a, ModelPage $b) => $a->position <=> $b->position);
+        usort($modelPages, fn (ModelPage $a, ModelPage $b) => $a->parentSlug <=> $b->parentSlug);
 
         foreach ($modelPages as $modelPage) {
             if ($modelPage->parentSlug === null) {
