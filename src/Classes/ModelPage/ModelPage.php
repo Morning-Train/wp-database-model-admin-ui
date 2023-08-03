@@ -30,7 +30,10 @@ class ModelPage
     public $adminTableViewsCallback = null;
 
     /** @var AdminTableExtraTablenav[] */
-    public array $adminTableExtraTablenavs = [];
+    public array $adminTableTopExtraTablenavs = [];
+
+    /** @var AdminTableExtraTablenav[] */
+    public array $adminTableBottomExtraTablenavs = [];
 
     public ?ViewPage $viewPage = null;
 
@@ -177,9 +180,16 @@ class ModelPage
         return $this;
     }
 
-    public function withAdminTableExtraTablenavs(array $extraTablenavs): self
+    public function withAdminTableTopExtraTablenavs(array $extraTablenavs): self
     {
-        $this->adminTableExtraTablenavs = $extraTablenavs;
+        $this->adminTableTopExtraTablenavs = $extraTablenavs;
+
+        return $this;
+    }
+
+    public function withAdminTableBottomExtraTablenavs(array $extraTablenavs): self
+    {
+        $this->adminTableBottomExtraTablenavs = $extraTablenavs;
 
         return $this;
     }

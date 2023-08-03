@@ -2,23 +2,22 @@
 
 namespace Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage;
 
+use Morningtrain\WP\DatabaseModelAdminUi\Enums\AdminTableExtraTablenavWhich;
+
 class AdminTableExtraTablenav
 {
-    public string $which = 'top';
-
-    public function __construct(public $renderCallback)
-    {
+    public function __construct(
+        public string $which,
+        public $renderCallback,
+    ) {
     }
 
-    public function setWhichToBottom(): self
+    public function render(ModelPage $modelPage): string
     {
-        $this->which = 'bottom';
+        if (! in_array($this->which, [AdminTableExtraTablenavWhich::TOP, AdminTableExtraTablenavWhich::BOTTOM], true)) {
+            return '';
+        }
 
-        return $this;
-    }
-
-    public function render(string $which, ModelPage $modelPage): string
-    {
-        return ($this->renderCallback)($which, $modelPage);
+        return ($this->renderCallback)($this->which, $modelPage);
     }
 }

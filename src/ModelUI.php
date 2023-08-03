@@ -16,6 +16,7 @@ use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\Column;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\RowAction;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ViewPage;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPages;
+use Morningtrain\WP\DatabaseModelAdminUi\Enums\AdminTableExtraTablenavWhich;
 use Morningtrain\WP\Hooks\Hook;
 use Morningtrain\WP\View\View;
 
@@ -64,9 +65,14 @@ class ModelUI
         return new AdminTableView($urlKey, $urlValue);
     }
 
-    public static function adminTableExtraTablenav(callable|string $renderCallback): AdminTableExtraTablenav
+    public static function adminTableBottomExtraTablenav(callable|string $renderCallback): AdminTableExtraTablenav
     {
-        return new AdminTableExtraTablenav($renderCallback);
+        return new AdminTableExtraTablenav(AdminTableExtraTablenavWhich::BOTTOM, $renderCallback);
+    }
+
+    public static function adminTableTopExtraTablenav(callable|string $renderCallback): AdminTableExtraTablenav
+    {
+        return new AdminTableExtraTablenav(AdminTableExtraTablenavWhich::TOP, $renderCallback);
     }
 
     public static function viewPage(): ViewPage

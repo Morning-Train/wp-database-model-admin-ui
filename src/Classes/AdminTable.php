@@ -9,6 +9,7 @@ if (! class_exists('WP_List_Table')) {
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\AdminTableExtraTablenav;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPage;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\RowAction;
+use Morningtrain\WP\DatabaseModelAdminUi\Enums\AdminTableExtraTablenavWhich;
 use WP_List_Table;
 
 class AdminTable extends WP_List_Table
@@ -95,12 +96,14 @@ class AdminTable extends WP_List_Table
 
     protected function extra_tablenav($which)
     {
-        foreach ($this->modelPage->adminTableExtraTablenavs as $adminTableExtraTablenav) {
-            if ($adminTableExtraTablenav->which !== $which) {
-                continue;
-            }
+        $adminTableExtraTablenavs = match ($which) {
+            AdminTableExtraTablenavWhich::TOP => $this->modelPage->adminTableTopExtraTablenavs,
+            AdminTableExtraTablenavWhich::BOTTOM => $this->modelPage->adminTableBottomExtraTablenavs,
+            default => [],
+        };
 
-            echo $adminTableExtraTablenav->render($which, $this->modelPage);
+        foreach ($adminTableExtraTablenavs as $adminTableExtraTablenav) {
+            echo $adminTableExtraTablenav->render($this->modelPage);
         }
     }
 
