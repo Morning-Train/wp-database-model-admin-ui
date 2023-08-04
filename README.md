@@ -390,7 +390,6 @@ Parameters in callback:
 To get an instance of a `AdminTableExtraTablenav`, use the wrapper method: `\Morningtrain\WP\DatabaseModelAdminUi\ModelUI::adminTableExtraTablenav()`.  
 The wrapper method has the following parameters:
 
-- `string $which` // This one can be either `top` or `bottom`
 - `callback|string $renderCallback`
 
 ---
