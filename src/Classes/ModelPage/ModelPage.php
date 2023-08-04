@@ -29,6 +29,12 @@ class ModelPage
 
     public $adminTableViewsCallback = null;
 
+    /** @var AdminTableExtraTablenav[] */
+    public array $adminTableTopExtraTablenavs = [];
+
+    /** @var AdminTableExtraTablenav[] */
+    public array $adminTableBottomExtraTablenavs = [];
+
     public ?ViewPage $viewPage = null;
 
     public ?AcfCreatePage $acfCreatePage = null;
@@ -170,6 +176,20 @@ class ModelPage
     public function withAdminTableViewsCallback(callable|string $callback): self
     {
         $this->adminTableViewsCallback = $callback;
+
+        return $this;
+    }
+
+    public function withAdminTableTopExtraTablenavs(array $extraTablenavs): self
+    {
+        $this->adminTableTopExtraTablenavs = $extraTablenavs;
+
+        return $this;
+    }
+
+    public function withAdminTableBottomExtraTablenavs(array $extraTablenavs): self
+    {
+        $this->adminTableBottomExtraTablenavs = $extraTablenavs;
 
         return $this;
     }

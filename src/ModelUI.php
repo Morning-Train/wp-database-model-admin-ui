@@ -8,6 +8,7 @@ use Morningtrain\WP\DatabaseModelAdminUi\Classes\Helper;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\AcfCreatePage;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\AcfLoadField;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\AdminTableView;
+use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\AdminTableExtraTablenav;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPage;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\MetaBox;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\AcfEditPage;
@@ -23,7 +24,7 @@ class ModelUI
     public static function setup(string|array $eloquentModelsDir): void
     {
         // If we are not on the admin side, we do not need to do load the admin UI
-        if(!is_admin()) {
+        if (! is_admin()) {
             return;
         }
 
@@ -61,6 +62,16 @@ class ModelUI
     public static function adminTableView(string $urlKey, ?string $urlValue = null): AdminTableView
     {
         return new AdminTableView($urlKey, $urlValue);
+    }
+
+    public static function adminTableBottomExtraTablenav(callable|string $renderCallback): AdminTableExtraTablenav
+    {
+        return new AdminTableExtraTablenav($renderCallback);
+    }
+
+    public static function adminTableTopExtraTablenav(callable|string $renderCallback): AdminTableExtraTablenav
+    {
+        return new AdminTableExtraTablenav($renderCallback);
     }
 
     public static function viewPage(): ViewPage

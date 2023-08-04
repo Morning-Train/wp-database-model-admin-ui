@@ -2,7 +2,6 @@
 
 namespace Morningtrain\WP\DatabaseModelAdminUi\Services;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\AdminTable;
 use Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPage;

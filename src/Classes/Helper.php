@@ -50,7 +50,7 @@ class Helper
                 continue;
             }
 
-            $newArray[$field['name']] = $value;
+            $newArray[$field['name']] = is_string($value) ? \stripslashes($value) : $value;
         }
 
         return $newArray;

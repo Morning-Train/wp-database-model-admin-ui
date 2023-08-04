@@ -7,6 +7,7 @@ class AdminTableView
     public string $title;
 
     public ?string $count = null;
+
     public $countCallback = null;
 
     public function __construct(

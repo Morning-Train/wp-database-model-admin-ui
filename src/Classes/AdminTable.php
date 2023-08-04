@@ -92,13 +92,26 @@ class AdminTable extends WP_List_Table
         }
     }
 
+    protected function extra_tablenav($which)
+    {
+        $adminTableExtraTablenavs = match ($which) {
+            'top' => $this->modelPage->adminTableTopExtraTablenavs,
+            'bottom' => $this->modelPage->adminTableBottomExtraTablenavs,
+            default => [],
+        };
+
+        foreach ($adminTableExtraTablenavs as $adminTableExtraTablenav) {
+            echo $adminTableExtraTablenav->render($this->modelPage);
+        }
+    }
+
     protected function get_views()
     {
         $views = [];
 
-        $adminTableViews = $this->modelPage->adminTableViews ;
+        $adminTableViews = $this->modelPage->adminTableViews;
 
-        if($this->modelPage->adminTableViewsCallback !== null) {
+        if ($this->modelPage->adminTableViewsCallback !== null) {
             $adminTableViews = call_user_func($this->modelPage->adminTableViewsCallback, $this->modelPage);
         }
 
