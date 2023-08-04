@@ -179,6 +179,12 @@ class AdminUiHandler
         $instance = $currentModelPage->model::query()
             ->find($parts[2]);
 
-        return $instance->{$prefix . $name} ?? '__return_null';
+        $returnValue = $instance->{$prefix . $name} ?? '__return_null';
+
+        if (is_a($returnValue, '\Illuminate\Support\Collection')) {
+            $returnValue = $returnValue->toArray();
+        }
+
+        return $returnValue;
     }
 }
