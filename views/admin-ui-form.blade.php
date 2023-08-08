@@ -47,6 +47,11 @@
                     <input type="hidden" name="page" value="{{ $modelPage->pageSlug }}"/>
                     <input type="hidden" name="post_type" value="{{ $postType }}"/>
 
+                    @foreach($_GET as $param => $value)
+                        @continue(in_array($param, ['page', 'post_type', 's', '_wpnonce', '_wp_http_referer', 'paged']))
+                        <input type="hidden" name="{{ $param }}" value="{{ $value }}"/>
+                    @endforeach
+
                     @php($adminTable->views())
 
                     @if(! empty($modelPage->searchableColumns))
