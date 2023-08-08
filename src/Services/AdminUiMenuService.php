@@ -28,7 +28,6 @@ class AdminUiMenuService
                 'modelPage' => $modelPage,
                 'postType' => $_GET['post_type'] ?? null,
                 'adminTable' => $adminTable,
-                'currentUrl' => remove_query_arg(['_wp_http_referer', '_wpnonce'], wp_unslash($_SERVER['REQUEST_URI'])),
             ]
         );
     }

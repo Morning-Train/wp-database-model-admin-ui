@@ -4,7 +4,6 @@
      * @var \Morningtrain\WP\DatabaseModelAdminUi\Classes\ModelPage\ModelPage $modelPage
      * @var string $postType
      * @var \Morningtrain\WP\DatabaseModelAdminUi\Classes\AdminTable $adminTable
-     * @var string $currentUrl
      */
 @endphp
 <style>
@@ -43,7 +42,7 @@
 
             <div id="postbox-container-2" class="postbox-container">
 
-                <form id="post" method="get" action="{!! $currentUrl !!}">
+                <form id="post" method="get">
 
                     <input type="hidden" name="page" value="{{ $modelPage->pageSlug }}"/>
                     <input type="hidden" name="post_type" value="{{ $postType }}"/>
