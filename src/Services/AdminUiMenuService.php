@@ -69,9 +69,8 @@ class AdminUiMenuService
         if ($modelPage->modifyQueryCallback !== null) {
             $dataQuery = call_user_func($modelPage->modifyQueryCallback, $dataQuery);
         }
-
         $dataQuery
-            ->orderBy($tableName . '.' . $instance->getKeyName())
+            ->orderBy($tableName . '.' . $instance->getKeyName(), $modelPage->primaryOrder)
             ->paginate(page: $adminTable->get_pagenum(), perPage: $adminTable->getPerPage());
 
         $data = $dataQuery->get();
