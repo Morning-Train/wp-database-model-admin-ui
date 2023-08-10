@@ -313,7 +313,7 @@ Default: `slug, with first letter uppercase`
 
 ##### _Render_
 Render the `callback|string` in each row, for the specific column.  
-Default: `output the value`
+Default: `output the value`  
 Parameters in callback:
 - `$instance`
 - `ModelPage $modelPage`
@@ -323,19 +323,25 @@ Parameters in callback:
 ```
 
 ##### _Searchable_
-Makes the column searchable.  
-Default: `false`
+Makes the column searchable. It can take a `callback|string`, where it's possible to make own search, on a custom column, that isn't on the Eloquent model table.  
+Default: `false`  
+Parameters in callback:
+- `\Illuminate\Database\Eloquent\Builder $dataQuery`
+- `string $searchString`
 
 ```php
-->makeSearchable()
+->makeSearchable(callback|string|null)
 ```
 
 ##### _Sortable_
-Makes the column sortable.  
-Default: `false`
+Makes the column sortable. It can take a `callback|string`, where it's possible to make own order, on a custom column, that isn't on the Eloquent model table.  
+Default: `false`  
+Parameters in callback:
+- `\Illuminate\Database\Eloquent\Builder $dataQuery`
+- `string $order`
 
 ```php
-->makeSortable()
+->makeSortable(callback|string|null)
 ```
 
 ---

@@ -16,8 +16,10 @@ class ModelPage
 
     public array $tableColumns = [];
 
+    /** @var Column[] */
     public array $searchableColumns = [];
 
+    /** @var Column[] */
     public array $sortableColumns = [];
 
     public array $excludeColumns = [];
@@ -141,13 +143,13 @@ class ModelPage
             array_column($this->columns, 'title')
         );
 
-        $this->searchableColumns = array_column(array_filter($columns, function (Column $column) {
+        $this->searchableColumns = array_filter($columns, function (Column $column) {
             return $column->searchable;
-        }), 'slug');
+        });
 
-        $this->sortableColumns = array_column(array_filter($columns, function (Column $column) {
+        $this->sortableColumns = array_filter($columns, function (Column $column) {
             return $column->sortable;
-        }), 'slug');
+        });
 
         return $this;
     }
