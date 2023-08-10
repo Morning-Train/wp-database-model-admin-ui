@@ -39,7 +39,7 @@ class AdminTable extends WP_List_Table
         return $this->sortableColumns;
     }
 
-    public function prepare_items(array $data = []): void
+    public function prepare_items(array $data = [], int $count = 0): void
     {
         $per_page = $this->getPerPage();
 
@@ -51,13 +51,7 @@ class AdminTable extends WP_List_Table
 
         $this->items = $data;
 
-        $total_items = count($this->items);
-
-        if (count($this->items) > $per_page) {
-            $this->items = array_slice($this->items, ($this->get_pagenum() - 1) * $per_page, $per_page);
-        }
-
-        $this->set_pagination_args(['total_items' => $total_items, 'per_page' => $per_page]);
+        $this->set_pagination_args(['total_items' => $count, 'per_page' => $per_page]);
     }
 
     /**
@@ -156,8 +150,8 @@ class AdminTable extends WP_List_Table
 
     public function addSortableColumns(array $sortableColumns = []): void
     {
-        foreach ($sortableColumns as $key) {
-            $this->sortableColumns[$key] = [$key, 'asc'];
+        foreach ($sortableColumns as $column) {
+            $this->sortableColumns[$column->slug] = [$column->slug, 'asc'];
         }
     }
 

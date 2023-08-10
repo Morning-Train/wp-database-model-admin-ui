@@ -34,22 +34,55 @@ class AdminUiMenuService
 
     private static function prepareAdminTable(ModelPage $modelPage): AdminTable
     {
-        $dataQuery = $modelPage->model::query();
+        $adminTable = new AdminTable($modelPage->pageSlug);
+
+        $searchString = $_GET['s'] ?? '';
+        $orderby = $_GET['orderby'] ?? $modelPage->primaryColumn;
+        $order = $_GET['order'] ?? $modelPage->primaryOrder;
+
+        $instance = (new $modelPage->model());
+        $tableName = $instance->getTable();
+        $dataQuery = $modelPage->model::query()
+            ->select($tableName . '.*');
+
+        if (! empty($searchString)) {
+            foreach ($modelPage->searchableColumns as $searchableColumn) {
+                if ($searchableColumn->searchableCallback !== null) {
+                    call_user_func($searchableColumn->searchableCallback, $dataQuery, $searchString);
+
+                    continue;
+                }
+
+                $dataQuery->orWhere($searchableColumn->slug, 'LIKE', '%' . $searchString . '%');
+            }
+        }
+
+        $sortableColumn = collect($modelPage->sortableColumns)->firstWhere('slug', $orderby);
+        if ($sortableColumn !== null) {
+            if ($sortableColumn->sortableCallback !== null) {
+                call_user_func($sortableColumn->sortableCallback, $dataQuery, $order);
+            } else {
+                $dataQuery->orderBy($orderby, $order);
+            }
+        }
+
         if ($modelPage->modifyQueryCallback !== null) {
             $dataQuery = call_user_func($modelPage->modifyQueryCallback, $dataQuery);
         }
+
+        $dataQuery
+            ->orderBy($tableName . '.' . $instance->getKeyName())
+            ->paginate(page: $adminTable->get_pagenum(), perPage: $adminTable->getPerPage());
+
         $data = $dataQuery->get();
 
         $data = static::handleExtraColumnsData($data, $modelPage);
-        $data = static::handleWheres($data, $modelPage);
-        $data = static::handleOrderBy($data, $modelPage);
         $data = static::markSearchWordInSearchableColumns($data, $modelPage);
 
-        $adminTable = new AdminTable($modelPage->pageSlug);
         $adminTable->addModelPage($modelPage);
         $adminTable->addColumns($modelPage->tableColumns);
         $adminTable->addSortableColumns($modelPage->sortableColumns);
-        $adminTable->prepare_items($data);
+        $adminTable->prepare_items($data, $dataQuery->count());
 
         return $adminTable;
     }
@@ -71,66 +104,6 @@ class AdminUiMenuService
         return $dataArray;
     }
 
-    private static function handleWheres(array $data, ModelPage $modelPage): array
-    {
-        $searchWord = $_GET['s'] ?? null;
-
-        if (empty($searchWord) || empty($modelPage->searchableColumns)) {
-            return $data;
-        }
-
-        $filteredData = [];
-
-        foreach ($modelPage->searchableColumns as $searchableColumn) {
-            foreach ($data as $values) {
-                if (empty($values[$searchableColumn]) || ! str_contains(strtolower($values[$searchableColumn]), strtolower($searchWord))) {
-                    continue;
-                }
-
-                $filteredData[] = $values;
-            }
-        }
-
-        return $filteredData;
-    }
-
-    private static function handleOrderBy(array $data, ModelPage $modelPage): array
-    {
-        if (empty($modelPage->primaryColumn)) {
-            return $data;
-        }
-
-        $orderby = $_GET['orderby'] ?? $modelPage->primaryColumn;
-        $order = $_GET['order'] ?? $modelPage->primaryOrder;
-
-        usort(
-            $data,
-            function (array $itemOne, array $itemTwo) use ($orderby, $order) {
-                $valueOne = $itemOne[$orderby];
-                $valueTwo = $itemTwo[$orderby];
-
-                if (is_numeric($valueOne) && is_numeric($valueTwo)) {
-                    if ($order === 'asc') {
-                        return $valueOne - $valueTwo;
-                    }
-
-                    return $valueTwo - $valueOne;
-                }
-
-                $valueOne = strtolower($valueOne);
-                $valueTwo = strtolower($valueTwo);
-
-                if ($order === 'asc') {
-                    return strcmp($valueOne, $valueTwo);
-                }
-
-                return strcmp($valueTwo, $valueOne);
-            }
-        );
-
-        return $data;
-    }
-
     private static function markSearchWordInSearchableColumns(array $data, ModelPage $modelPage): array
     {
         $searchWord = $_GET['s'] ?? null;
@@ -141,19 +114,19 @@ class AdminUiMenuService
 
         foreach ($data as $key => $item) {
             foreach ($modelPage->searchableColumns as $searchableColumn) {
-                if (empty($data[$key][$searchableColumn])) {
+                if (empty($data[$key][$searchableColumn->slug])) {
                     continue;
                 }
 
-                $pos = stripos($data[$key][$searchableColumn], $searchWord);
+                $pos = stripos($data[$key][$searchableColumn->slug], $searchWord);
 
                 while ($pos !== false) {
                     $wordLength = strlen($searchWord);
 
-                    $data[$key][$searchableColumn] = substr_replace($data[$key][$searchableColumn], '<mark>', $pos, 0);
-                    $data[$key][$searchableColumn] = substr_replace($data[$key][$searchableColumn], '</mark>', $pos + $wordLength + 6, 0);
+                    $data[$key][$searchableColumn->slug] = substr_replace($data[$key][$searchableColumn->slug], '<mark>', $pos, 0);
+                    $data[$key][$searchableColumn->slug] = substr_replace($data[$key][$searchableColumn->slug], '</mark>', $pos + $wordLength + 6, 0);
 
-                    $pos = stripos($data[$key][$searchableColumn], $searchWord, $pos + $wordLength + 13);
+                    $pos = stripos($data[$key][$searchableColumn->slug], $searchWord, $pos + $wordLength + 13);
                 }
             }
         }

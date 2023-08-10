@@ -10,7 +10,11 @@ class Column
 
     public bool $searchable = false;
 
+    public $searchableCallback = null;
+
     public bool $sortable = false;
+
+    public $sortableCallback = null;
 
     public function __construct(
         public string $slug
@@ -32,16 +36,18 @@ class Column
         return $this;
     }
 
-    public function makeSearchable(): self
+    public function makeSearchable(callable|string|null $searchableCallback = null): self
     {
         $this->searchable = true;
+        $this->searchableCallback = $searchableCallback;
 
         return $this;
     }
 
-    public function makeSortable(): self
+    public function makeSortable(callable|string|null $sortableCallback = null): self
     {
         $this->sortable = true;
+        $this->sortableCallback = $sortableCallback;
 
         return $this;
     }
