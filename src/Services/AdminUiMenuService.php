@@ -69,6 +69,8 @@ class AdminUiMenuService
         if ($modelPage->modifyQueryCallback !== null) {
             $dataQuery = call_user_func($modelPage->modifyQueryCallback, $dataQuery);
         }
+
+        $count = $dataQuery->count();
         $dataQuery
             ->orderBy($tableName . '.' . $instance->getKeyName(), $modelPage->primaryOrder)
             ->paginate(page: $adminTable->get_pagenum(), perPage: $adminTable->getPerPage());
@@ -81,7 +83,7 @@ class AdminUiMenuService
         $adminTable->addModelPage($modelPage);
         $adminTable->addColumns($modelPage->tableColumns);
         $adminTable->addSortableColumns($modelPage->sortableColumns);
-        $adminTable->prepare_items($data, $dataQuery->count());
+        $adminTable->prepare_items($data, $count);
 
         return $adminTable;
     }
