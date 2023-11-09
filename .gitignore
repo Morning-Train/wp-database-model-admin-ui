@@ -2,3 +2,4 @@
 /.idea
 auth.json
 /views/_cache
+composer.lock
